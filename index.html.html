@@ -107,8 +107,49 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[#070b13] text-slate-200 select-none">
 
-  <!-- SABRE RED 360 TOP ACCENT BAR -->
-  <div class="h-1 w-full sabre-red-ribbon"></div>
+  <!-- SABRE RED 360 CLASSIC MENU STRIP (Inspired by Sabre Red Desktop & MyGDSPro) -->
+  <div class="bg-[#111927] border-b border-slate-800 px-4 py-1 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+    <div class="flex items-center gap-3">
+      <button type="button" id="btnToggleLeftNav" class="text-slate-300 hover:text-white font-bold flex items-center gap-1.5 bg-slate-800/90 hover:bg-slate-700 px-2 py-0.5 rounded border border-slate-700 transition" title="Toggle Learning Center Sidebar">
+        <span>☰ Academy Menu</span>
+      </button>
+      <div class="hidden md:flex items-center gap-3 text-slate-400 font-medium">
+        <button type="button" id="menuBookingTools" class="hover:text-white transition">Booking Tools ▾</button>
+        <button type="button" id="menuSabreProfiles" class="hover:text-white transition">Sabre Profiles ▾</button>
+        <button type="button" id="menuFormatFinder" class="hover:text-white transition">Format Finder ▾</button>
+        <button type="button" id="menuAdminAudit" class="hover:text-white transition">Agency Audit (DQB*) ▾</button>
+      </div>
+    </div>
+
+    <!-- Center: Header Quick PNR / Ticket Search Bar -->
+    <div class="flex items-center gap-1.5">
+      <div class="relative flex items-center">
+        <input
+          id="headerQuickPnrSearch"
+          type="text"
+          maxlength="14"
+          placeholder="Quick Retrieve PNR (*ABCDEF) or Tkt..."
+          class="bg-[#060b14] text-cyan-300 border border-slate-700 focus:border-cyan-400 rounded px-2.5 py-0.5 text-[11px] font-mono w-48 sm:w-56 focus:outline-none uppercase placeholder:text-slate-500"
+        >
+      </div>
+      <button type="button" id="btnHeaderPnrSearch" class="bg-cyan-700 hover:bg-cyan-600 text-white font-mono font-bold px-2.5 py-0.5 rounded text-[10px] transition">
+        Retrieve
+      </button>
+    </div>
+
+    <!-- Right: Sabre Red Official Badge & Fullscreen Toggle -->
+    <div class="flex items-center gap-2">
+      <button type="button" id="btnOpenNdcModal" class="bg-purple-950/90 hover:bg-purple-800 text-purple-300 border border-purple-700/70 px-2 py-0.5 rounded font-mono font-bold text-[10px] transition" title="Inspect IATA NDC XML/JSON Request & Response">
+        ⚡ NDC XML/JSON
+      </button>
+      <button type="button" id="btnFullscreenToggle" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2 py-0.5 rounded font-mono font-bold text-[10px] flex items-center gap-1 transition" title="Toggle Fullscreen Mode">
+        <span>⛶ Full Screen</span>
+      </button>
+      <span class="sabre-red-ribbon text-white font-black px-2.5 py-0.5 rounded text-[11px] tracking-wider uppercase shadow">
+        sabre red 360
+      </span>
+    </div>
+  </div>
 
   <!-- TOP HEADER -->
   <header class="bg-gradient-to-r from-[#09111e] via-[#0d1829] to-[#09111e] border-b border-slate-800/90 px-4 py-2 flex flex-wrap items-center justify-between gap-3 shadow-lg">
@@ -220,9 +261,28 @@
 
   <!-- SUB-BAR: WORK AREAS TABS & TERMINAL CONTROLS -->
   <div class="bg-[#0e1726] border-b border-slate-800 px-4 py-1.5 flex flex-wrap items-center justify-between gap-2">
-    <!-- Work Area Tabs A - F -->
-    <div class="flex items-center gap-1.5" id="workAreaTabsContainer">
-      <!-- Tabs injected via JS -->
+    <!-- Work Area Tabs A - F + Regional Route Quick Picker -->
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="flex items-center gap-1" id="workAreaTabsContainer">
+        <!-- Tabs injected via JS -->
+      </div>
+      <span class="text-slate-700 hidden sm:inline">|</span>
+      <!-- Regional Route Quick Selector -->
+      <div class="flex items-center gap-1 text-[11px]">
+        <span class="text-slate-400 font-medium hidden md:inline">Region Route:</span>
+        <select id="regionalRouteSelect" class="bg-slate-900 border border-slate-700 text-cyan-300 rounded px-2 py-0.5 text-[11px] font-mono focus:outline-none focus:border-cyan-500">
+          <option value="">✈ Quick Route Hub...</option>
+          <option value="115NOVDACDXB">Middle East: DAC ➔ DXB (Emirates/Biman)</option>
+          <option value="115NOVDACJED">Middle East: DAC ➔ JED (Saudia/Biman)</option>
+          <option value="115NOVDACDOH">Middle East: DAC ➔ DOH (Qatar Airways)</option>
+          <option value="125DECDACSIN¥SQ">SE Asia: DAC ➔ SIN (Singapore Airlines)</option>
+          <option value="120NOVDACBKK">SE Asia: DAC ➔ BKK (Thai/US-Bangla)</option>
+          <option value="110NOVDACKUL">SE Asia: DAC ➔ KUL (Malaysia/Batik)</option>
+          <option value="115NOVDACLHR">Europe: DAC ➔ LHR (British/Biman)</option>
+          <option value="115NOVDACJFK">North America: DAC ➔ JFK (Emirates/Qatar)</option>
+          <option value="115NOVDACCGP">Domestic BD: DAC ➔ CGP (Chittagong)</option>
+        </select>
+      </div>
     </div>
 
     <!-- Right Controls: Clear Screen, Auto-Scroll, Font Scale -->
@@ -311,8 +371,14 @@
         <span>PQ (Optional)</span>
       </div>
 
-      <!-- E-Ticket Status (OPEN / EXCH / RFND / VOID) -->
-      <div id="badgeTktStatus" class="px-2 py-1 rounded bg-slate-900 text-slate-500 border border-slate-800 flex items-center gap-1" title="Electronic Ticket Status">
+      <!-- APIS & Contact Status (3DOCS + 3CTCM + 3CTCE) -->
+      <div id="badgeDocsContact" class="px-2 py-1 rounded bg-red-950/40 text-red-400 border border-red-900/50 flex items-center gap-1" title="Mandatory before Ticket Issue: 3DOCS + 3CTCM + 3CTCE">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+        <span>6. DOCS/CTC/Email</span>
+      </div>
+
+      <!-- E-Ticket Status (TE / TV / TR) -->
+      <div id="badgeTktStatus" class="px-2 py-1 rounded bg-slate-900 text-slate-500 border border-slate-800 flex items-center gap-1" title="Electronic Ticket Status (TE=Issued, TV=Void, TR=Refund)">
         <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
         <span>No E-Tkt</span>
       </div>
@@ -346,81 +412,123 @@
   <!-- MAIN SIMULATOR LAYOUT -->
   <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
 
-    <!-- LEFT / MAIN: TERMINAL & VISUAL AVAILABILITY -->
-    <div class="flex-1 flex flex-col min-w-0 bg-[#040810] overflow-hidden">
-
-      <!-- VISUAL FLIGHT AVAILABILITY OVERLAY (Shown when 1AVAIL is run) -->
-      <div id="visualAvailPanel" class="hidden bg-[#0c1527] border-b border-cyan-900/60 p-3 shadow-lg transition-all max-h-72 overflow-y-auto">
-        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span id="visualAvailTitle" class="text-xs font-bold text-cyan-300 uppercase tracking-wide">Live Flight Availability</span>
-            <span class="text-[11px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-800 font-mono">Interactive Booking Grid</span>
+    <!-- LEFT ACADEMY NAVIGATION SIDEBAR (Inspired by MyGDSPro Training Academy) -->
+    <aside id="leftAcademySidebar" class="hidden xl:flex w-52 bg-[#080d18] border-r border-slate-800/90 flex-col justify-between p-2.5 text-xs shrink-0 select-none">
+      <div class="space-y-3">
+        <!-- Brand Card -->
+        <div class="bg-gradient-to-br from-[#0f192d] to-[#09101d] border border-slate-800 rounded-lg p-2.5 shadow">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-white text-sm tracking-tight">MyGDS<span class="text-red-500">PRO</span></span>
+            <span class="text-[9px] font-mono bg-red-950 text-red-300 border border-red-800/60 px-1.5 py-0.2 rounded">1S PRO</span>
           </div>
+          <div class="text-[10px] text-slate-400 mt-0.5">Sabre Red 360 Academy</div>
+          <div class="text-[10px] text-cyan-400 font-mono mt-1 truncate">Agent: MOKTADA TAWHA</div>
+        </div>
 
-          <div class="flex items-center gap-2 text-xs">
-            <span class="text-slate-400">Seats:</span>
-            <div class="flex items-center bg-slate-900 rounded border border-slate-700 p-0.5" id="seatSelectorContainer">
-              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-600 text-white font-bold" data-seats="1">1</button>
-              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono text-slate-300 hover:text-white" data-seats="2">2</button>
-              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono text-slate-300 hover:text-white" data-seats="3">3</button>
-              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono text-slate-300 hover:text-white" data-seats="4">4</button>
-            </div>
-            <button id="btnCloseVisualAvail" class="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition" title="Hide Visual Overlay">
-              ✕
+        <!-- Active Terminal Mode Pill -->
+        <div>
+          <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1 mb-1">Active GDS Host</div>
+          <div class="w-full bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold px-3 py-1.5 rounded-md shadow flex items-center justify-between text-[11px]">
+            <span>SABRE RED 360</span>
+            <span class="font-mono text-[10px] bg-black/30 px-1.5 rounded">ACTIVE</span>
+          </div>
+        </div>
+
+        <!-- Learning Center Navigation -->
+        <div>
+          <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1 mb-1">Learning Center</div>
+          <div class="space-y-1 font-medium">
+            <button type="button" id="navBtnTerminalHome" class="w-full text-left px-2.5 py-1.5 rounded-md bg-cyan-950/70 text-cyan-300 border border-cyan-800/60 flex items-center justify-between transition">
+              <span>💻 Sabre Terminal</span>
+              <span class="text-[10px] font-mono">1S</span>
+            </button>
+            <button type="button" id="navBtnAcademyDash" class="w-full text-left px-2.5 py-1.5 rounded-md hover:bg-slate-800/80 text-slate-300 hover:text-white flex items-center justify-between transition">
+              <span>📊 Academy Dashboard</span>
+              <span id="navProgressBadge" class="text-[10px] font-mono bg-emerald-950 text-emerald-300 px-1.5 rounded">Pro</span>
+            </button>
+            <button type="button" id="navBtnScenarios" class="w-full text-left px-2.5 py-1.5 rounded-md hover:bg-slate-800/80 text-slate-300 hover:text-white flex items-center justify-between transition">
+              <span>✈ Booking Scenarios</span>
+              <span class="text-[10px] font-mono text-indigo-300">7</span>
+            </button>
+            <button type="button" id="navBtnKnowledgeQuiz" class="w-full text-left px-2.5 py-1.5 rounded-md hover:bg-slate-800/80 text-slate-300 hover:text-white flex items-center justify-between transition">
+              <span>✓ Knowledge Quiz</span>
+              <span class="text-[10px] font-mono bg-amber-950 text-amber-300 px-1.5 rounded">Exam</span>
+            </button>
+            <button type="button" id="navBtnCodeGlossary" class="w-full text-left px-2.5 py-1.5 rounded-md hover:bg-slate-800/80 text-slate-300 hover:text-white flex items-center justify-between transition">
+              <span>🌐 Airline & IATA Codes</span>
+              <span class="text-[10px] font-mono text-slate-400">A-Z</span>
+            </button>
+            <button type="button" id="navBtnNdcConsole" class="w-full text-left px-2.5 py-1.5 rounded-md hover:bg-slate-800/80 text-slate-300 hover:text-white flex items-center justify-between transition">
+              <span>⚡ NDC API Inspector</span>
+              <span class="text-[10px] font-mono text-purple-300">XML</span>
             </button>
           </div>
         </div>
+      </div>
 
-        <!-- Flight Cards Container -->
-        <div id="visualFlightCardsList" class="space-y-2">
-          <!-- Populated by JS -->
+      <!-- Bottom Office ID Card -->
+      <div class="bg-[#050912] border border-slate-800/90 rounded-lg p-2.5 space-y-1 font-mono text-[10px]">
+        <div class="flex items-center justify-between text-slate-400">
+          <span>OFFICE PCC:</span>
+          <strong class="text-white bg-blue-950 border border-blue-800 px-1.5 rounded">AWDA / DAC</strong>
+        </div>
+        <div class="flex items-center justify-between text-slate-400">
+          <span>AGENT SINE:</span>
+          <strong class="text-emerald-400">9999TAWHA</strong>
+        </div>
+        <div class="flex items-center justify-between text-slate-400">
+          <span>SUPPORT:</span>
+          <strong class="text-cyan-300">01980284967</strong>
+        </div>
+      </div>
+    </aside>
+
+    <!-- LEFT / MAIN: COMMAND PANEL ON TOP + TERMINAL DISPLAY BELOW -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#040810] overflow-hidden">
+
+      <!-- TOP 1: PROMINENT SABRE RED 360 COMMAND INPUT PANEL (ABOVE DISPLAY PANEL) -->
+      <div class="bg-gradient-to-r from-[#0b1528] via-[#0e1b33] to-[#0b1528] border-b-2 border-cyan-500/70 px-3.5 py-2.5 flex flex-col gap-1.5 shadow-xl">
+        <div class="flex items-center justify-between text-[11px]">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="font-bold text-cyan-300 uppercase tracking-wider">Sabre Host Command Prompt — Type Your GDS Command Here:</span>
+          </div>
+          <span class="text-[10px] font-mono text-amber-300 hidden sm:inline">Strict Order: 1. Create PNR (ER) ➔ 2. Add 3DOCS/3CTCM/3CTCE ➔ 3. Price & Issue Ticket ➔ 4. Refund/Reissue</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="flex items-center gap-1.5 font-mono text-cyan-300 font-extrabold text-sm bg-cyan-950/90 border border-cyan-500/60 px-3 py-2 rounded-lg whitespace-nowrap shadow">
+            <span id="promptWorkAreaIndicator">[A]</span>
+            <span class="text-emerald-400">1S-HOST</span>
+            <span class="text-amber-400">&gt;</span>
+          </div>
+          <div class="flex-1 relative flex items-center">
+            <input 
+              type="text" 
+              id="terminalInput" 
+              autofocus
+              class="w-full bg-[#02060f] text-emerald-300 font-mono-term text-base font-bold pl-4 pr-24 py-2 rounded-lg border-2 border-cyan-500/60 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 uppercase placeholder:text-slate-400 placeholder:font-normal shadow-inner tracking-wider"
+              placeholder="WRITE SABRE COMMAND HERE (E.G. 115NOVDACDXB, 01Y1, -TAWHA/MOKTADA MR, 901980284967, 7TAW/, 6A, ER)..."
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <span class="hidden sm:inline-block absolute right-3 text-[10px] font-mono text-cyan-300 bg-cyan-950/90 px-2 py-0.5 rounded border border-cyan-700 pointer-events-none">
+              PRESS ENTER ↵
+            </span>
+          </div>
+          <button 
+            id="btnSendCommand" 
+            class="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-lg transition active:scale-95 shadow-lg font-mono flex items-center gap-1.5 border border-emerald-400/40"
+          >
+            <span>SEND</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <!-- LIVE SEGMENT STATUS BAR (Shows Sold SS / Confirmed HK / Return Segments in Real-Time) -->
-      <div id="liveSegmentStatusBar" class="hidden bg-[#0a1324] border-b border-cyan-800/60 px-3 py-1.5 flex items-center justify-between gap-2 overflow-x-auto text-[11px] font-mono shadow-md">
-        <div class="flex items-center gap-2" id="liveSegmentPillsContainer">
-          <!-- Populated dynamically when segments are sold -->
-        </div>
-        <div class="flex items-center gap-1.5 shrink-0">
-          <button id="btnQuickBookReturn" class="bg-cyan-900/70 hover:bg-cyan-800 text-cyan-200 px-2 py-0.5 rounded border border-cyan-700/60 text-[10px] transition" title="Search Return Flight (1R25NOV)">+ Return Flight (1R)</button>
-          <button id="btnOpenTripSummaryFromSeg" class="bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded border border-emerald-700/60 text-[10px] transition">Trip Summary</button>
-        </div>
-      </div>
-
-      <!-- ENLARGED REAL SABRE RED 360 TERMINAL TRANSCRIPT DISPLAY -->
-      <div id="terminalTranscript" class="flex-1 min-h-[430px] p-4 font-mono-term text-[14px] leading-relaxed overflow-y-auto space-y-1.5 terminal-container select-text">
-        <!-- Terminal lines will appear here -->
-      </div>
-
-      <!-- CLEAN STREAMLINED QUICK COMMAND DOCK -->
-      <div id="quickCommandDock" class="bg-[#080d18] border-t border-slate-800/90 px-3 py-1.5 flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono">
-        <span class="text-slate-400 font-sans font-bold text-[10px] uppercase whitespace-nowrap bg-slate-900 px-2 py-0.5 rounded border border-slate-800">1-Click Cmd:</span>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="115NOVDACDXB">115NOVDACDXB</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="01Y1">01Y1</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="-TAWHA/MOKTADA AS SADAR MR">-TAWHA/MOKTADA AS SADAR MR</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="901980284967">901980284967</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="7TAW/">7TAW/</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-pink-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="6A">6A</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="*A">*A</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-yellow-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="WP">WP</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-yellow-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="PQ">PQ</button>
-        <button class="quick-cmd-btn bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="ER">ER</button>
-        <button class="quick-cmd-btn bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="W‡PQ1‡FINVAGT‡ETR‡ASQ" title="Issue E-Ticket">TKT ISSUE</button>
-        <button class="quick-cmd-btn bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WFRF‡T1‡ACASH" title="Full Ticket Refund">REFUND</button>
-        <button class="quick-cmd-btn bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WFR‡T1‡ASQ" title="Ticket Reissue / Exchange">REISSUE</button>
-        <button class="quick-cmd-btn bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="FQDACDXB15NOV-EK" title="Fare Basis & Tariff Display">FARE BASIS</button>
-        <button class="quick-cmd-btn bg-sky-950 hover:bg-sky-900 text-sky-300 border border-sky-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="RD1*M" title="Fare Rules (Mini Rules Cat 16)">FARE RULES</button>
-        <button class="quick-cmd-btn bg-orange-950 hover:bg-orange-900 text-orange-300 border border-orange-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WPRD*B" title="Baggage Allowance Check">BAG CHECK</button>
-        <button class="quick-cmd-btn bg-pink-950 hover:bg-pink-900 text-pink-300 border border-pink-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="*AE" title="Extra Baggage Ancillaries">EXTRA BAG</button>
-        <button class="quick-cmd-btn bg-lime-950 hover:bg-lime-900 text-lime-300 border border-lime-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="DC*USD100/BDT" title="Convert USD to BDT">USD➔BDT</button>
-        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="*T" title="Display Ticket Record">*T</button>
-        <button class="quick-cmd-btn bg-red-950 hover:bg-red-900 text-red-300 border border-red-800/80 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="I">I</button>
-      </div>
-
-      <!-- SABRE SPECIAL KEYS & KEYBOARD MAPPING BAR (Cross of Lorraine ‡, Change Key ¤, End Item «) -->
-      <div class="bg-[#070d19] border-t border-slate-800/80 px-3 py-1 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
+      <!-- TOP 2: SABRE SPECIAL KEYS & KEYBOARD MAPPING BAR (Cross of Lorraine ‡, Change Key ¤, End Item «) -->
+      <div class="bg-[#070d19] border-b border-slate-800/80 px-3 py-1 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="text-slate-400 font-sans text-[10px] font-bold uppercase">Sabre Keys:</span>
           <button type="button" class="sabre-sym-btn bg-slate-800 hover:bg-cyan-700 text-cyan-300 hover:text-white px-2 py-0.5 rounded border border-slate-700 transition font-bold" data-sym="‡" title="Cross of Lorraine (Keyboard Shortcut: = or +)">
@@ -452,41 +560,112 @@
         </div>
       </div>
 
-      <!-- FLAGSHIP SABRE RED 360 COMMAND INPUT BAR -->
-      <div class="bg-[#0a1120] border-t border-slate-800/90 px-3 py-2.5 flex items-center gap-2.5 shadow-2xl">
-        <div class="flex items-center gap-1.5 font-mono text-cyan-400 font-bold text-xs bg-cyan-950/50 border border-cyan-800/60 px-2.5 py-2 rounded-md whitespace-nowrap shadow-sm">
-          <span id="promptWorkAreaIndicator">[A]</span>
-          <span class="text-emerald-400">1S</span>
-          <span class="text-slate-400">&gt;</span>
+      <!-- TOP 3: CLEAN STREAMLINED QUICK COMMAND DOCK -->
+      <div id="quickCommandDock" class="bg-[#080d18] border-b border-slate-800/90 px-3 py-1.5 flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono">
+        <span class="text-slate-400 font-sans font-bold text-[10px] uppercase whitespace-nowrap bg-slate-900 px-2 py-0.5 rounded border border-slate-800">1-Click Cmd:</span>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="115NOVDACDXB">115NOVDACDXB</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="01Y1">01Y1</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="-TAWHA/MOKTADA AS SADAR MR">-TAWHA/MOKTADA AS SADAR MR</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="901980284967">901980284967</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="7TAW/">7TAW/</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-pink-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="6A">6A</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="*A">*A</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-yellow-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="WP">WP</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-yellow-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="PQ">PQ</button>
+        <button class="quick-cmd-btn bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="ER" title="Step 1: End & Create PNR">ER</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1" title="Step 2A: Add Mandatory Passport (After ER)">3DOCS</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="3CTCM/01980284967-1.1" title="Step 2B: Add Mandatory Mobile Number">3CTCM</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="3CTCE/MOKTADA200644//GMAIL.COM-1.1" title="Step 2C: Add Mandatory Email">3CTCE</button>
+        <button class="quick-cmd-btn bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="W‡PQ1‡FINVAGT‡ETR‡ASQ" title="Step 4: Issue E-Ticket (Requires PNR + DOCS + CTCM + CTCE + PQ)">TKT ISSUE</button>
+        <button class="quick-cmd-btn bg-red-950 hover:bg-red-900 text-red-300 border border-red-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WV2" title="Void Issued Ticket (*T shows TV)">VOID (WV2)</button>
+        <button class="quick-cmd-btn bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WFRF‡T1‡ACASH" title="Full Ticket Refund">REFUND</button>
+        <button class="quick-cmd-btn bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WFR‡T1‡ASQ" title="Ticket Reissue / Exchange">REISSUE</button>
+        <button class="quick-cmd-btn bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="FQDACDXB15NOV-EK" title="Fare Basis & Tariff Display">FARE BASIS</button>
+        <button class="quick-cmd-btn bg-sky-950 hover:bg-sky-900 text-sky-300 border border-sky-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="RD1*M" title="Fare Rules (Mini Rules Cat 16)">FARE RULES</button>
+        <button class="quick-cmd-btn bg-orange-950 hover:bg-orange-900 text-orange-300 border border-orange-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="WPRD*B" title="Baggage Allowance Check">BAG CHECK</button>
+        <button class="quick-cmd-btn bg-pink-950 hover:bg-pink-900 text-pink-300 border border-pink-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="*AE" title="Extra Baggage Ancillaries">EXTRA BAG</button>
+        <button class="quick-cmd-btn bg-lime-950 hover:bg-lime-900 text-lime-300 border border-lime-700/80 px-2 py-1 rounded font-bold transition whitespace-nowrap active:scale-95" data-cmd="DC*USD100/BDT" title="Convert USD to BDT">USD➔BDT</button>
+        <button class="quick-cmd-btn bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="*T" title="Display Ticket Record">*T</button>
+        <button class="quick-cmd-btn bg-red-950 hover:bg-red-900 text-red-300 border border-red-800/80 px-2 py-1 rounded transition whitespace-nowrap active:scale-95" data-cmd="I">I</button>
+      </div>
+
+      <!-- LIVE SEGMENT STATUS BAR (Shows Sold SS / Confirmed HK / Return Segments in Real-Time) -->
+      <div id="liveSegmentStatusBar" class="hidden bg-[#0a1324] border-b border-cyan-800/60 px-3 py-1.5 flex items-center justify-between gap-2 overflow-x-auto text-[11px] font-mono shadow-md">
+        <div class="flex items-center gap-2" id="liveSegmentPillsContainer">
+          <!-- Populated dynamically when segments are sold -->
         </div>
-        <div class="flex-1 relative flex items-center">
-          <input 
-            type="text" 
-            id="terminalInput" 
-            class="w-full bg-[#030711] text-emerald-300 font-mono-term text-sm pl-3.5 pr-24 py-2 rounded-md border border-slate-700/90 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 uppercase placeholder:text-slate-600 shadow-inner tracking-wider"
-            placeholder="Type Sabre command (e.g. 115NOVDACDXB, 01Y1, WP, ER) or press ↑/↓ for history..."
-            autocomplete="off"
-            spellcheck="false"
-          >
-          <span class="hidden sm:inline-block absolute right-3 text-[10px] font-mono text-slate-500 bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800 pointer-events-none">
-            ENTER ↵
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="btnQuickBookReturn" class="bg-cyan-900/70 hover:bg-cyan-800 text-cyan-200 px-2 py-0.5 rounded border border-cyan-700/60 text-[10px] transition" title="Search Return Flight (1R25NOV)">+ Return Flight (1R)</button>
+          <button id="btnOpenTripSummaryFromSeg" class="bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded border border-emerald-700/60 text-[10px] transition">Trip Summary</button>
+        </div>
+      </div>
+
+      <!-- VISUAL FLIGHT AVAILABILITY OVERLAY (Shown when 1AVAIL is run) -->
+      <div id="visualAvailPanel" class="hidden bg-[#0c1527] border-b border-cyan-900/60 p-3 shadow-lg transition-all max-h-72 overflow-y-auto">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="visualAvailTitle" class="text-xs font-bold text-cyan-300 uppercase tracking-wide">Live Flight Availability</span>
+            <span class="text-[11px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-800 font-mono">Interactive Booking Grid</span>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400">Seats:</span>
+            <div class="flex items-center bg-slate-900 rounded border border-slate-700 p-0.5" id="seatSelectorContainer">
+              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-600 text-white font-bold" data-seats="1">1</button>
+              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono text-slate-300 hover:text-white" data-seats="2">2</button>
+              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono text-slate-300 hover:text-white" data-seats="3">3</button>
+              <button class="seat-btn px-2 py-0.5 rounded text-[11px] font-mono text-slate-300 hover:text-white" data-seats="4">4</button>
+            </div>
+            <button id="btnCloseVisualAvail" class="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition" title="Hide Visual Overlay">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Flight Cards Container -->
+        <div id="visualFlightCardsList" class="space-y-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- ENLARGED REAL SABRE RED 360 TERMINAL TRANSCRIPT DISPLAY (BELOW COMMAND PANEL) -->
+      <div id="terminalTranscript" class="flex-1 min-h-[410px] p-4 font-mono-term text-[14px] leading-relaxed overflow-y-auto space-y-1.5 terminal-container select-text">
+        <!-- Terminal lines will appear here -->
+      </div>
+
+      <!-- MYGDSPRO-STYLE BOTTOM ACTION BAR & MAINFRAME TELEMETRY FOOTER -->
+      <div class="bg-[#06181c] border-t border-teal-900/70 px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" id="btnBottomClear" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-full text-[11px] shadow transition active:scale-95">
+            Clear screen
+          </button>
+          <button type="button" id="btnBottomDownloadTkt" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-full text-[11px] shadow transition active:scale-95">
+            Download ticket PDF
+          </button>
+          <button type="button" id="btnBottomInsertExample" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-full text-[11px] shadow transition active:scale-95">
+            Insert next step example
+          </button>
+          <button type="button" id="btnBottomNewSession" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-full text-[11px] shadow transition active:scale-95">
+            New practice session
+          </button>
+        </div>
+
+        <!-- Mainframe Coordinates, Latency & Office ID Badge -->
+        <div class="flex items-center gap-2.5 font-mono text-[10px] text-slate-300">
+          <span id="mainframeCoordText" class="text-teal-300">Input: 1S • Line: 01 • Col: 01</span>
+          <span class="hidden sm:inline text-emerald-400">● Latency: 18ms</span>
+          <span id="liveDhakaClock" class="hidden md:inline text-slate-400">DAC 12:00:00</span>
+          <span class="bg-blue-700 text-white font-bold px-2.5 py-0.5 rounded-full shadow">
+            Office ID: AWDA-DAC1S
           </span>
         </div>
-        <button 
-          id="btnSendCommand" 
-          class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs px-4 py-2.5 rounded-md transition active:scale-95 shadow-md font-mono flex items-center gap-1.5"
-        >
-          <span>SEND</span>
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-          </svg>
-        </button>
       </div>
     </div>
 
     <!-- RIGHT: INTERACTIVE CHEAT SHEET / HELPER SIDEBAR -->
     <aside id="cheatSheetSidebar" class="w-full lg:w-80 bg-[#090f1b] border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col h-auto lg:h-full max-h-96 lg:max-h-none overflow-hidden transition-all">
-      <!-- Sidebar Mode Tabs: Guide | Trip Summary | PNR Vault | Cmd History -->
+      <!-- Sidebar Mode Tabs: Cryptic Guide | Live PNR Card | PNR History | Cmd Log -->
       <div class="p-1.5 bg-[#0d1527] border-b border-slate-800 grid grid-cols-4 gap-1 text-[11px]">
         <button id="tabSidebarGuide" class="px-1.5 py-1.5 rounded font-bold bg-cyan-600 text-white shadow flex items-center justify-center gap-1 transition" title="Sabre Command Cheat Sheet">
           <span>Cryptic Guide</span>
@@ -1042,6 +1221,176 @@
           <button id="btnCopyEtktReceipt" class="bg-cyan-700 hover:bg-cyan-600 text-white px-3 py-1.5 rounded font-semibold transition">Copy E-Ticket Text</button>
           <button id="btnCloseEtktReceipt2" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-1.5 rounded font-medium">Close</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MYGDSPRO-STYLE ACADEMY DASHBOARD MODAL (Inspired by Screenshot 2) -->
+  <div id="academyDashboardModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-[#0b1322] border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Top Hero Banner -->
+      <div class="p-5 bg-gradient-to-r from-blue-900 via-indigo-900 to-[#0d1b3a] border-b border-slate-700 flex flex-wrap items-center justify-between gap-4 relative">
+        <div class="space-y-1.5 max-w-xl">
+          <div class="inline-flex items-center gap-2 bg-blue-950/90 border border-blue-700/60 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-cyan-300">
+            <span>✈ SABRE RED 360 GLOBAL TRAINING ACADEMY</span>
+          </div>
+          <h2 class="text-xl font-black text-white tracking-tight">Welcome to Your Sabre GDS Pro Academy</h2>
+          <p class="text-xs text-blue-200/90">Master real-world airline reservation, strict PNR creation, automated fare load (7% IATA commission), E-ticket issuance, QREX refund & reissue.</p>
+          <div class="pt-1 flex items-center gap-2 flex-wrap">
+            <button type="button" id="btnDashOpenTerminal" class="bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-4 py-1.5 rounded-lg shadow transition">
+              &gt;_ Open Sabre Terminal
+            </button>
+            <button type="button" id="btnDashStartQuiz" class="bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs px-4 py-1.5 rounded-lg shadow transition">
+              ✓ Take Sabre Exam Quiz
+            </button>
+          </div>
+        </div>
+        <button type="button" id="btnCloseAcademyDash" class="text-white/80 hover:text-white text-xl font-bold px-2 self-start">✕</button>
+      </div>
+
+      <!-- Dashboard Body -->
+      <div class="flex-1 p-4 overflow-y-auto space-y-4 text-xs bg-[#070c16]">
+        <!-- 5 Stat Cards (190+ Airlines, 1,100+ Airports, 60+ Sabre Commands, 6 Work Areas, Your Progress) -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          <div class="bg-[#0d1629] border border-slate-800 rounded-xl p-3">
+            <div class="text-lg font-black text-white font-mono">190+</div>
+            <div class="text-[11px] text-slate-400">Global Airlines</div>
+          </div>
+          <div class="bg-[#0d1629] border border-slate-800 rounded-xl p-3">
+            <div class="text-lg font-black text-cyan-400 font-mono">1,100+</div>
+            <div class="text-[11px] text-slate-400">IATA Airports</div>
+          </div>
+          <div class="bg-[#0d1629] border border-slate-800 rounded-xl p-3">
+            <div class="text-lg font-black text-emerald-400 font-mono" id="dashSavedPnrStat">0</div>
+            <div class="text-[11px] text-slate-400">Created PNRs</div>
+          </div>
+          <div class="bg-[#0d1629] border border-slate-800 rounded-xl p-3">
+            <div class="text-lg font-black text-amber-400 font-mono" id="dashCmdCountStat">0</div>
+            <div class="text-[11px] text-slate-400">Executed Commands</div>
+          </div>
+          <div class="bg-[#0d1629] border border-slate-800 rounded-xl p-3">
+            <div class="text-lg font-black text-purple-400 font-mono" id="dashQuizScoreStat">0%</div>
+            <div class="text-[11px] text-slate-400">Exam Quiz Score</div>
+          </div>
+        </div>
+
+        <!-- Learning Path & Recent Activity -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-[#0c1424] border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+            <div class="font-bold text-white text-sm border-b border-slate-800 pb-1.5">Your Sabre Red 360 Learning Path</div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">1</span>
+              <div>
+                <div class="font-bold text-slate-200">Beginner: Availability, Seat Sell & 5 Mandatory Elements</div>
+                <div class="text-[11px] text-slate-400">Commands: <code class="text-cyan-300">125DECDACSIN¥SQ</code>, <code class="text-cyan-300">01Y1</code>, <code class="text-cyan-300">-NAME</code>, <code class="text-cyan-300">9PHONE</code>, <code class="text-cyan-300">7TAW/</code>, <code class="text-cyan-300">6A</code>, <code class="text-cyan-300">ER</code></div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">2</span>
+              <div>
+                <div class="font-bold text-slate-200">Intermediate: Mandatory APIS (3DOCS), Contact (3CTCM/3CTCE) & Pricing</div>
+                <div class="text-[11px] text-slate-400">Commands: <code class="text-emerald-300">3DOCS/P/...</code>, <code class="text-emerald-300">3CTCM/...</code>, <code class="text-emerald-300">3CTCE/...</code>, <code class="text-emerald-300">WPASQ¥S1-4</code>, <code class="text-emerald-300">PQ</code></div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">3</span>
+              <div>
+                <div class="font-bold text-slate-200">Advanced: E-Ticket Issue (TE), Void (TV), Reissue (EXCH) & Refund (TR)</div>
+                <div class="text-[11px] text-slate-400">Commands: <code class="text-amber-300">W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER</code>, <code class="text-amber-300">WV2</code>, <code class="text-amber-300">WFRF‡T1‡ACASH</code></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[#0c1424] border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+            <div class="font-bold text-white text-sm border-b border-slate-800 pb-1.5">Strict Sabre Certification Rules Active</div>
+            <ul class="space-y-1.5 text-[11px] text-slate-300 list-disc pl-4">
+              <li><strong class="text-emerald-400">Rule 1:</strong> SSR/OSI (<code class="font-mono">3DOCS</code>, <code class="font-mono">3CTCM</code>, Meals) cannot be added before PNR is committed with <code class="font-mono">ER</code>.</li>
+              <li><strong class="text-cyan-400">Rule 2:</strong> E-Ticket (<code class="font-mono">TE</code>) cannot be issued until <code class="font-mono">3DOCS</code>, <code class="font-mono">3CTCM</code>, <code class="font-mono">3CTCE</code>, and <code class="font-mono">PQ</code> are present.</li>
+              <li><strong class="text-amber-400">Rule 3:</strong> Refund (<code class="font-mono">TR</code>), Reissue (<code class="font-mono">EXCH</code>), and Void (<code class="font-mono">TV</code>) require an active issued E-Ticket.</li>
+              <li><strong class="text-purple-400">Rule 4:</strong> Every command typo highlights the exact wrong token and shows the 1-click correct Sabre syntax.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-[#0a101d] border-t border-slate-800 flex justify-between items-center text-xs">
+        <span class="text-slate-400 font-mono">Agent: MOKTADA AS SADAR TAWHA • Contact: 01980284967</span>
+        <button type="button" id="btnCloseAcademyDash2" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-1.5 rounded font-medium">Close Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SABRE KNOWLEDGE QUIZ & CERTIFICATION EXAM MODAL -->
+  <div id="knowledgeQuizModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-[#0b1322] border border-amber-500/50 rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-3.5 bg-gradient-to-r from-amber-900/60 via-[#0f1a2e] to-[#0f1a2e] border-b border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-white text-sm">✓ Sabre Red 360 Knowledge Quiz & Cryptic Exam</h3>
+          <p class="text-[11px] text-amber-200/80">Test your mastery of Sabre PNR creation, APIS, pricing, and ticketing commands</p>
+        </div>
+        <button type="button" id="btnCloseQuizModal" class="text-slate-400 hover:text-white text-lg font-bold px-2">✕</button>
+      </div>
+
+      <div id="quizBodyContainer" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+        <!-- Populated dynamically by renderKnowledgeQuiz() -->
+      </div>
+
+      <div class="p-3 bg-[#0a101d] border-t border-slate-800 flex justify-between items-center text-xs">
+        <span id="quizScoreFooterText" class="font-mono text-emerald-400 font-bold">Answer all 6 questions to calculate your score</span>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnResetQuiz" class="bg-amber-700 hover:bg-amber-600 text-white px-3 py-1.5 rounded font-semibold">Reset Exam</button>
+          <button type="button" id="btnCloseQuizModal2" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-1.5 rounded font-medium">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IATA NDC XML / JSON API INSPECTOR MODAL (Option 6 from FreeGDSPractice) -->
+  <div id="ndcApiConsoleModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-[#0b1322] border border-purple-500/50 rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-3.5 bg-gradient-to-r from-purple-900/60 via-[#0f1a2e] to-[#0f1a2e] border-b border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-white text-sm">⚡ Sabre Red 360 — IATA NDC Level 4 XML / JSON Schema Inspector</h3>
+          <p class="text-[11px] text-purple-200/80">Live IATA New Distribution Capability (AirShoppingRQ, OfferPriceRQ, OrderCreateRQ) payload synced with your PNR</p>
+        </div>
+        <button type="button" id="btnCloseNdcModal" class="text-slate-400 hover:text-white text-lg font-bold px-2">✕</button>
+      </div>
+
+      <div class="p-3 bg-[#070c17] border-b border-slate-800 flex items-center gap-2 text-xs">
+        <button type="button" class="ndc-schema-tab bg-purple-600 text-white font-mono font-bold px-3 py-1 rounded" data-schema="AirShoppingRQ">1. AirShoppingRQ</button>
+        <button type="button" class="ndc-schema-tab bg-slate-800 text-slate-300 hover:text-white font-mono font-bold px-3 py-1 rounded" data-schema="OfferPriceRQ">2. OfferPriceRQ</button>
+        <button type="button" class="ndc-schema-tab bg-slate-800 text-slate-300 hover:text-white font-mono font-bold px-3 py-1 rounded" data-schema="OrderCreateRQ">3. OrderCreateRQ (PNR/Tkt)</button>
+      </div>
+
+      <div class="flex-1 p-4 overflow-y-auto bg-[#03060c] font-mono text-xs text-emerald-300">
+        <pre id="ndcCodeDisplay" class="whitespace-pre-wrap leading-relaxed"></pre>
+      </div>
+
+      <div class="p-3 bg-[#0a101d] border-t border-slate-800 flex justify-between items-center text-xs">
+        <span class="text-slate-400 font-mono">IATA NDC Schema v21.3 • Sabre GDS Aggregator</span>
+        <button type="button" id="btnCloseNdcModal2" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-1.5 rounded font-medium">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- A-Z AIRLINE, AIRPORT & MEAL CODE GLOSSARY MODAL -->
+  <div id="codeGlossaryModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-[#0b1322] border border-cyan-600/50 rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-3.5 bg-[#0f1a2e] border-b border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-white text-sm">🌐 Sabre A–Z Airline, Airport, Equipment & Meal Code Glossary</h3>
+          <p class="text-[11px] text-slate-400">Quick reference directory for encoding and decoding on Sabre GDS</p>
+        </div>
+        <button type="button" id="btnCloseGlossaryModal" class="text-slate-400 hover:text-white text-lg font-bold px-2">✕</button>
+      </div>
+
+      <div id="glossaryBodyContainer" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs">
+        <!-- Populated dynamically by renderCodeGlossary() -->
+      </div>
+
+      <div class="p-3 bg-[#0a101d] border-t border-slate-800 flex justify-end">
+        <button type="button" id="btnCloseGlossaryModal2" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-1.5 rounded text-xs font-medium">Close</button>
       </div>
     </div>
   </div>
@@ -1667,6 +2016,17 @@
         return;
       }
       if (/^PE[‡¥][^‡¥]+[‡¥](\-\d+\.\d+)?$/.test(cleanCmd)) {
+        const missingPnr = getMissingMandatoryPnrElements(draft, true);
+        if (missingPnr.length > 0) {
+          triggerStrictError(
+            cleanCmd,
+            cleanCmd,
+            `MANDATORY PNR ELEMENTS MISSING: Cannot add Customer Email (${cleanCmd}) before PNR is created! Missing: [ ${missingPnr.join(', ')} ]. Complete and save PNR (ER) first.`,
+            missingPnr[0].split('(')[1]?.replace(')', '') || '115NOVDACDXB',
+            'Complete Mandatory PNR Element First'
+          );
+          return;
+        }
         draft.osi.push(cleanCmd);
         session.transcript.push({
           type: 'success',
@@ -2335,17 +2695,22 @@
             lineIdx++;
           }
           const st = draft.ticketStatus || 'OPEN';
+          // Sabre Accounting Indicator in *T: TE = Ticket Electronic (Issued), TV = Ticket Voided, TR = Ticket Refunded
+          let tktPrefix = 'TE';
           let extraNote = 'COUPON 1-2: OPEN FOR USE';
           if (st === 'RFND') {
-            extraNote = `TICKET REFUNDED [RFND] • NET REFUND: BDT ${(draft.netRefundAmount || 63500).toLocaleString()}`;
-          } else if (st === 'EXCH/OPEN') {
-            extraNote = `REISSUED TICKET [OPEN FOR USE] • ADD COLLECT PAID: BDT ${(draft.reissueAddCollect || 8850).toLocaleString()}`;
+            tktPrefix = 'TR';
+            extraNote = `TICKET REFUNDED [TR / RFND] • NET REFUND: BDT ${(draft.netRefundAmount || 63500).toLocaleString()}`;
           } else if (st === 'VOID') {
-            extraNote = `TICKET VOIDED SAME-DAY [VOID]`;
+            tktPrefix = 'TV';
+            extraNote = `TICKET VOIDED SAME-DAY [TV / VOID]`;
+          } else if (st === 'EXCH/OPEN') {
+            tktPrefix = 'TE';
+            extraNote = `REISSUED TICKET [TE / OPEN FOR USE] • ADD COLLECT PAID: BDT ${(draft.reissueAddCollect || 8850).toLocaleString()}`;
           }
           session.transcript.push({
             type: st === 'RFND' || st === 'VOID' ? 'warning' : 'success',
-            text: `${lineIdx}. TE ${draft.ticketNumber.replace('-', '')}-AT ${paxShort} 9999TAWHA  STATUS: [${st}] -> ${extraNote}`
+            text: `${lineIdx}. ${tktPrefix} ${draft.ticketNumber.replace('-', '')}-AT ${paxShort} 9999TAWHA  STATUS: [${tktPrefix} - ${st}] -> ${extraNote}`
           });
         } else {
           session.transcript.push({
@@ -2523,9 +2888,10 @@
           });
         }
         const st = draft.ticketStatus || 'OPEN';
+        const tktPrefix = st === 'RFND' ? 'TR' : (st === 'VOID' ? 'TV' : 'TE');
         session.transcript.push({
           type: st === 'RFND' || st === 'VOID' ? 'warning' : 'output-line',
-          text: `TKT/ELECTRONIC ACTIVE : ${draft.ticketNumber}  ➔  STATUS: [${st}] ${st === 'RFND' ? '(REFUND SETTLED)' : st === 'EXCH/OPEN' ? '(REISSUED & OPEN FOR USE)' : '(COUPONS OPEN FOR USE)'}`
+          text: `TKT/${tktPrefix} ${draft.ticketNumber.replace('-', '')}  ➔  STATUS: [${tktPrefix} - ${st}] ${st === 'RFND' ? '(TICKET REFUNDED)' : st === 'VOID' ? '(TICKET VOIDED)' : st === 'EXCH/OPEN' ? '(REISSUED & OPEN FOR USE)' : '(COUPONS OPEN FOR USE)'}`
         });
       }
 
@@ -2642,13 +3008,20 @@
       if (!draft.receivedFrom) missing.push('RECEIVED FROM (6A)');
 
       if (missing.length > 0) {
-        session.transcript.push({
-          type: 'error',
-          text: `CANNOT END RESERVATION - MISSING MANDATORY ELEMENTS:`
-        });
-        missing.forEach(m => {
-          session.transcript.push({ type: 'error', text: `NEED ${m}«` });
-        });
+        let nextStepCmd = '115NOVDACDXB';
+        if (draft.segments.length === 0) nextStepCmd = session.currentAvail ? '01Y1' : '115NOVDACDXB';
+        else if (draft.names.length === 0) nextStepCmd = '-TAWHA/MOKTADA AS SADAR MR';
+        else if (draft.phones.length === 0) nextStepCmd = '901980284967';
+        else if (!draft.ticketLimit) nextStepCmd = '7TAW/';
+        else if (!draft.receivedFrom) nextStepCmd = '6A';
+
+        triggerStrictError(
+          cmd,
+          cmd,
+          `MANDATORY PNR ELEMENTS MISSING: Cannot commit PNR (${cmd}). Missing Mandatory Elements: [ ${missing.join(' • ')} ].`,
+          nextStepCmd,
+          'Add Missing Mandatory PNR Element'
+        );
         return;
       }
 
@@ -2822,8 +3195,31 @@
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      // Auto-prepare if user clicks Quick Run TKT ISSUE directly or if PNR is committed
-      ensureAutoReadyForTicketing(draft);
+      // STRICT ORDER RULE 2: Cannot Issue Ticket without PNR + DOCS (3DOCS) + Contact Number (3CTCM) + Email (3CTCE/PE) + Stored PQ!
+      const missingTkt = getMissingTicketingPrerequisites(draft);
+      if (missingTkt.length > 0) {
+        let nextCmd = '115NOVDACDXB';
+        const firstMissing = missingTkt[0];
+        if (firstMissing.includes('ITINERARY')) nextCmd = session.currentAvail ? '01Y1' : '115NOVDACDXB';
+        else if (firstMissing.includes('PASSENGER NAME')) nextCmd = '-TAWHA/MOKTADA AS SADAR MR';
+        else if (firstMissing.includes('AGENCY PHONE')) nextCmd = '901980284967';
+        else if (firstMissing.includes('TICKETING FIELD')) nextCmd = '7TAW/';
+        else if (firstMissing.includes('RECEIVED FROM')) nextCmd = '6A';
+        else if (firstMissing.includes('COMMIT PNR')) nextCmd = 'ER';
+        else if (firstMissing.includes('PASSPORT')) nextCmd = '3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1';
+        else if (firstMissing.includes('MOBILE')) nextCmd = '3CTCM/01980284967-1.1';
+        else if (firstMissing.includes('EMAIL')) nextCmd = '3CTCE/MOKTADA200644//GMAIL.COM-1.1';
+        else if (firstMissing.includes('PRICE QUOTE')) nextCmd = draft.candidatePrice ? 'PQ' : 'WP';
+
+        triggerStrictError(
+          cmd,
+          cmd,
+          `MANDATORY PNR ELEMENTS MISSING FOR TICKET ISSUANCE: Cannot issue E-Ticket until PNR is created AND APIS Passport (3DOCS), Mobile Contact (3CTCM), Email (3CTCE), and Fare Load (WP + PQ) are completed! Missing: [ ${missingTkt.join(' • ')} ].`,
+          nextCmd,
+          'Complete Missing Requirement First'
+        );
+        return;
+      }
 
       // Extract commission if KP specified (e.g. KP7 -> 7%)
       const kpMatch = cmd.match(/KP(\d{1,2})/);
@@ -2908,11 +3304,18 @@
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      ensureAutoReadyForTicketing(draft);
-      if (!draft.ticketNumber) {
-        const carrierNum = AIRLINE_CODES[draft.priceQuote?.validatingCarrier || 'EK']?.num || '176';
-        draft.ticketNumber = `${carrierNum}-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-        draft.ticketIssued = true;
+      // STRICT ORDER RULE 3: Cannot Refund without an Issued E-Ticket!
+      if (!draft.ticketIssued || !draft.ticketNumber) {
+        const missingTkt = getMissingTicketingPrerequisites(draft);
+        const nextCmd = missingTkt.length > 0 ? (missingTkt[0].includes('ITINERARY') ? '115NOVDACDXB' : '3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1') : 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER';
+        triggerStrictError(
+          cmd,
+          cmd,
+          `MANDATORY PNR ELEMENTS / ACTIVE E-TICKET MISSING: Cannot process Ticket Refund (${cmd}) because no Electronic Ticket has been issued in this PNR yet! Complete PNR + 3DOCS + 3CTCM + 3CTCE + Issue Ticket first.`,
+          nextCmd,
+          'Issue Electronic Ticket Before Refund'
+        );
+        return;
       }
 
       const baseFare = draft.priceQuote?.baseFare || 55000;
@@ -2961,11 +3364,18 @@
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      ensureAutoReadyForTicketing(draft);
-      if (!draft.ticketNumber) {
-        const carrierNum = AIRLINE_CODES[draft.priceQuote?.validatingCarrier || 'EK']?.num || '176';
-        draft.ticketNumber = `${carrierNum}-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-        draft.ticketIssued = true;
+      // STRICT ORDER RULE 3: Cannot Reissue / Exchange without an Issued E-Ticket!
+      if (!draft.ticketIssued || !draft.ticketNumber) {
+        const missingTkt = getMissingTicketingPrerequisites(draft);
+        const nextCmd = missingTkt.length > 0 ? (missingTkt[0].includes('ITINERARY') ? '115NOVDACDXB' : '3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1') : 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER';
+        triggerStrictError(
+          cmd,
+          cmd,
+          `MANDATORY PNR ELEMENTS / ACTIVE E-TICKET MISSING: Cannot process Ticket Reissue (${cmd}) because no Electronic Ticket has been issued in this PNR yet! Complete PNR + 3DOCS + 3CTCM + 3CTCE + Issue Ticket first.`,
+          nextCmd,
+          'Issue Electronic Ticket Before Reissue'
+        );
+        return;
       }
 
       const oldTicket = draft.ticketNumber;
@@ -3047,29 +3457,80 @@
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      if (!draft.ticketNumber) {
-        session.transcript.push({
-          type: 'error',
-          text: `NO ISSUED TICKET PRESENT IN PNR TO VOID«`
-        });
+      if (!draft.ticketIssued || !draft.ticketNumber) {
+        triggerStrictError(
+          cmd,
+          cmd,
+          `MANDATORY PNR ELEMENTS / ACTIVE E-TICKET MISSING: Cannot Void Ticket (${cmd}) because no Electronic Ticket has been issued yet!`,
+          'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
+          'Issue Electronic Ticket First'
+        );
         return;
       }
 
       draft.ticketStatus = 'VOID';
+      savePnrToVault(draft);
       session.transcript.push({
         type: 'warning',
-        text: `TICKET ${draft.ticketNumber} VOIDED SAME-DAY - COUPON STATUS: VOID`
+        text: `* TV ${draft.ticketNumber.replace('-', '')} - TICKET VOIDED SAME-DAY (STATUS: TV / VOID)`
       });
       session.transcript.push({
         type: 'success',
-        text: `VOID AUTHORIZATION CONFIRMED - ZERO SETTLEMENT`
+        text: `VOID AUTHORIZATION CONFIRMED - ENTER '*T' TO VERIFY 'TV ${draft.ticketNumber.replace('-', '')}' STATUS`
       });
-      showToast(`Ticket Voided: ${draft.ticketNumber}`);
+      showToast(`Ticket Voided: TV ${draft.ticketNumber}`);
+    }
+
+    function getMissingMandatoryPnrElements(draft, requireCommitted) {
+      const missing = [];
+      if (draft.segments.length === 0) missing.push('1. ITINERARY SEGMENT (01Y1)');
+      if (draft.names.length === 0) missing.push('2. PASSENGER NAME (-TAWHA/MOKTADA MR)');
+      if (draft.phones.length === 0) missing.push('3. AGENCY PHONE (901980284967)');
+      if (!draft.ticketLimit) missing.push('4. TICKETING FIELD (7TAW/)');
+      if (!draft.receivedFrom) missing.push('5. RECEIVED FROM (6A)');
+      if (requireCommitted && (!draft.isConfirmed || !draft.locator)) {
+        missing.push('6. END & COMMIT PNR (ER)');
+      }
+      return missing;
+    }
+
+    function getMissingTicketingPrerequisites(draft) {
+      const missing = getMissingMandatoryPnrElements(draft, true);
+      const hasDocs = draft.ssr.some(x => x.startsWith('3DOCS'));
+      const hasMobile = draft.ssr.some(x => x.startsWith('3CTCM')) || draft.osi.some(x => x.includes('CTCM'));
+      const hasEmail = draft.ssr.some(x => x.startsWith('3CTCE')) || draft.osi.some(x => x.startsWith('PE'));
+
+      if (!hasDocs) missing.push('APIS PASSPORT (3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1)');
+      if (!hasMobile) missing.push('PASSENGER MOBILE NUMBER (3CTCM/01980284967-1.1)');
+      if (!hasEmail) missing.push('PASSENGER EMAIL (3CTCE/MOKTADA200644//GMAIL.COM-1.1)');
+      if (!draft.priceQuote) missing.push('STORED PRICE QUOTE (WP then PQ)');
+      return missing;
     }
 
     function handleSpecialServiceRequests(cmd) {
       const session = areaSessions[currentArea];
       const draft = session.draft;
+
+      // STRICT ORDER RULE 1: Cannot add SSR or OSI before PNR is created!
+      const missingPnr = getMissingMandatoryPnrElements(draft, true);
+      if (missingPnr.length > 0) {
+        let nextCmd = '115NOVDACDXB';
+        if (draft.segments.length === 0) nextCmd = session.currentAvail ? '01Y1' : '115NOVDACDXB';
+        else if (draft.names.length === 0) nextCmd = '-TAWHA/MOKTADA AS SADAR MR';
+        else if (draft.phones.length === 0) nextCmd = '901980284967';
+        else if (!draft.ticketLimit) nextCmd = '7TAW/';
+        else if (!draft.receivedFrom) nextCmd = '6A';
+        else if (!draft.isConfirmed) nextCmd = 'ER';
+
+        triggerStrictError(
+          cmd,
+          cmd,
+          `MANDATORY PNR ELEMENTS MISSING: Cannot add SSR/OSI (${cmd.split('/')[0]}) before PNR is created and committed! Missing Elements: [ ${missingPnr.join(' • ')} ].`,
+          nextCmd,
+          'Complete & Commit PNR First'
+        );
+        return;
+      }
 
       // 1. Strict APIS Passport Data: 3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/JAHID/MD-2.1 (or 3DOCS/DB/P/...)
       if (cmd.startsWith('3DOC') && !cmd.startsWith('3DOCO') && !cmd.startsWith('3DOCA')) {
@@ -4767,12 +5228,16 @@
 
     function openRefundExchangeModal() {
       const draft = areaSessions[currentArea].draft;
-      ensureAutoReadyForTicketing(draft);
-      if (!draft.ticketNumber) {
-        const carrierNum = AIRLINE_CODES[draft.priceQuote?.validatingCarrier || 'EK']?.num || '176';
-        draft.ticketNumber = `${carrierNum}-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-        draft.ticketIssued = true;
-        draft.ticketStatus = 'OPEN';
+      if (!draft.ticketIssued || !draft.ticketNumber) {
+        triggerStrictError(
+          'WFRF / WFR',
+          'NO ISSUED E-TICKET',
+          'MANDATORY PNR ELEMENTS / ACTIVE E-TICKET MISSING: You cannot open the Refund / Reissue Mask before issuing an E-Ticket! Follow strict order: 1. Create PNR (ER) ➔ 2. Add 3DOCS, 3CTCM, 3CTCE ➔ 3. Price (WP & PQ) ➔ 4. Issue Ticket.',
+          '115NOVDACDXB',
+          'Complete PNR & Issue Ticket First'
+        );
+        showToast('Error: Issue E-Ticket first before Refund/Reissue!');
+        return;
       }
 
       const base = draft.priceQuote?.baseFare || 55000;
@@ -4925,6 +5390,195 @@
           executeCrypticCommand(`WP`);
         });
       });
+    }
+
+
+    let currentQuizScore = 0;
+    const SABRE_QUIZ_QUESTIONS = [
+      {
+        q: '1. What is the exact Sabre command to search Singapore Airlines (SQ) flights from Dhaka (DAC) to Singapore (SIN) on 25 December?',
+        opts: ['125DECDACSIN¥SQ', 'AN25DECDACSIN/ASQ', 'A25DECDACSIN*SQ', '01Y1DACSIN'],
+        ans: 0
+      },
+      {
+        q: '2. Which Sabre command is mandatory to store Passenger Mobile Number for Airline SMS alerts before issuing a ticket?',
+        opts: ['901980284967', '3CTCM/01980284967-1.1', '3CTC/01980284967', 'PE¥01980284967¥'],
+        ans: 1
+      },
+      {
+        q: '3. When you void an Electronic Ticket using WV2 and check *T, what 2-letter status prefix appears before the ticket number?',
+        opts: ['TE (Ticket Electronic)', 'TR (Ticket Refunded)', 'TV (Ticket Voided)', 'EX (Ticket Exchanged)'],
+        ans: 2
+      },
+      {
+        q: '4. When a ticket is refunded using WFRF‡T1‡ACASH and you check *T, what 2-letter prefix is displayed?',
+        opts: ['TV', 'TR', 'TE', 'TK'],
+        ans: 1
+      },
+      {
+        q: '5. How do you delete all stored Price Quote (PQ) records in a Sabre PNR?',
+        opts: ['XI', 'PQD-ALL', '31¤', 'WETRV'],
+        ans: 1
+      },
+      {
+        q: '6. Which command rebooks the lowest available fare across segments 1 to 4?',
+        opts: ['WPASQ¥S1-4', 'WPNCB¥S1-4', 'FQDACDXB15NOV', 'WFR‡T1‡ASQ'],
+        ans: 1
+      }
+    ];
+    let userQuizAnswers = {};
+
+    function renderKnowledgeQuiz() {
+      const container = document.getElementById('quizBodyContainer');
+      if (!container) return;
+
+      container.innerHTML = SABRE_QUIZ_QUESTIONS.map((item, qIdx) => {
+        const picked = userQuizAnswers[qIdx];
+        return `
+          <div class="bg-[#060c18] border border-slate-800 rounded-lg p-3 space-y-2">
+            <div class="font-bold text-white">${item.q}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              ${item.opts.map((opt, oIdx) => {
+                let btnCls = 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700';
+                if (picked !== undefined) {
+                  if (oIdx === item.ans) btnCls = 'bg-emerald-950 text-emerald-300 border-emerald-600 font-bold';
+                  else if (picked === oIdx) btnCls = 'bg-red-950 text-red-300 border-red-600 line-through';
+                }
+                return `
+                  <button type="button" class="quiz-opt-btn text-left px-3 py-1.5 rounded border font-mono text-[11px] transition ${btnCls}" data-q="${qIdx}" data-o="${oIdx}">
+                    ${opt}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const q = parseInt(e.currentTarget.getAttribute('data-q'), 10);
+          const o = parseInt(e.currentTarget.getAttribute('data-o'), 10);
+          userQuizAnswers[q] = o;
+          let correct = 0;
+          SABRE_QUIZ_QUESTIONS.forEach((item, idx) => {
+            if (userQuizAnswers[idx] === item.ans) correct++;
+          });
+          currentQuizScore = Math.round((correct / SABRE_QUIZ_QUESTIONS.length) * 100);
+          const footer = document.getElementById('quizScoreFooterText');
+          if (footer) footer.textContent = `Current Exam Score: ${correct}/${SABRE_QUIZ_QUESTIONS.length} (${currentQuizScore}%)`;
+          const dashStat = document.getElementById('dashQuizScoreStat');
+          if (dashStat) dashStat.textContent = `${currentQuizScore}%`;
+          renderKnowledgeQuiz();
+        });
+      });
+    }
+
+    function renderNdcSchema(schemaType) {
+      const pre = document.getElementById('ndcCodeDisplay');
+      if (!pre) return;
+      const draft = areaSessions[currentArea].draft;
+      const seg = draft.segments[0] || { orig: 'DAC', dest: 'DXB', carrier: 'EK', flight: '587', date: '2026-11-15', bookingClass: 'Y' };
+      const pax = draft.names[0]?.fullName || 'TAWHA/MOKTADA AS SADAR MR';
+
+      if (schemaType === 'AirShoppingRQ') {
+        pre.textContent = `<IATA_AirShoppingRQ xmlns="http://www.iata.org/IATA/2015/EASD/00/IATA_OffersAndOrdersMessage">
+  <Party>
+    <Sender>
+      <TravelAgency>
+        <AgencyID>AWDA</AgencyID>
+        <Name>TAWHA TOURS AND TRAVELS</Name>
+        <PseudoCityID>AWDA-DAC1S</PseudoCityID>
+      </TravelAgency>
+    </Sender>
+  </Party>
+  <Request>
+    <FlightRequest>
+      <OriginDestCriteria>
+        <OriginDepCriteria>
+          <IATA_LocationCode>${seg.orig}</IATA_LocationCode>
+          <Date>${seg.date}</Date>
+        </OriginDepCriteria>
+        <DestArrivalCriteria>
+          <IATA_LocationCode>${seg.dest}</IATA_LocationCode>
+        </DestArrivalCriteria>
+      </OriginDestCriteria>
+    </FlightRequest>
+  </Request>
+</IATA_AirShoppingRQ>`;
+      } else if (schemaType === 'OfferPriceRQ') {
+        pre.textContent = `{
+  "IATA_OfferPriceRQ": {
+    "PointOfSale": { "PCC": "AWDA", "AgentSine": "9999TAWHA", "Currency": "BDT" },
+    "SelectedOffer": {
+      "Carrier": "${seg.carrier}",
+      "FlightNumber": "${seg.flight}",
+      "BookingClass": "${seg.bookingClass}",
+      "BaseFareBDT": ${draft.priceQuote?.baseFare || 55000},
+      "TaxesBDT": ${draft.priceQuote?.taxes || 14500},
+      "IataCommission7Pct": ${Math.round((draft.priceQuote?.baseFare || 55000) * 0.07)},
+      "BaggageAllowance": "30KG Checked + 7KG Cabin"
+    }
+  }
+}`;
+      } else {
+        pre.textContent = `{
+  "IATA_OrderCreateRS": {
+    "OrderID": "${draft.locator || 'UNCOMMITTED'}",
+    "OrderStatus": "${draft.isConfirmed ? 'HOLDING_CONFIRMED_HK' : 'DRAFT_SS'}",
+    "Passenger": "${pax}",
+    "ContactMobile": "01980284967",
+    "TicketDocument": {
+      "TicketNumber": "${draft.ticketNumber || 'NOT_ISSUED'}",
+      "AccountingPrefix": "${draft.ticketStatus === 'RFND' ? 'TR' : draft.ticketStatus === 'VOID' ? 'TV' : 'TE'}",
+      "CouponStatus": "${draft.ticketStatus || 'OPEN'}"
+    }
+  }
+}`;
+      }
+    }
+
+    function renderCodeGlossary() {
+      const container = document.getElementById('glossaryBodyContainer');
+      if (!container) return;
+
+      const airportRows = Object.entries(AIRPORT_CODES).map(([code, a]) =>
+        `<div class="bg-slate-900 px-2.5 py-1.5 rounded border border-slate-800 flex justify-between font-mono text-[11px]"><strong class="text-cyan-400">${code}</strong><span class="text-slate-300">${a.city} (${a.airport})</span></div>`
+      ).join('');
+
+      const airlineRows = Object.entries(AIRLINE_CODES).map(([code, al]) =>
+        `<div class="bg-slate-900 px-2.5 py-1.5 rounded border border-slate-800 flex justify-between font-mono text-[11px]"><strong class="text-emerald-400">${code} (${al.num})</strong><span class="text-slate-300">${al.name}</span></div>`
+      ).join('');
+
+      container.innerHTML = `
+        <div>
+          <div class="font-bold text-cyan-300 uppercase mb-1.5">IATA 3-Letter Airport Codes (W/*DAC)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">${airportRows}</div>
+        </div>
+        <div>
+          <div class="font-bold text-emerald-300 uppercase mb-1.5">Airline 2-Letter & 3-Digit Accounting Codes (W/*EK)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">${airlineRows}</div>
+        </div>
+      `;
+    }
+
+    function getNextRecommendedStepCommand() {
+      const session = areaSessions[currentArea];
+      const draft = session.draft;
+      if (!session.currentAvail && draft.segments.length === 0) return '115NOVDACDXB';
+      if (draft.segments.length === 0) return '01Y1';
+      if (draft.names.length === 0) return '-TAWHA/MOKTADA AS SADAR MR';
+      if (draft.phones.length === 0) return '901980284967';
+      if (!draft.ticketLimit) return '7TAW/';
+      if (!draft.receivedFrom) return '6A';
+      if (!draft.isConfirmed) return 'ER';
+      if (!draft.ssr.some(x => x.startsWith('3DOCS'))) return '3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1';
+      if (!draft.ssr.some(x => x.startsWith('3CTCM'))) return '3CTCM/01980284967-1.1';
+      if (!draft.ssr.some(x => x.startsWith('3CTCE'))) return '3CTCE/MOKTADA200644//GMAIL.COM-1.1';
+      if (!draft.candidatePrice && !draft.priceQuote) return 'WP';
+      if (!draft.priceQuote) return 'PQ';
+      if (!draft.ticketIssued) return 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER';
+      return '*T';
     }
 
     function updateLiveInspectorUI() {
@@ -5190,11 +5844,18 @@
         pqBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span>PQ (Optional)</span>`;
       }
 
-      // E-Ticket Status badge
+      // DOCS + CTCM + CTCE badge
+      const hasDocs = draft.ssr.some(x => x.startsWith('3DOCS'));
+      const hasMobile = draft.ssr.some(x => x.startsWith('3CTCM')) || draft.osi.some(x => x.includes('CTCM'));
+      const hasEmail = draft.ssr.some(x => x.startsWith('3CTCE')) || draft.osi.some(x => x.startsWith('PE'));
+      updateSingleBadge('badgeDocsContact', hasDocs && hasMobile && hasEmail, '6. DOCS/CTC/Email', `DOCS:${hasDocs?'✓':'✗'} CTCM:${hasMobile?'✓':'✗'} CTCE:${hasEmail?'✓':'✗'}`);
+
+      // E-Ticket Status badge (TE / TV / TR)
       const tktBadge = document.getElementById('badgeTktStatus');
       if (tktBadge) {
         if (draft.ticketNumber) {
           const st = draft.ticketStatus || 'OPEN';
+          const pfx = st === 'RFND' ? 'TR' : (st === 'VOID' ? 'TV' : 'TE');
           let colorCls = 'bg-cyan-950/70 text-cyan-300 border-cyan-800';
           let dotCls = 'bg-cyan-400';
           if (st === 'RFND' || st === 'VOID') {
@@ -5205,8 +5866,8 @@
             dotCls = 'bg-purple-400';
           }
           tktBadge.className = `px-2 py-1 rounded border flex items-center gap-1 ${colorCls}`;
-          tktBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotCls}"></span><span>TKT: ${st}</span>`;
-          tktBadge.title = `Ticket: ${draft.ticketNumber} (${st})`;
+          tktBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotCls}"></span><span>${pfx} ${draft.ticketNumber.replace('-', '')} (${st})</span>`;
+          tktBadge.title = `${pfx} ${draft.ticketNumber} (${st})`;
         } else {
           tktBadge.className = 'px-2 py-1 rounded bg-slate-900 text-slate-500 border border-slate-800 flex items-center gap-1';
           tktBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span>No E-Tkt</span>`;
@@ -5909,6 +6570,154 @@
       // Close Visual Overlay
       document.getElementById('btnCloseVisualAvail').addEventListener('click', () => {
         document.getElementById('visualAvailPanel').classList.add('hidden');
+      });
+
+      // Live Terminal Input Coordinates & Dhaka Clock
+      termInput.addEventListener('input', () => {
+        const coord = document.getElementById('mainframeCoordText');
+        if (coord) {
+          const col = (termInput.selectionStart || termInput.value.length) + 1;
+          const line = areaSessions[currentArea].transcript.length;
+          coord.textContent = `Input: 1S • Line: ${String(line).padStart(2, '0')} • Col: ${String(col).padStart(2, '0')}`;
+        }
+      });
+      setInterval(() => {
+        const clk = document.getElementById('liveDhakaClock');
+        if (clk) clk.textContent = `DAC ${getTimestamp()}`;
+      }, 1000);
+
+      // Left Academy Sidebar Toggle
+      document.getElementById('btnToggleLeftNav')?.addEventListener('click', () => {
+        const leftNav = document.getElementById('leftAcademySidebar');
+        if (leftNav) {
+          leftNav.classList.toggle('hidden');
+          leftNav.classList.toggle('flex');
+        }
+      });
+
+      // Top Menu Strip Quick Links
+      document.getElementById('menuBookingTools')?.addEventListener('click', () => document.getElementById('guiHelperModal')?.classList.remove('hidden'));
+      document.getElementById('menuSabreProfiles')?.addEventListener('click', () => executeCrypticCommand('*A'));
+      document.getElementById('menuFormatFinder')?.addEventListener('click', () => executeCrypticCommand('HELP'));
+      document.getElementById('menuAdminAudit')?.addEventListener('click', () => executeCrypticCommand('DQB*'));
+
+      // Header Quick PNR / Ticket Search
+      const pnrSearchInp = document.getElementById('headerQuickPnrSearch');
+      function runHeaderPnrSearch() {
+        const val = (pnrSearchInp?.value || '').toUpperCase().trim();
+        if (!val) return;
+        pnrSearchInp.value = '';
+        if (/^\d{10,14}$/.test(val.replace('-', ''))) {
+          executeCrypticCommand(`WETR*T${val.replace('-', '')}`);
+        } else {
+          executeCrypticCommand(val.startsWith('*') ? val : `*${val}`);
+        }
+      }
+      document.getElementById('btnHeaderPnrSearch')?.addEventListener('click', runHeaderPnrSearch);
+      pnrSearchInp?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          runHeaderPnrSearch();
+        }
+      });
+
+      // Regional Route Quick Selector
+      document.getElementById('regionalRouteSelect')?.addEventListener('change', (e) => {
+        const cmd = e.target.value;
+        if (cmd) {
+          executeCrypticCommand(cmd);
+          e.target.value = '';
+        }
+      });
+
+      // Fullscreen Mode Toggle
+      document.getElementById('btnFullscreenToggle')?.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.().catch(() => {});
+          showToast('Entered Fullscreen Sabre Workspace Mode');
+        } else {
+          document.exitFullscreen?.().catch(() => {});
+          showToast('Exited Fullscreen Mode');
+        }
+      });
+
+      // Bottom MyGDSPro Action Pills
+      document.getElementById('btnBottomClear')?.addEventListener('click', clearTerminal);
+      document.getElementById('btnBottomDownloadTkt')?.addEventListener('click', () => {
+        renderEtktReceiptModal();
+        document.getElementById('etktReceiptModal')?.classList.remove('hidden');
+      });
+      document.getElementById('btnBottomInsertExample')?.addEventListener('click', () => {
+        const nextCmd = getNextRecommendedStepCommand();
+        termInput.value = nextCmd;
+        termInput.focus();
+        showToast(`Inserted Next Step Command: ${nextCmd}`);
+      });
+      document.getElementById('btnBottomNewSession')?.addEventListener('click', () => {
+        executeCrypticCommand('I');
+      });
+
+      // Left Academy Sidebar Buttons & Modals
+      const dashModal = document.getElementById('academyDashboardModal');
+      function openAcademyDash() {
+        const pnrStat = document.getElementById('dashSavedPnrStat');
+        const cmdStat = document.getElementById('dashCmdCountStat');
+        if (pnrStat) pnrStat.textContent = savedPnrVault.length;
+        if (cmdStat) cmdStat.textContent = globalCommandLog.length;
+        dashModal?.classList.remove('hidden');
+      }
+      document.getElementById('navBtnAcademyDash')?.addEventListener('click', openAcademyDash);
+      document.getElementById('btnCloseAcademyDash')?.addEventListener('click', () => dashModal?.classList.add('hidden'));
+      document.getElementById('btnCloseAcademyDash2')?.addEventListener('click', () => dashModal?.classList.add('hidden'));
+      document.getElementById('btnDashOpenTerminal')?.addEventListener('click', () => {
+        dashModal?.classList.add('hidden');
+        termInput.focus();
+      });
+
+      const quizModal = document.getElementById('knowledgeQuizModal');
+      function openQuizModal() {
+        dashModal?.classList.add('hidden');
+        renderKnowledgeQuiz();
+        quizModal?.classList.remove('hidden');
+      }
+      document.getElementById('navBtnKnowledgeQuiz')?.addEventListener('click', openQuizModal);
+      document.getElementById('btnDashStartQuiz')?.addEventListener('click', openQuizModal);
+      document.getElementById('btnCloseQuizModal')?.addEventListener('click', () => quizModal?.classList.add('hidden'));
+      document.getElementById('btnCloseQuizModal2')?.addEventListener('click', () => quizModal?.classList.add('hidden'));
+      document.getElementById('btnResetQuiz')?.addEventListener('click', () => {
+        userQuizAnswers = {};
+        currentQuizScore = 0;
+        renderKnowledgeQuiz();
+      });
+
+      document.getElementById('navBtnTerminalHome')?.addEventListener('click', () => termInput.focus());
+      document.getElementById('navBtnScenarios')?.addEventListener('click', () => document.getElementById('exerciseModal')?.classList.remove('hidden'));
+
+      const glosModal = document.getElementById('codeGlossaryModal');
+      document.getElementById('navBtnCodeGlossary')?.addEventListener('click', () => {
+        renderCodeGlossary();
+        glosModal?.classList.remove('hidden');
+      });
+      document.getElementById('btnCloseGlossaryModal')?.addEventListener('click', () => glosModal?.classList.add('hidden'));
+      document.getElementById('btnCloseGlossaryModal2')?.addEventListener('click', () => glosModal?.classList.add('hidden'));
+
+      const ndcModal = document.getElementById('ndcApiConsoleModal');
+      function openNdcConsole() {
+        renderNdcSchema('AirShoppingRQ');
+        ndcModal?.classList.remove('hidden');
+      }
+      document.getElementById('btnOpenNdcModal')?.addEventListener('click', openNdcConsole);
+      document.getElementById('navBtnNdcConsole')?.addEventListener('click', openNdcConsole);
+      document.getElementById('btnCloseNdcModal')?.addEventListener('click', () => ndcModal?.classList.add('hidden'));
+      document.getElementById('btnCloseNdcModal2')?.addEventListener('click', () => ndcModal?.classList.add('hidden'));
+      document.querySelectorAll('.ndc-schema-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          document.querySelectorAll('.ndc-schema-tab').forEach(t => {
+            t.className = 'ndc-schema-tab bg-slate-800 text-slate-300 hover:text-white font-mono font-bold px-3 py-1 rounded';
+          });
+          e.currentTarget.className = 'ndc-schema-tab bg-purple-600 text-white font-mono font-bold px-3 py-1 rounded';
+          renderNdcSchema(e.currentTarget.getAttribute('data-schema'));
+        });
       });
 
       // Keyboard Mapping for Sabre Special Symbols in Terminal Input:
