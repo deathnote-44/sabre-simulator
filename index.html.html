@@ -1314,6 +1314,23 @@
        SABRE COMMAND PARSER & RULES ENGINE
        ====================================================================== */
 
+    function triggerStrictError(cleanCmd, customBadPart, customReason, customCorrect, customDesc) {
+      const session = areaSessions[currentArea];
+      const diag = (customCorrect && customReason)
+        ? { badPart: customBadPart || cleanCmd, reason: customReason, correctCmd: customCorrect, desc: customDesc || 'Official Sabre Syntax' }
+        : diagnoseInvalidSabreCommand(cleanCmd);
+
+      session.transcript.push({
+        type: 'smart-error',
+        rawCmd: cleanCmd,
+        badPart: diag.badPart,
+        reason: diag.reason,
+        correctCmd: diag.correctCmd,
+        desc: diag.desc
+      });
+      finishExecution();
+    }
+
     function executeCrypticCommand(rawInput) {
       if (!rawInput || !rawInput.trim()) return;
       const cmd = rawInput.trim();
@@ -1351,8 +1368,7 @@
         return;
       }
 
-      // 3. FLIGHT AVAILABILITY (1<DATE><ORIGIN><DEST>[‡<CARRIER>], 1*more, 1R<DATE>)
-      // E.g.: 115NOVDACDXB, 120NOVDACBKK‡TG, 1DACKUL, 110DOHDAC, 110DACDXB, 1*, 1R25NOV
+      // 3. FLIGHT AVAILABILITY (Strict validation: 1[DDMMM][ORIG][DEST], 1¥10, 1-15, 1R10JAN, 1*, 120NOVDACSIN/D, 125DECDACSIN¥SQ)
       if (cleanCmd === '1*' || cleanCmd === '1*OA') {
         if (session.currentAvail) {
           handleFlightAvailability(cleanCmd, session.currentAvail.date, session.currentAvail.orig, session.currentAvail.dest);
@@ -1362,28 +1378,72 @@
         finishExecution();
         return;
       }
-      const retAvailMatch = cleanCmd.match(/^1R(\d{1,2}[A-Z]{3})?$/);
-      if (retAvailMatch) {
-        if (session.currentAvail) {
-          const retDate = retAvailMatch[1] || '25NOV';
-          handleFlightAvailability(cleanCmd, retDate, session.currentAvail.dest, session.currentAvail.orig);
-        } else {
-          session.transcript.push({ type: 'error', text: 'NO INITIAL AVAILABILITY FOR RETURN SEARCH«' });
-        }
+
+      // After N days (1¥10 / 1‡10) or Before N days (1-15) from PDF Page 1
+      const shiftAvailMatch = cleanCmd.match(/^1([‡¥\-])(\d{1,2})$/);
+      if (shiftAvailMatch) {
+        const dir = shiftAvailMatch[1] === '-' ? 'BEFORE' : 'AFTER';
+        const days = shiftAvailMatch[2];
+        const orig = session.currentAvail ? session.currentAvail.orig : 'DAC';
+        const dest = session.currentAvail ? session.currentAvail.dest : 'SIN';
+        const newDate = dir === 'AFTER' ? '25DEC' : '10DEC';
+        session.transcript.push({
+          type: 'info',
+          text: `* AVAILABILITY SHIFTED ${days} DAYS ${dir} (${orig}➔${dest} ON ${newDate})`
+        });
+        handleFlightAvailability(cleanCmd, newDate, orig, dest);
         finishExecution();
         return;
       }
-      const availMatch = cleanCmd.match(/^1(\d{1,2}[A-Z]{3}|\d{1,2})?([A-Z]{3})([A-Z]{3})(?:[‡¥\-]([A-Z0-9]{2}))?.*$/);
+
+      // Return Availability: 1R10JAN or 1R25NOV or 1R
+      const retAvailMatch = cleanCmd.match(/^1R(\d{1,2}[A-Z]{3})?$/);
+      if (retAvailMatch) {
+        const retDate = retAvailMatch[1] || '10JAN';
+        const orig = session.currentAvail ? session.currentAvail.dest : 'SIN';
+        const dest = session.currentAvail ? session.currentAvail.orig : 'DAC';
+        handleFlightAvailability(cleanCmd, retDate, orig, dest);
+        finishExecution();
+        return;
+      }
+
+      // Main Availability: Strict regex — no extra trailing garbage allowed!
+      const availMatch = cleanCmd.match(/^1(\d{1,2}[A-Z]{3})?([A-Z]{3})([A-Z]{3})(?:\/D)?(?:[‡¥\-]([A-Z0-9]{2}))?$/);
       if (availMatch) {
-        let dStr = availMatch[1] || '15NOV';
-        if (/^\d{1,2}$/.test(dStr)) dStr = dStr + 'NOV';
+        const dStr = availMatch[1] || '15NOV';
         handleFlightAvailability(cleanCmd, dStr, availMatch[2], availMatch[3], availMatch[4]);
         finishExecution();
         return;
       }
 
-      // 4. SELL FLIGHT SEGMENT (0<SEATS><CLASS><LINE> or 0A ARNK)
-      // E.g.: 01Y1, 02J1, 01M2, 01Y1*, 0A, 0AA
+      // 3B. SCHEDULE CHECK FROM PDF PAGE 1 (SDACDXB/ES, SDACDXB/ES¥BG, S15DECDACSIN/ES¥SQ)
+      const schedMatch = cleanCmd.match(/^S(\d{1,2}[A-Z]{3})?([A-Z]{3})([A-Z]{3})\/ES(?:[‡¥]([A-Z0-9]{2}))?$/);
+      if (schedMatch) {
+        const dt = schedMatch[1] || '15DEC';
+        const orig = schedMatch[2];
+        const dest = schedMatch[3];
+        const cxr = schedMatch[4] || 'ALL';
+        session.transcript.push({
+          type: 'output-header',
+          text: `* EXTENDED AIRLINE SCHEDULE DISPLAY (${dt} ${orig}${dest} / CARRIER: ${cxr}):`
+        });
+        session.transcript.push({
+          type: 'output-line',
+          text: `1 ${cxr === 'ALL' ? 'SQ' : cxr} 447  J9 C9 Y9 B9 M9  ${orig}${dest} 2355 0605+1  359  0  DAILY  /E`
+        });
+        session.transcript.push({
+          type: 'output-line',
+          text: `2 ${cxr === 'ALL' ? 'BG' : cxr} 584  J4 C2 Y9 B7 M5  ${orig}${dest} 0815 1415    738  0  1357   /E`
+        });
+        session.transcript.push({
+          type: 'success',
+          text: `EXTENDED SCHEDULE CHECK COMPLETED (DAYS OF OPERATION: 1=MON ... 7=SUN)`
+        });
+        finishExecution();
+        return;
+      }
+
+      // 4. SELL FLIGHT SEGMENT (Strict: 01Y1, 01W1, 01W1*, 01W5H6 two-class connecting from PDF Page 1, or 0A ARNK)
       if (cleanCmd === '0A' || cleanCmd === '0AA') {
         const segIndex = draft.segments.length + 1;
         draft.segments.push({
@@ -1391,48 +1451,116 @@
           seats: 0, date: 'ARNK', orig: 'SURFACE', dest: 'SECTOR', dep: '----', arr: '----',
           status: '  ', baseFare: 0, taxes: 0, name: 'ARNK Surface'
         });
-        session.transcript.push({ type: 'success', text: `${segIndex}   ARNK` });
+        session.transcript.push({ type: 'success', text: `${segIndex}   ARNK (ARRIVAL UNKNOWN SURFACE SECTOR)` });
         finishExecution();
         return;
       }
-      const sellMatch = cleanCmd.match(/^0(\d{1,2})([A-Z])(\d{1,2})\*?$/);
+
+      // Connecting Two-Class or Same-Class Seat Sell: 01Y1, 01W1, 01W1*, 01W5H6
+      const sellMatch = cleanCmd.match(/^0(\d{1,2})([A-Z])(\d{1,2})(\*|([A-Z])(\d{1,2}))?$/);
       if (sellMatch) {
         const seats = parseInt(sellMatch[1], 10);
-        const bookingClass = sellMatch[2];
-        const line = parseInt(sellMatch[3], 10);
-        handleSellFlightSegment(seats, bookingClass, line);
+        const cls1 = sellMatch[2];
+        const line1 = parseInt(sellMatch[3], 10);
+        handleSellFlightSegment(seats, cls1, line1);
+        if (sellMatch[4] === '*') {
+          // Connecting flight same class
+          handleSellFlightSegment(seats, cls1, Math.min(2, line1 + 1));
+        } else if (sellMatch[5] && sellMatch[6]) {
+          // Connecting flight second class (e.g. 01W5H6)
+          handleSellFlightSegment(seats, sellMatch[5], parseInt(sellMatch[6], 10));
+        }
         finishExecution();
         return;
       }
 
-      // 5. PASSENGER NAME (-<SURNAME>/<FIRSTNAME> <TITLE>)
-      // E.g.: -TAWHA/MOKTADA AS SADAR MR, -AHMED/RAHIM MR, -BEGUM/FATEMA MS
+      // 5. PASSENGER NAME (-SURNAME/GIVEN TITLE or -I/SURNAME/GIVEN TITLE*I18 or -SURNAME/GIVEN MISS*C09)
       if (cleanCmd.startsWith('-')) {
-        handlePassengerName(cleanCmd.substring(1).trim());
+        if (cleanCmd.includes('¤')) {
+          if (handleCommandModificationWithChangeKey(cleanCmd)) {
+            finishExecution();
+            return;
+          }
+        }
+        const nameBody = cleanCmd.substring(1).trim();
+        // Validate strict Sabre Name Format: Must have SURNAME/GIVEN and valid Title or PDT
+        const validNameRegex = /^(I\/)?[A-Z\s]+\/[A-Z\s]+\s+(MR|MRS|MS|MSTR|MISS|INF|CHD)(\*(C\d{2}|I\d{2}))?$/;
+        if (!validNameRegex.test(nameBody)) {
+          triggerStrictError(
+            cleanCmd,
+            nameBody,
+            'Strict Sabre Name Format requires: -[SURNAME]/[GIVEN NAME] [TITLE] (Titles: MR, MRS, MS, MSTR, MISS; Child: *C09; Infant: -I/SURNAME/GIVEN MSTR*I18). Extra or missing words/titles are not allowed.',
+            nameBody.startsWith('I/') ? '-I/AHMED/SULTAN MSTR*I18' : (nameBody.includes('MISS') || nameBody.includes('MSTR') ? '-SULTANA/JAIFA MISS*C09' : '-TAWHA/MOKTADA AS SADAR MR'),
+            'Official Sabre Passenger Name Entry'
+          );
+          return;
+        }
+        handlePassengerName(nameBody);
         finishExecution();
         return;
       }
 
-      // 6. CONTACT PHONE / AGENCY CONTACT (9<NUMBER_OR_TEXT>)
-      // E.g.: 901980284967, 901711223344-A, 9 TAWHA TOURS CTC 01980284967
+      // 6. CONTACT PHONE / AGENCY CONTACT (9 MTTCTC01712327458REFJAHID or 901980284967)
       if (cleanCmd.startsWith('9')) {
-        handleContactPhone(cleanCmd.substring(1).trim());
+        if (cleanCmd.includes('¤')) {
+          if (handleCommandModificationWithChangeKey(cleanCmd)) {
+            finishExecution();
+            return;
+          }
+        }
+        const phBody = cleanCmd.substring(1).trim();
+        if (phBody.length < 6 || !/\d{6,}/.test(phBody)) {
+          triggerStrictError(
+            cleanCmd,
+            phBody || cleanCmd,
+            'Phone Field (9) must contain a valid contact phone number or Agency CTC format (e.g. 9 MTTCTC01980284967REFTAWHA).',
+            '9 MTTCTC01980284967REFTAWHA',
+            'Sabre Agency Phone Contact Field'
+          );
+          return;
+        }
+        handleContactPhone(phBody);
         finishExecution();
         return;
       }
 
-      // 7. TICKETING ARRANGEMENT (7...)
-      // E.g.: 7TAW/, 7T-A/15NOV, 7T-OK
+      // 7. TICKETING ARRANGEMENT (Strict: 7TAW/, 7TAW/15NOV/, 7T-OK, 7T-A)
       if (cleanCmd.startsWith('7')) {
+        if (cleanCmd.includes('¤')) {
+          if (handleCommandModificationWithChangeKey(cleanCmd)) {
+            finishExecution();
+            return;
+          }
+        }
+        if (!/^7(TAW\/[A-Z0-9\/]*|T\-[A-Z0-9\/]+)$/.test(cleanCmd)) {
+          triggerStrictError(
+            cleanCmd,
+            cleanCmd,
+            'Ticketing Field must be exactly 7TAW/ (or 7TAW/DDMMM/ or 7T-OK). Missing slash (/) or extra characters cause a Sabre format error.',
+            '7TAW/',
+            'Mandatory Ticketing Time Limit'
+          );
+          return;
+        }
         handleTicketingLimit(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 8. RECEIVED FROM (6<AGENT>)
-      // E.g.: 6A, 6TAWHA, 6HASAN
+      // 8. RECEIVED FROM (Strict: 6A, 6J, 6TAWHA — single agent name/initial, no extra invalid flags)
       if (cleanCmd.startsWith('6')) {
-        handleReceivedFrom(cleanCmd.substring(1).trim());
+        const rcvBody = cleanCmd.substring(1).trim();
+        if (!/^[A-Z\s]{1,20}$/.test(rcvBody)) {
+          triggerStrictError(
+            cleanCmd,
+            cleanCmd,
+            'Received From (6) requires 6 followed by Agent Initial or Name only (e.g. 6J or 6TAWHA).',
+            '6TAWHA',
+            'Mandatory Received From Element'
+          );
+          return;
+        }
+        handleReceivedFrom(rcvBody);
         finishExecution();
         return;
       }
@@ -1444,7 +1572,7 @@
         return;
       }
 
-      // 9B. DISPLAY PNR (*A, *I, *N, *P, *T, *P3D, *PQ)
+      // 9B. DISPLAY PNR (*A, *I, *N, *P, *T, *P3D, *PQ, *PQS, *PQD, *PQR, *H, *FF, *P5, *SV, *ABCDEF)
       if (cleanCmd.startsWith('*')) {
         handleDisplayCommand(cleanCmd);
         finishExecution();
@@ -1458,119 +1586,203 @@
         return;
       }
 
-      // 10B. BARGAIN FINDER LOWEST FARE & REBOOK (WPNCB, WPNC, WPNCS, WPNI)
-      if (cleanCmd === 'WPNCB' || cleanCmd === 'WPNC' || cleanCmd === 'WPNCS' || cleanCmd === 'WPNI') {
+      // 10B. BARGAIN FINDER LOWEST FARE & SEGMENT QUALIFIERS (WPNCB, WPNCB¥S1, WPNCB¥S1-4, WPNC, WPNCS, WPNI)
+      if (/^WPNCB([‡¥]S\d(\-\d)?)?$/.test(cleanCmd) || cleanCmd === 'WPNC' || cleanCmd === 'WPNCS' || cleanCmd === 'WPNI') {
         handleBargainFinderWPNC(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 10C. ITINERARY PRICING (WP, WPASQ, WPAEK, WPQ..., WPP...)
-      if (cleanCmd === 'WP' || cleanCmd.startsWith('WP')) {
+      // 10C. ITINERARY PRICING (Strict: WP, WPA[CXR], WPASQ¥S1, WPASQ¥S1-4, WPPADT/CNN/INF)
+      if (/^WP(A[A-Z0-9]{2})?([‡¥]S\d(\-\d)?)?([‡¥]P[A-Z0-9\/]+)?$/.test(cleanCmd)) {
         handlePricingWP(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 11. STORE PRICE QUOTE (PQ)
+      // 11. STORE OR DELETE PRICE QUOTE (PQ, PQD-ALL, PQDALL, PQD1, PQRDALL)
       if (cleanCmd === 'PQ') {
         handleStorePriceQuote();
         finishExecution();
         return;
       }
+      if (/^PQR?D(\-?ALL|\d+)$/.test(cleanCmd)) {
+        draft.priceQuote = null;
+        draft.candidatePrice = null;
+        draft.pqrRetained = false;
+        session.transcript.push({
+          type: 'warning',
+          text: `* ${cleanCmd} - ALL STORED PRICE QUOTE (PQ/PQR) RECORDS DELETED FROM PNR`
+        });
+        showToast('All PQ Records Deleted (PQD-ALL)');
+        finishExecution();
+        return;
+      }
 
-      // 12. END RESERVATION (ER, ET)
-      if (cleanCmd === 'ER' || cleanCmd === 'ET') {
+      // 12. END RESERVATION & SCHEDULE CHANGE ACCEPT (ER, ET, EWR, EM)
+      if (cleanCmd === 'ER' || cleanCmd === 'ET' || cleanCmd === 'EWR' || cleanCmd === 'EM') {
+        if (cleanCmd === 'EWR') {
+          draft.segments.forEach(s => s.status = 'HK');
+          session.transcript.push({
+            type: 'success',
+            text: `EWR - SCHEDULE CHANGE / KK SEGMENT CONFIRMED TO HK (HOLDING CONFIRMED)`
+          });
+          showToast('Segments Updated to HK (EWR)');
+          finishExecution();
+          return;
+        }
+        if (cleanCmd === 'EM') {
+          session.transcript.push({
+            type: 'success',
+            text: `EM - PNR ENDED & ITINERARY E-MAILED TO CUSTOMER ADDRESS ON FILE`
+          });
+          handleEndReservation('ER');
+          finishExecution();
+          return;
+        }
         handleEndReservation(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 13. IGNORE RESERVATION (I, IR)
-      if (cleanCmd === 'I' || cleanCmd === 'IR') {
-        handleIgnoreReservation(cleanCmd);
+      // 13. IGNORE RESERVATION (I, IR, IG)
+      if (cleanCmd === 'I' || cleanCmd === 'IR' || cleanCmd === 'IG') {
+        handleIgnoreReservation(cleanCmd === 'IG' ? 'I' : cleanCmd);
         finishExecution();
         return;
       }
 
-      // 14. PRINTER SETUP (W*BD«, PTR/..., DSIV...)
-      if (cleanCmd.startsWith('W*BD') || cleanCmd.startsWith('PTR/') || cleanCmd.startsWith('DSIV')) {
+      // 14. PRINTER SETUP & EMAIL (PE*8MDJ, PE¥email¥-1.1, W*BD, PTR/C25A8E, DSIVC25A8E)
+      if (cleanCmd.startsWith('PE*')) {
+        session.transcript.push({
+          type: 'output-header',
+          text: `* AGENCY PRINTER PROFILE (${cleanCmd}):`
+        });
+        session.transcript.push({
+          type: 'output-line',
+          text: `station: C25A8E   •   STATUS: OK-0008   •   PCC: AWDA   •   TYPE: ETR/ITIN`
+        });
+        showToast('Printer Profile Displayed (Copy: C25A8E)');
+        finishExecution();
+        return;
+      }
+      if (/^PE[‡¥][^‡¥]+[‡¥](\-\d+\.\d+)?$/.test(cleanCmd)) {
+        draft.osi.push(cleanCmd);
+        session.transcript.push({
+          type: 'success',
+          text: `CUSTOMER EMAIL ADDRESS STORED IN PNR: ${cleanCmd}`
+        });
+        showToast('Customer Email Stored (PE¥)');
+        finishExecution();
+        return;
+      }
+      if (/^W\*[A-Z]{2}«?$/.test(cleanCmd) || /^PTR\/[A-Z0-9]+«?$/.test(cleanCmd) || /^DSIV[A-Z0-9]+«?$/.test(cleanCmd)) {
         handlePrinterConfig(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 15A. TICKET VOID (WV2, WV1, W/VOID...)
-      if (cleanCmd.startsWith('WV') || cleanCmd.startsWith('W/VOID')) {
+      // 15A. TICKET VOID (Strict: WV2, WV1, WETRV)
+      if (/^WV\d+$/.test(cleanCmd) || cleanCmd === 'WETRV') {
         handleVoidTicket(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 15B. TICKET REFUND (WFRF..., WFR...RF...)
-      if (cleanCmd.startsWith('WFRF') || (cleanCmd.startsWith('WFR') && cleanCmd.includes('RF'))) {
+      // 15B. TICKET REFUND (Strict: WFRF..., WFRA..., WFRR...)
+      if (/^WFR[FAR](\d{13}|TR\d|[‡¥]T\d).*$/.test(cleanCmd)) {
         handleTicketRefund(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 15C. TICKET REISSUE / AUTOMATED EXCHANGE (WFR..., W‡PQR..., W¥PQR..., W+PQR...)
-      if (cleanCmd.startsWith('WFR') || cleanCmd.includes('PQR')) {
+      // 15C. TICKET REISSUE / AUTOMATED EXCHANGE & COUPON REVALIDATION (WFR..., W‡PQR..., WETRL/S1/C1)
+      if (cleanCmd.startsWith('WETRL/')) {
+        session.transcript.push({
+          type: 'output-header',
+          text: `* ELECTRONIC TICKET COUPON REVALIDATION (${cleanCmd}):`
+        });
+        session.transcript.push({
+          type: 'success',
+          text: `FLIGHT COUPON 1 REVALIDATED TO MATCH SEGMENT 1 NEW TIME/DATE - NO ADDITIONAL COLLECTION`
+        });
+        showToast('E-Ticket Coupon Revalidated (WETRL)');
+        finishExecution();
+        return;
+      }
+      if (/^WFR(\d{13}|TR\d|[‡¥]T\d|\*).*$/.test(cleanCmd) || /^W[‡¥+]PQR\d.*$/.test(cleanCmd)) {
         handleTicketReissue(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 15D. ELECTRONIC TICKET DISPLAY (WETR*2, WETR*1, WETR*T...)
-      if (cleanCmd.startsWith('WETR*')) {
+      // 15D. ELECTRONIC TICKET & DATABASE DISPLAY (WETR*2, WETR*T..., WETR*2/H, WTDB*2, WTDB*T..., DWLIST)
+      if (/^(WETR|WTDB)\*(T\d{10,14}|\d+|S)(\/H)?$/.test(cleanCmd) || cleanCmd === 'DWLIST') {
         handleDisplayWETR(cleanCmd);
         finishExecution();
         return;
       }
 
       // 15E. EXTRA BAGGAGE EMD ISSUANCE (W‡EMD...)
-      if (cleanCmd.includes('EMD')) {
+      if (/^W[‡¥+]EMD.*$/.test(cleanCmd)) {
         handleExtraBaggageAncillary(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 15F. E-TICKET ISSUANCE (W‡PQ1..., W¥PQ1..., W+PQ1..., W‡KP...)
-      if (cleanCmd.includes('‡') || cleanCmd.includes('¥') || cleanCmd.includes('FINVAGT') || cleanCmd.startsWith('W‡') || cleanCmd.startsWith('W¥') || cleanCmd.startsWith('W+PQ')) {
+      // 15F. E-TICKET ISSUANCE (Strict PDF Page 7 & Standard Sabre: W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER, W‡PQ1‡FINVAGT‡ETR‡ASQ, etc.)
+      if (/^W[‡¥+]PQ\d(\-\d)?(N\d+\.\d+)?([‡¥+][A-Z0-9\.]+)+$/.test(cleanCmd)) {
         handleElectronicTicketing(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 16. SSR / OSI / APIS / DOCS / MEAL (3OSI, 3CTCM, 3CTCE, 3DOCS, 3MOML, etc.)
-      if (cleanCmd.startsWith('3') || cleanCmd.startsWith('PE‡')) {
+      // 16. SSR / OSI / APIS / DOCS / CONTACT / MEAL / SEAT / LINE DELETE (Strict validation!)
+      if (cleanCmd.startsWith('3')) {
+        // Delete SSR/OSI Line (e.g. 31¤ or 38¤ from PDF Page 5 & 6)
+        const delSsrMatch = cleanCmd.match(/^3(\d+)¤$/);
+        if (delSsrMatch) {
+          const lineNum = parseInt(delSsrMatch[1], 10);
+          if (draft.ssr.length >= lineNum) {
+            draft.ssr.splice(lineNum - 1, 1);
+          } else if (draft.osi.length > 0) {
+            draft.osi.pop();
+          }
+          session.transcript.push({
+            type: 'warning',
+            text: `* SSR / OSI LINE ${lineNum} DELETED FROM PNR (${cleanCmd})`
+          });
+          showToast(`SSR/OSI Line ${lineNum} Deleted`);
+          finishExecution();
+          return;
+        }
         handleSpecialServiceRequests(cleanCmd);
         finishExecution();
         return;
       }
 
       // 17. ENCODING / DECODING / REFERENCE TABLES /HCC
-      if (cleanCmd.startsWith('W/') || cleanCmd.startsWith('HCC') || cleanCmd.startsWith('DU*/')) {
+      if (/^(W\/\*[A-Z0-9]{2,3}|W\/\-CC[A-Z\s]+|W\/\-AL[A-Z\s]+|W\/EQ\*[A-Z0-9]{3}|HCCC?\/?[A-Z]{2}|DU\*\/(MLS|SPM)([‡¥][A-Z0-9]{2})?)$/.test(cleanCmd)) {
         handleEncodingDecoding(cleanCmd);
         finishExecution();
         return;
       }
 
       // 18. CANCEL SEGMENT (XI, X1, X2, X1-2)
-      if (cleanCmd === 'XI' || /^X\d/.test(cleanCmd)) {
+      if (cleanCmd === 'XI' || /^X\d(\-\d)?$/.test(cleanCmd)) {
         if (cleanCmd === 'XI') {
           draft.segments = [];
           draft.candidatePrice = null;
           draft.priceQuote = null;
-          session.transcript.push({ type: 'warning', text: 'ALL ITINERARY SEGMENTS CANCELLED (XI)' });
-          showToast('All Itinerary Segments Cancelled');
+          session.transcript.push({ type: 'warning', text: '* NO ITIN - ALL ITINERARY SEGMENTS CANCELLED (XI)' });
+          showToast('All Itinerary Segments Cancelled (XI)');
         } else {
           const lineToCancel = parseInt(cleanCmd.substring(1), 10);
           const idx = draft.segments.findIndex(seg => seg.index === lineToCancel);
           if (idx !== -1) {
             draft.segments.splice(idx, 1);
             draft.segments.forEach((seg, i) => seg.index = i + 1);
-            session.transcript.push({ type: 'warning', text: `SEGMENT ${lineToCancel} CANCELLED` });
+            session.transcript.push({ type: 'warning', text: `* SEGMENT ${lineToCancel} CANCELLED` });
             showToast(`Segment ${lineToCancel} Cancelled`);
           } else {
             session.transcript.push({ type: 'error', text: `SEGMENT ${lineToCancel} NOT FOUND IN ITINERARY«` });
@@ -1602,7 +1814,17 @@
 
       // 20. REMARKS & FORM OF PAYMENT (5...)
       if (cleanCmd.startsWith('5')) {
+        if (cleanCmd.includes('¤')) {
+          if (handleCommandModificationWithChangeKey(cleanCmd)) {
+            finishExecution();
+            return;
+          }
+        }
         const rmk = cleanCmd.substring(1).trim();
+        if (!rmk) {
+          triggerStrictError(cleanCmd, cleanCmd, 'Remark command (5) cannot be empty.', '5CHECK PASSPORT EXPIRY', 'Add PNR Remark');
+          return;
+        }
         draft.remarks.push(rmk);
         session.transcript.push({ type: 'success', text: `REMARK / FOP STORED: ${rmk}` });
         showToast('Remark / FOP Stored');
@@ -1610,8 +1832,8 @@
         return;
       }
 
-      // 21. SEAT MAP & SEAT ASSIGNMENT (4G1*, 4G1/12A)
-      if (cleanCmd.startsWith('4G')) {
+      // 21. SEAT MAP & SEAT ASSIGNMENT (4G1*, 4G1/12A, 4GXALL)
+      if (/^4G(\d\*|\d\/[0-9]{1,2}[A-K]|XALL)$/.test(cleanCmd)) {
         if (cleanCmd.endsWith('*')) {
           session.transcript.push({ type: 'output-header', text: 'SEAT MAP DISPLAY - CABIN CONFIGURATION (3-3-3):' });
           session.transcript.push({ type: 'output-line', text: '   A  B  C     D  E  F     G  H  K' });
@@ -1619,6 +1841,8 @@
           session.transcript.push({ type: 'output-line', text: '14 .  .  /     .  .  .     .  .  .   WING' });
           session.transcript.push({ type: 'output-line', text: '15 .  .  .     .  .  .     .  .  .   EXIT' });
           session.transcript.push({ type: 'info', text: 'LEGEND: (.) AVAILABLE   (/) OCCUPIED   (X) BLOCKED' });
+        } else if (cleanCmd === '4GXALL') {
+          session.transcript.push({ type: 'warning', text: '* ALL PRE-RESERVED SEATS CANCELLED (4GXALL)' });
         } else {
           draft.ssr.push(`SEAT ${cleanCmd}`);
           session.transcript.push({ type: 'success', text: `SEAT ASSIGNED CONFIRMED (KK): ${cleanCmd}` });
@@ -1628,43 +1852,43 @@
         return;
       }
 
-      // 22. SWITCH WORK AREA BY COMMAND (¤B, *B, CHANGE AREA)
+      // 22. SWITCH WORK AREA BY COMMAND (¤B)
       const areaMatch = cleanCmd.match(/^[¤^]([A-F])$/);
       if (areaMatch) {
         switchWorkArea(areaMatch[1]);
         return;
       }
 
-      // 23. CURRENCY CONVERSION: USD TO BDT & BANK SELLING RATE (DC*CUR, DC*USD, DC*BDT, DC*USD100/BDT)
-      if (cleanCmd.startsWith('DC*') || cleanCmd.startsWith('DC‡') || cleanCmd.startsWith('DC¥')) {
+      // 23. CURRENCY CONVERSION: USD TO BDT & BANK SELLING RATE (DC*CUR, DC*USD100/BDT)
+      if (/^DC[*‡¥](CUR|[A-Z]{3}|[A-Z]{3}\d+(\.\d+)?\/[A-Z]{3})$/.test(cleanCmd)) {
         handleCurrencyConversion(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 24. FARE QUOTE & FARE BASIS DISPLAY (FQ...)
-      if (cleanCmd.startsWith('FQ')) {
+      // 24. FARE QUOTE & FARE BASIS DISPLAY (FQDACDXB15NOV-EK)
+      if (/^FQ[A-Z]{6}(\d{1,2}[A-Z]{3})?(\-([A-Z0-9]{2}))?([‡¥][A-Z]{2})?$/.test(cleanCmd)) {
         handleFareBasisDisplay(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 25. FARE RULES & BAGGAGE ALLOWANCE CHECK (RD..., WPRD*..., WP*BAG, WPBAG)
-      if (cleanCmd.startsWith('RD') || cleanCmd.startsWith('WPRD') || cleanCmd.startsWith('WP*BAG') || cleanCmd.startsWith('WPBAG')) {
+      // 25. FARE RULES & BAGGAGE ALLOWANCE CHECK (RD1, RD1*M, RD1*16, RD1*31, RD1*33, WPRD*B, WP*BAG)
+      if (/^(RD\d+(\*(M|16|31|33|PE))?|WPRD\*[A-Z0-9]+|WP\*?BAG)$/.test(cleanCmd)) {
         handleFareRulesAndBaggage(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 26. EXTRA BAGGAGE ANCILLARY & EMD (*AE, AE‡..., W‡EMD...)
-      if (cleanCmd === '*AE' || cleanCmd.startsWith('AE') || cleanCmd.includes('EMD')) {
+      // 26. EXTRA BAGGAGE ANCILLARY & EMD (*AE, AE‡1A1)
+      if (/^AE[‡¥+]\d[A-Z]\d$/.test(cleanCmd)) {
         handleExtraBaggageAncillary(cleanCmd);
         finishExecution();
         return;
       }
 
       // 27. DIVIDE / SPLIT PNR (D1, D2, D1.1, DC, EF)
-      if (/^D\d/.test(cleanCmd) || cleanCmd === 'DC' || cleanCmd === 'EF') {
+      if (/^D\d(\.\d)?$/.test(cleanCmd) || cleanCmd === 'DC' || cleanCmd === 'EF') {
         handleDivideSplitPnr(cleanCmd);
         finishExecution();
         return;
@@ -1677,22 +1901,22 @@
         return;
       }
 
-      // 29. AGENCY QUEUES (QC/, Q/..., QXI, QR)
-      if (cleanCmd.startsWith('Q/') || cleanCmd.startsWith('QC/') || cleanCmd === 'QXI' || cleanCmd === 'QR') {
+      // 29. AGENCY QUEUES (QC/, Q/1, Q/9, QXI, QR)
+      if (cleanCmd === 'QC/' || /^Q\/\d+$/.test(cleanCmd) || cleanCmd === 'QXI' || cleanCmd === 'QR') {
         handleAgencyQueues(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 30. DAILY SALES & TICKET AUDIT REPORT (DQB*)
-      if (cleanCmd.startsWith('DQB')) {
+      // 30. DAILY SALES & TICKET AUDIT REPORT (DQB*, DQB*RF, DQB*REA)
+      if (/^DQB\*(RF|REA)?$/.test(cleanCmd)) {
         handleDailySalesReport(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 31. FREQUENT FLYER / LOYALTY CARD (FF...)
-      if (cleanCmd.startsWith('FF')) {
+      // 31. FREQUENT FLYER / LOYALTY CARD (FFEK123456789-1.1)
+      if (/^FF[A-Z0-9]{2}\d{5,15}(\-\d+\.\d+)?$/.test(cleanCmd)) {
         draft.ssr.push(`FQTV ${cleanCmd}`);
         session.transcript.push({
           type: 'success',
@@ -1703,47 +1927,30 @@
         return;
       }
 
-      // 32. MINIMUM CONNECTING TIME & FLIGHT INFO (T*CT-..., VA*..., V*...)
-      if (cleanCmd.startsWith('T*CT') || cleanCmd.startsWith('VA*') || cleanCmd.startsWith('V*')) {
+      // 32. MINIMUM CONNECTING TIME & FLIGHT INFO (T*CT-DXB/EK, VA*1, V*EK587/15NOV)
+      if (/^(T\*CT\-[A-Z]{3}(\/[A-Z0-9]{2})?|VA\*\d+|V\*[A-Z0-9]{2}\d+\/\d{1,2}[A-Z]{3})$/.test(cleanCmd)) {
         handleFlightAndAirportVerification(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 33. SABRE CALCULATOR / TIME / CALENDAR (T¤...)
-      if (cleanCmd.startsWith('T¤') || cleanCmd.startsWith('T*')) {
+      // 33. SABRE CALCULATOR / TIME (T¤...)
+      if (cleanCmd.startsWith('T¤')) {
         handleSabreCalculatorAndTime(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 34. COMMAND MODIFICATION & DELETION USING CHANGE KEY (¤)
-      if (cleanCmd.includes('¤')) {
-        if (handleCommandModificationWithChangeKey(cleanCmd)) {
-          finishExecution();
-          return;
-        }
-      }
-
-      // 35. FARE SHOPPING / LOW FARE MATRIX COMMAND (JR., JR.DAC/S-OYDXB15NOV)
-      if (cleanCmd.startsWith('JR')) {
+      // 34. FARE SHOPPING / LOW FARE MATRIX COMMAND FROM PDF PAGE 5
+      // (JR.DAC/S-OYSIN12AUG, JR.DAC/S-OYSIN12AUG/S-OYDAC15AUG, JR.DAC/S-OYSIN12AUGSQ/P-2ADT1CO91INF, JR01, JR03)
+      if (/^JR\.[A-Z]{3}\/S\-OY[A-Z]{3}\d{1,2}[A-Z]{3}.*$/.test(cleanCmd) || /^JR0\d(,.*)?$/.test(cleanCmd) || cleanCmd === 'JR.') {
         handleFareShoppingCommand(cleanCmd);
         finishExecution();
         return;
       }
 
-      // 36. SMART ERROR HIGHLIGHTING & DIAGNOSTIC ENGINE
-      const diag = diagnoseInvalidSabreCommand(cleanCmd);
-      session.transcript.push({
-        type: 'smart-error',
-        rawCmd: cleanCmd,
-        badPart: diag.badPart,
-        reason: diag.reason,
-        correctCmd: diag.correctCmd,
-        desc: diag.desc
-      });
-
-      finishExecution();
+      // 35. STRICT ERROR DIAGNOSTIC ENGINE (Any unrecognized, incomplete, or extra-word command lands here and shows the exact right command!)
+      triggerStrictError(cleanCmd);
     }
 
     function saveWorkspaceStateToStorage() {
@@ -2231,7 +2438,26 @@
         return;
       }
 
-      session.transcript.push({ type: 'error', text: `INVALID DISPLAY QUALIFIER«` });
+      if (cmd === '*PQS' || cmd === '*PQR' || cmd === '*PQD' || cmd === '*PQRH') {
+        session.transcript.push({ type: 'output-header', text: `* PRICE QUOTE / REISSUE SUMMARY (${cmd}):` });
+        if (draft.priceQuote) {
+          session.transcript.push({
+            type: 'output-line',
+            text: `PQ 1  ${draft.priceQuote.validatingCarrier}  BASE: BDT ${draft.priceQuote.baseFare.toLocaleString()}  TAX: BDT ${draft.priceQuote.taxes.toLocaleString()}  TOTAL: BDT ${draft.priceQuote.total.toLocaleString()}`
+          });
+        } else {
+          session.transcript.push({ type: 'warning', text: `NO ACTIVE PQ/PQR RECORD STORED IN PNR` });
+        }
+        return;
+      }
+
+      triggerStrictError(
+        cmd,
+        cmd,
+        `Invalid Display Command "${cmd}". Valid Sabre displays: *A (Full PNR), *I (Itin), *N (Names), *P (Phones), *T (Tickets), *PQ (Fare Load), *P3D (DOCS/SSR), *P5 (Remarks), *H (History), or *[6-CHAR LOCATOR].`,
+        '*A',
+        'Display Full Active PNR'
+      );
     }
 
     function renderFullPnrDisplay(draft) {
@@ -2350,15 +2576,24 @@
         fareBasis: fareBasis
       };
 
+      // Calculate 7% IATA Commission & Net Agent Payable (PDF Page 4 Formula: Base Fare x 7% = Commission; Base - Comm + Taxes = Net Payable)
+      const iataComm = Math.round(totalBase * 0.07);
+      const netBase = totalBase - iataComm;
+      const netPayable = netBase + totalTaxes;
+
       // Output Sabre Automated Pricing Construction
-      session.transcript.push({ type: 'output-header', text: `BASE FARE        TAXES/FEES/CHARGES       TOTAL` });
+      session.transcript.push({ type: 'output-header', text: `* BASE FARE (EQUIV)   TAXES (XT/BD/UT/OW)      GROSS TOTAL` });
       session.transcript.push({
         type: 'output-line',
-        text: `BDT ${totalBase.toLocaleString().padEnd(12)} BDT ${totalTaxes.toLocaleString().padEnd(20)} BDT ${grandTotal.toLocaleString()}`
+        text: `  BDT ${totalBase.toLocaleString().padEnd(15)} BDT ${totalTaxes.toLocaleString().padEnd(20)} BDT ${grandTotal.toLocaleString()}`
       });
       session.transcript.push({
         type: 'output-line',
-        text: `VALIDATING CARRIER: ${carrier}  ADT-01  FARE BASIS: ${fareBasis}`
+        text: `  IATA 7% COMMISSION : BDT ${iataComm.toLocaleString()} (BASE ${totalBase.toLocaleString()} x 7%)`
+      });
+      session.transcript.push({
+        type: 'success',
+        text: `NET AGENT PAYABLE  : BDT ${netPayable.toLocaleString()} (BASE - 7% COMM + TAXES)  •  CARRIER: ${carrier} (${fareBasis})`
       });
       session.transcript.push({
         type: 'output-line',
@@ -2836,53 +3071,77 @@
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      // Special Meals e.g. 3MOML-1.1
-      if (cmd.startsWith('3') && (cmd.includes('ML-') || cmd.includes('ML'))) {
-        draft.ssr.push(cmd);
-        session.transcript.push({
-          type: 'success',
-          text: `SSR ${cmd} - SPECIAL MEAL CONFIRMED`
-        });
-        showToast(`Special Meal Stored: ${cmd}`);
-        return;
-      }
-
-      // APIS Passport Data: 3DOCS/...
-      if (cmd.startsWith('3DOCS')) {
+      // 1. Strict APIS Passport Data: 3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/JAHID/MD-2.1 (or 3DOCS/DB/P/...)
+      if (cmd.startsWith('3DOC') && !cmd.startsWith('3DOCO') && !cmd.startsWith('3DOCA')) {
+        const docsRegex = /^3DOCS\/(DB\/)?P\/[A-Z]{3}\/[A-Z0-9]{5,15}\/[A-Z]{3}\/\d{1,2}[A-Z]{3}\d{2}\/(M|F|MI|FI)\/\d{1,2}[A-Z]{3}\d{2}\/[A-Z\s]+\/[A-Z\s]+(\-\d+\.\d+)?$/;
+        if (!docsRegex.test(cmd)) {
+          let bad = cmd;
+          if (!cmd.startsWith('3DOCS/')) bad = cmd.split('/')[0];
+          triggerStrictError(
+            cmd,
+            bad,
+            'Strict 3DOCS Format Error: Must be 3DOCS/P/[NAT]/[PASSPORT#]/[NAT]/[DOB]/[M/F/MI/FI]/[EXPIRY]/[SURNAME]/[GIVEN]-[PAX]. Every field separated by "/" is mandatory (e.g. 3DOC/ instead of 3DOCS/ or missing field is invalid).',
+            '3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1',
+            'Mandatory APIS Passport Entry (3DOCS)'
+          );
+          return;
+        }
         draft.ssr.push(cmd);
         session.transcript.push({
           type: 'output-header',
-          text: `SSR DOCS - APIS PRIMARY TRAVEL DOCUMENT (PASSPORT):`
+          text: `* SSR DOCS - APIS PRIMARY TRAVEL DOCUMENT (PASSPORT):`
         });
         session.transcript.push({
           type: 'success',
-          text: `SSR DOCS HK1 ${cmd.substring(5)} (PASSPORT VERIFIED & STORED)`
+          text: `SSR DOCS HK1 ${cmd.substring(5)} (PASSPORT VERIFIED & STORED IN PNR)`
         });
         showToast(`APIS Passport (3DOCS) Stored`);
         return;
       }
 
-      // APIS Visa / Other Document Info: 3DOCO/...
+      // 2. Strict APIS Visa / Secondary Document: 3DOCO/BGD/V/12345678/BGD/25JUN26/AU//25JUN27-1.1 (or 3DOCO/DB/...)
       if (cmd.startsWith('3DOCO')) {
+        const docoRegex = /^3DOCO\/[A-Z0-9\s\/]+\/V\/[A-Z0-9]{5,15}\/[A-Z\s]+\/\d{1,2}[A-Z]{3}\d{2}\/[A-Z]{2,3}(\/I?\/\d{1,2}[A-Z]{3}\d{2})?(\-\d+\.\d+)?$/;
+        if (!docoRegex.test(cmd)) {
+          triggerStrictError(
+            cmd,
+            cmd,
+            'Strict 3DOCO Format Error: Must be 3DOCO/[NAT]/V/[VISA#]/[ISSUING COUNTRY]/[ISSUE DATE]/[APPLY COUNTRY]//[EXPIRY DATE]-[PAX] (Use /I/ before expiry for Infant).',
+            '3DOCO/BGD/V/12345678/BGD/25JUN26/AU//25JUN27-1.1',
+            'Mandatory APIS Visa Entry (3DOCO)'
+          );
+          return;
+        }
         draft.ssr.push(cmd);
         session.transcript.push({
           type: 'output-header',
-          text: `SSR DOCO - APIS SECONDARY DOCUMENT / VISA INFORMATION:`
+          text: `* SSR DOCO - APIS SECONDARY DOCUMENT / VISA INFORMATION:`
         });
         session.transcript.push({
           type: 'success',
-          text: `SSR DOCO HK1 ${cmd.substring(5)} (VISA / PLACE OF BIRTH RECORDED)`
+          text: `SSR DOCO HK1 ${cmd.substring(5)} (VISA INFORMATION VERIFIED & STORED)`
         });
         showToast(`APIS Visa Info (3DOCO) Stored`);
         return;
       }
 
-      // APIS Destination / Residence Address: 3DOCA/...
+      // 3. Strict APIS Destination Address: 3DOCA/...
       if (cmd.startsWith('3DOCA')) {
+        const docaRegex = /^3DOCA\/(DB\/)?[DR]\/[A-Z]{3}\/[^\/]+\/[^\/]+\/[^\/]+\/[A-Z0-9\-]+$/;
+        if (!docaRegex.test(cmd)) {
+          triggerStrictError(
+            cmd,
+            cmd,
+            'Strict 3DOCA Format Error: Must be 3DOCA/D/[COUNTRY]/[STREET]/[CITY]/[STATE]/[ZIP]-[PAX].',
+            '3DOCA/DB/D/ARE/SHEIKH ZAYED ROAD/DUBAI/AE/00000-1.1',
+            'APIS Destination Address (3DOCA)'
+          );
+          return;
+        }
         draft.ssr.push(cmd);
         session.transcript.push({
           type: 'output-header',
-          text: `SSR DOCA - APIS DESTINATION / RESIDENCE ADDRESS:`
+          text: `* SSR DOCA - APIS DESTINATION / RESIDENCE ADDRESS:`
         });
         session.transcript.push({
           type: 'success',
@@ -2892,19 +3151,142 @@
         return;
       }
 
-      // General OSI / CTCM / CTCE
-      if (cmd.startsWith('3OSI') || cmd.startsWith('3CTC') || cmd.startsWith('PE‡')) {
-        draft.osi.push(cmd);
+      // 4. Strict Special Meals from PDF Page 6: MOML, BBML, SHML, CHML, DBML, FPML, HNML, VGML, AVML, SPML, VJML, KSML, GFML
+      if (/^3[A-Z]{2}ML/.test(cmd)) {
+        const mealRegex = /^3(MOML|BBML|SHML|CHML|DBML|FPML|HNML|VGML|AVML|SPML|VJML|KSML|LCML|LFML|LSML|GFML)(\-\d+(\.\d+)?(,\d+(\.\d+)?)*)?$/;
+        if (!mealRegex.test(cmd)) {
+          triggerStrictError(
+            cmd,
+            cmd,
+            'Invalid Special Meal Code or Passenger Association. Valid codes: MOML (Muslim), BBML (Baby), SHML/CHML (Child), DBML (Diabetic), FPML (Fruit), HNML (Hindu), VGML/AVML (Veg), SPML (Cake). Format: 3MOML-1.1 or 3MOML-1,2,3.',
+            '3MOML-1.1',
+            'Special Meal Request (SSR)'
+          );
+          return;
+        }
+        draft.ssr.push(cmd);
         session.transcript.push({
           type: 'success',
-          text: `OSI DATA STORED IN PNR`
+          text: `SSR ${cmd.substring(1)} HK1 - SPECIAL MEAL CONFIRMED`
         });
-        showToast(`OSI Stored`);
+        showToast(`Special Meal Stored: ${cmd}`);
         return;
       }
 
-      draft.ssr.push(cmd);
-      session.transcript.push({ type: 'success', text: `SSR DATA RECORDED` });
+      // 5. Strict Baby Bassinet (3BSCT-1.1), Wheelchair (3WCHR-2.1 or 3WCHR/PAX IS UNABLE TO WALK-2.1), Window/Aisle Seat (3NSSW-1.1, 3NSSA-1.1), Meet & Assist (3MAAS/... or 3 MASS/...)
+      if (cmd.startsWith('3BSCT') || cmd.startsWith('3WCHR') || cmd.startsWith('3NSSW') || cmd.startsWith('3NSSA') || cmd.startsWith('3MAAS') || cmd.startsWith('3 MASS') || cmd.startsWith('3CHLD') || cmd.startsWith('3INFT')) {
+        const ssrSpecRegex = /^3(BSCT|WCHR|NSSW|NSSA|MAAS|\s?MASS|CHLD|INFT)(\/[A-Z0-9\s\.\-]+)?(\-\d+\.\d+)?$/;
+        if (!ssrSpecRegex.test(cmd)) {
+          triggerStrictError(
+            cmd,
+            cmd,
+            'Invalid SSR syntax for Bassinet (3BSCT-1.1), Wheelchair (3WCHR/REASON-2.1), Seat Preference (3NSSW-1.1 / 3NSSA-1.1), or Meet & Assist (3MAAS/DETAILS-1.1).',
+            '3WCHR/PAX IS UNABLE TO WALK-2.1',
+            'Special Service Request (SSR)'
+          );
+          return;
+        }
+        draft.ssr.push(cmd);
+        session.transcript.push({
+          type: 'success',
+          text: `SSR ${cmd.substring(1).trim()} HK1 - SPECIAL ASSISTANCE / REQUEST RECORDED`
+        });
+        showToast(`SSR Stored: ${cmd}`);
+        return;
+      }
+
+      // 6. Strict Passenger Mobile Contact: 3CTCM/01980284967-1.1 or 3CTCM/01995918875-1,2,3
+      if (cmd.startsWith('3CTC')) {
+        if (cmd.startsWith('3CTCM/')) {
+          const ctcmRegex = /^3CTCM\/\d{8,15}(\-\d+(\.\d+)?(,\d+(\.\d+)?)*)?$/;
+          if (!ctcmRegex.test(cmd)) {
+            triggerStrictError(
+              cmd,
+              cmd,
+              'Strict 3CTCM Format Error: Must be 3CTCM/[MOBILE NUMBER]-[PAX] (e.g. 3CTCM/01980284967-1.1 or 3CTCM/01995918875-1,2,3).',
+              '3CTCM/01980284967-1.1',
+              'Airline SMS Mobile Contact (3CTCM)'
+            );
+            return;
+          }
+          const phone = cmd.replace('3CTCM/', '');
+          draft.ssr.push(cmd);
+          draft.phones.push(phone + '-M');
+          session.transcript.push({
+            type: 'output-header',
+            text: `* SSR CTCM - PASSENGER MOBILE CONTACT (AIRLINE NOTIFICATION):`
+          });
+          session.transcript.push({
+            type: 'success',
+            text: `SSR CTCM HK1 ${phone} (MOBILE CONTACT STORED FOR AIRLINE SMS ALERTS)`
+          });
+          showToast(`Mobile Contact (3CTCM) Stored`);
+          return;
+        }
+
+        if (cmd.startsWith('3CTCE/')) {
+          const ctceRegex = /^3CTCE\/[A-Z0-9._\-]+\/\/[A-Z0-9.\-]+(\-\d+\.\d+)?$/;
+          if (!ctceRegex.test(cmd)) {
+            triggerStrictError(
+              cmd,
+              cmd,
+              'Strict 3CTCE Format Error: Must be 3CTCE/[EMAIL USER]//[DOMAIN]-[PAX] (Use "//" in place of "@", e.g. 3CTCE/SULTANAJAIFA65//GMAIL.COM-1.1).',
+              '3CTCE/MOKTADA200644//GMAIL.COM-1.1',
+              'Airline Email Contact (3CTCE)'
+            );
+            return;
+          }
+          const email = cmd.replace('3CTCE/', '');
+          draft.ssr.push(cmd);
+          session.transcript.push({
+            type: 'output-header',
+            text: `* SSR CTCE - PASSENGER EMAIL CONTACT (AIRLINE NOTIFICATION):`
+          });
+          session.transcript.push({
+            type: 'success',
+            text: `SSR CTCE HK1 ${email} (EMAIL CONTACT STORED FOR E-TICKET ALERTS)`
+          });
+          showToast(`Email Contact (3CTCE) Stored`);
+          return;
+        }
+
+        // If user typed 3CTC/... instead of 3CTCM/... -> Flag strict error and show 3CTCM/!
+        const numMatch = cmd.match(/\d{7,15}/);
+        const num = numMatch ? numMatch[0] : '01980284967';
+        triggerStrictError(
+          cmd,
+          '3CTC/',
+          'Incomplete SSR Contact Code "3CTC/": Sabre requires "M" for Mobile (3CTCM/) or "E" for Email (3CTCE/), or "3OSI [AIRLINE] CTCM ..." for OSI contact.',
+          `3CTCM/${num}-1.1`,
+          'Passenger Mobile Contact (3CTCM)'
+        );
+        return;
+      }
+
+      // 7. Strict OSI Message: 3OSI BG PAX IS AN ACTOR-1.1 or 3OSI BG CTCM 01712327458-1.1
+      if (cmd.startsWith('3OSI ')) {
+        const osiRegex = /^3OSI\s+[A-Z0-9]{2}\s+[A-Z0-9\s\.\-]+(\-\d+\.\d+)?$/;
+        if (!osiRegex.test(cmd)) {
+          triggerStrictError(
+            cmd,
+            cmd,
+            'Strict 3OSI Format Error: Must be 3OSI [2-LETTER AIRLINE CODE] [FREE TEXT MESSAGE]-[PAX] (e.g. 3OSI BG PAX IS AN ACTOR-1.1).',
+            '3OSI BG PAX IS AN ACTOR-1.1',
+            'Other Service Information (3OSI)'
+          );
+          return;
+        }
+        draft.osi.push(cmd);
+        session.transcript.push({
+          type: 'success',
+          text: `OSI ${cmd.substring(5)} STORED IN PNR`
+        });
+        showToast(`OSI Stored in PNR`);
+        return;
+      }
+
+      // Any other 3... command is invalid! Trigger context-aware strict error!
+      triggerStrictError(cmd);
     }
 
     function handleEncodingDecoding(cmd) {
@@ -3765,96 +4147,349 @@
 
 
     function diagnoseInvalidSabreCommand(cmd) {
-      // 1. Flight Availability typos (starts with 1)
-      if (cmd.startsWith('1')) {
-        if (cmd.length < 7) {
+      const u = cmd.toUpperCase().trim();
+
+      // 1. Contact / Mobile / Email / CTC / CTCM / CTCE / PE
+      if (u.includes('CTCE') || u.includes('@') || u.includes('//GMAIL') || u.includes('EMAIL') || u.startsWith('PE')) {
+        if (u.startsWith('PE')) {
           return {
-            badPart: cmd,
-            reason: 'Flight Availability command requires 1 + Travel Date (DDMMM) + 3-letter Origin + 3-letter Destination.',
-            correctCmd: '115NOVDACDXB',
-            desc: 'Search flights from DAC to DXB on 15NOV'
+            badPart: u,
+            reason: 'Customer Email (PE) requires ¥ or ‡ before and after the email address (e.g. PE¥SULTANAJAIFA65@GMAIL.COM¥-1.1), or PE*8MDJ for Printer Profile.',
+            correctCmd: 'PE¥MOKTADA200644@GMAIL.COM¥-1.1',
+            desc: 'Add Customer Email to PNR (PDF Page 5)'
           };
         }
+        const cleanEmail = u.replace(/^3?CTCE\/?/, '').replace('@', '//');
         return {
-          badPart: cmd.substring(1),
-          reason: 'Invalid Date or Airport Code format in Availability Search (Format: 1 + DDMMM + ORIG + DEST).',
-          correctCmd: '115NOVDACDXB',
-          desc: 'Standard Sabre Availability format'
+          badPart: u.startsWith('3CTCE/') ? u : u.split('/')[0],
+          reason: 'Airline Email Contact (SSR CTCE) must start with "3CTCE/" and use "//" instead of "@" followed by passenger number (e.g. -1.1).',
+          correctCmd: cleanEmail.includes('//') ? `3CTCE/${cleanEmail.includes('-') ? cleanEmail : cleanEmail + '-1.1'}` : '3CTCE/MOKTADA200644//GMAIL.COM-1.1',
+          desc: 'Passenger Email Contact for Airline (SSR CTCE)'
         };
       }
 
-      // 2. Sell Segment typos (starts with 0)
-      if (cmd.startsWith('0')) {
+      if (u.includes('CTC') || u.includes('MOBILE') || u.includes('PHONE') || /^01\d{8,9}$/.test(u)) {
+        const digits = (u.match(/\d{7,15}/) || ['01980284967'])[0];
+        const badPrefix = u.split('/')[0] || u;
         return {
-          badPart: cmd,
-          reason: 'Sell Segment requires 0 + Number of Seats (1-9) + Booking Class Letter (Y/J/M) + Line Number (1-4).',
-          correctCmd: '01Y1',
-          desc: 'Sell 1 seat in Economy (Y) class from line 1'
+          badPart: badPrefix,
+          reason: `Invalid or incomplete contact command "${badPrefix}". In Sabre, use "3CTCM/${digits}-1.1" for Airline SMS Mobile Contact, or "9 MTTCTC${digits}REFTAWHA" for Agency Phone Field.`,
+          correctCmd: `3CTCM/${digits}-1.1`,
+          desc: 'Passenger Mobile Contact for Airline SMS (PDF Page 5)'
         };
       }
 
-      // 3. Passenger Name typos (starts with -)
-      if (cmd.startsWith('-')) {
+      // 2. APIS Passport / Visa / Address (3DOCS, 3DOC, DOCS, DOCO, DOCA, PASSPORT, VISA)
+      if (u.includes('DOCO') || u.includes('VISA')) {
         return {
-          badPart: cmd,
-          reason: 'Passenger Name must include a slash (/) between Family Surname and Given Name.',
-          correctCmd: '-TAWHA/MOKTADA AS SADAR MR',
-          desc: 'Add Adult Passenger Name'
+          badPart: u.split('/')[0] || u,
+          reason: 'Strict 3DOCO Format Error: Must start with "3DOCO/" followed by [NAT]/V/[VISA#]/[ISSUING COUNTRY]/[ISSUE DATE]/[APPLY COUNTRY]//[EXPIRY DATE]-[PAX].',
+          correctCmd: '3DOCO/BGD/V/12345678/BGD/25JUN26/AU//25JUN27-1.1',
+          desc: 'APIS Visa Information (PDF Page 6)'
         };
       }
 
-      // 4. Pricing / Ticketing / Refund / Reissue typos (starts with W)
-      if (cmd.startsWith('W')) {
-        if (cmd.includes('REF') || cmd.includes('RF')) {
+      if (u.includes('DOCA') || u.includes('ADDRESS')) {
+        return {
+          badPart: u.split('/')[0] || u,
+          reason: 'Strict 3DOCA Format Error: Must start with "3DOCA/" followed by DB/D/[COUNTRY]/[STREET]/[CITY]/[STATE]/[ZIP]-[PAX].',
+          correctCmd: '3DOCA/DB/D/ARE/SHEIKH ZAYED ROAD/DUBAI/AE/00000-1.1',
+          desc: 'APIS Destination Address (3DOCA)'
+        };
+      }
+
+      if (u.includes('DOC') || u.includes('PASS')) {
+        const badToken = !u.startsWith('3DOCS/') ? (u.split('/')[0] || u) : u;
+        return {
+          badPart: badToken,
+          reason: `Strict 3DOCS Format Error in "${badToken}": Must start with "3DOCS/P/" (not 3DOC/ or DOCS/) and contain all 9 slash-separated fields: 3DOCS/P/[NAT]/[PASS#]/[NAT]/[DOB]/[M/F/MI/FI]/[EXP]/[SURNAME]/[GIVEN]-[PAX].`,
+          correctCmd: '3DOCS/P/BGD/A18653478/BGD/31DEC89/M/27MAR35/TAWHA/MOKTADA-1.1',
+          desc: 'Mandatory APIS Passport Entry (PDF Page 6)'
+        };
+      }
+
+      // 3. Special Meals, Wheelchair, Bassinet, Meet & Assist, OSI (3..., ML, WCHR, BSCT, MASS, MAAS, OSI, NSSW, NSSA)
+      if (u.includes('ML') || u.includes('MEAL')) {
+        return {
+          badPart: u,
+          reason: 'Special Meal SSR must start with "3" + 4-letter Meal Code (MOML, BBML, SHML, DBML, FPML, HNML, VGML, AVML, SPML) + "-[PAX]". For Meal Table, use DU*/SPM or DU*/SPM¥BG.',
+          correctCmd: '3MOML-1.1',
+          desc: 'Request Muslim Meal for Pax 1.1 (PDF Page 6)'
+        };
+      }
+
+      if (u.includes('WCHR') || u.includes('WHEEL')) {
+        return {
+          badPart: u,
+          reason: 'Wheelchair SSR requires "3WCHR-[PAX]" or "3WCHR/PAX IS UNABLE TO WALK-2.1".',
+          correctCmd: '3WCHR/PAX IS UNABLE TO WALK-2.1',
+          desc: 'Wheelchair Assistance Request (PDF Page 5 & 6)'
+        };
+      }
+
+      if (u.includes('BSCT') || u.includes('BASSINET') || u.includes('BABY')) {
+        return {
+          badPart: u,
+          reason: 'Baby Bassinet SSR requires exact syntax "3BSCT-1.1".',
+          correctCmd: '3BSCT-1.1',
+          desc: 'Baby Bassinet Request (PDF Page 6)'
+        };
+      }
+
+      if (u.includes('MASS') || u.includes('MAAS') || u.includes('ASSIST')) {
+        return {
+          badPart: u,
+          reason: 'Meet & Assist SSR requires "3 MASS/[FREE TEXT]-[PAX]" or "3MAAS/[FREE TEXT]-[PAX]".',
+          correctCmd: '3 MASS/PAX IS TRAVELING ALONE WITH TWO BABIES-1.1',
+          desc: 'Meet & Assist Request (PDF Page 5)'
+        };
+      }
+
+      if (u.includes('NSSW') || u.includes('NSSA') || u.includes('WINDOW') || u.includes('AISLE')) {
+        return {
+          badPart: u,
+          reason: 'Seat Preference SSR requires "3NSSW-1.1" (Window Seat) or "3NSSA-1.1" (Aisle Seat), or "4G1*" for Seat Map.',
+          correctCmd: '3NSSW-1.1',
+          desc: 'Window Seat Request (PDF Page 6)'
+        };
+      }
+
+      if (u.includes('OSI') || u.startsWith('3')) {
+        return {
+          badPart: u,
+          reason: 'Invalid 3-prefix SSR/OSI entry. For OSI use "3OSI [AIRLINE] [MESSAGE]-1.1"; to delete an SSR line use "38¤" or "31¤".',
+          correctCmd: '3OSI BG PAX IS AN ACTOR-1.1',
+          desc: 'Other Service Information (PDF Page 5)'
+        };
+      }
+
+      // 4. Fare Shopping (JR.)
+      if (u.startsWith('JR') || u.includes('/S-OY')) {
+        return {
+          badPart: u,
+          reason: 'Fare Shopping (JR.) requires "JR.[ORIG]/S-OY[DEST][DATE]" (One-Way), "/S-OY[ORIG][RET_DATE]" (Round-Trip), or "JR01" to sell line 1.',
+          correctCmd: 'JR.DAC/S-OYSIN12AUG',
+          desc: 'Sabre Fare Shopping One-Way (PDF Page 5)'
+        };
+      }
+
+      // 5. Schedule Check (S... /ES)
+      if (u.startsWith('S') && (u.includes('/ES') || u.length >= 7)) {
+        return {
+          badPart: u,
+          reason: 'Extended Schedule Check requires "S" + [DATE optional] + [ORIG][DEST] + "/ES" + optional "¥[CARRIER]".',
+          correctCmd: 'S15DECDACSIN/ES¥SQ',
+          desc: 'Extended Airline Schedule Check (PDF Page 1)'
+        };
+      }
+
+      // 6. Pricing, Fare Load, PQ Delete, Ticket Issue, Refund, Reissue, Void, WETR (Starts with W or PQ)
+      if (u.startsWith('PQ')) {
+        return {
+          badPart: u,
+          reason: 'To store a Price Quote enter "PQ". To delete all stored PQ records enter "PQD-ALL". To view stored PQ enter "*PQ".',
+          correctCmd: 'PQD-ALL',
+          desc: 'Delete All Stored Price Quotes (PDF Page 4)'
+        };
+      }
+
+      if (u.startsWith('W') || u.includes('PQ') || u.includes('ETR') || u.includes('TKT') || u.includes('REFUND') || u.includes('REISSUE')) {
+        if (u.includes('WETR') || u.includes('WTDB') || u.includes('DWLIST')) {
           return {
-            badPart: cmd,
-            reason: 'Automated Ticket Refund requires WFRF‡T1‡ACASH format.',
+            badPart: u,
+            reason: 'Electronic Ticket Display requires "WETR*2" (from *T line 2) or "WETR*T[13-DIGIT TKT]" or "WETR*2/H" (History) or "WETRV" (Void).',
+            correctCmd: 'WETR*2',
+            desc: 'Display Electronic Ticket Record'
+          };
+        }
+        if (u.startsWith('WV') || u.includes('VOID')) {
+          return {
+            badPart: u,
+            reason: 'To Void a ticket from *T list, enter "WV2" (where 2 is the ticket line number in *T) twice, or "WETRV".',
+            correctCmd: 'WV2',
+            desc: 'Void Electronic Ticket on Line 2 (PDF Page 7)'
+          };
+        }
+        if (u.includes('WFRF') || u.includes('WFRA') || u.includes('WFRR') || u.includes('REF')) {
+          return {
+            badPart: u,
+            reason: 'Automated Ticket Refund requires "WFRF‡T1‡ACASH" or "WFRA1762489104412/REF" or "WFRRTR2".',
             correctCmd: 'WFRF‡T1‡ACASH',
-            desc: 'Full Automated Ticket Refund'
+            desc: 'Automated Full Ticket Refund (QREX)'
           };
         }
-        if (cmd.includes('REIS') || cmd.includes('EXCH') || cmd.startsWith('WFR')) {
+        if (u.includes('WFR') || u.includes('PQR') || u.includes('EXCH') || u.includes('REIS')) {
           return {
-            badPart: cmd,
-            reason: 'Ticket Reissue / Exchange requires WFR‡T1‡ASQ (calculate) or W‡PQR1‡FINVAGT (issue).',
+            badPart: u,
+            reason: 'Automated Ticket Reissue requires "WFR‡T1‡ASQ" (or "WFR1762489104412‡ASQ") to calculate PQR, and "W¥PQR1‡FINVAGT" to issue the exchanged ticket.',
             correctCmd: 'WFR‡T1‡ASQ',
-            desc: 'Calculate Ticket Exchange / Reissue'
+            desc: 'Calculate Automated Ticket Reissue / Exchange'
+          };
+        }
+        if (u.startsWith('WPNC')) {
+          return {
+            badPart: u,
+            reason: 'Lowest Fare Rebook requires "WPNCB" (all segments), "WPNCB¥S1" (segment 1), or "WPNCB¥S1-4" (segments 1 to 4).',
+            correctCmd: 'WPNCB¥S1-4',
+            desc: 'Rebook Lowest Fare for Segments 1-4 (PDF Page 4)'
+          };
+        }
+        if (u.startsWith('WP')) {
+          return {
+            badPart: u,
+            reason: 'Itinerary Pricing requires "WP", "WPASQ" (carrier SQ), "WPASQ¥S1" (segment 1), "WPASQ¥S1-4" (segments 1-4), or "WPRD*B" (Baggage).',
+            correctCmd: 'WPASQ¥S1-4',
+            desc: 'Price Itinerary with Validating Carrier & Segments (PDF Page 4)'
+          };
+        }
+        if (u.startsWith('W*')) {
+          return {
+            badPart: u,
+            reason: 'Ticket Printer Designate status requires "W*BD" followed by "PTR/C25A8E" and "DSIVC25A8E".',
+            correctCmd: 'W*BD',
+            desc: 'Ticket Printer Link Status (PDF Page 7)'
+          };
+        }
+        if (u.startsWith('W/')) {
+          return {
+            badPart: u,
+            reason: 'Encode/Decode requires "W/*DAC" (Airport), "W/*BG" (Airline), "W/-CCDHAKA" (City), or "W/EQ*77W" (Aircraft).',
+            correctCmd: 'W/*DAC',
+            desc: 'Decode Airport / Airline Code'
           };
         }
         return {
-          badPart: cmd,
-          reason: 'Unrecognized W-command. Use WP (Price), WPNCB (Lowest Fare), WPRD*B (Baggage), or W‡PQ1‡FINVAGT‡ETR‡ASQ (Issue Ticket).',
-          correctCmd: 'W‡PQ1‡FINVAGT‡ETR‡ASQ',
-          desc: 'Issue Electronic Ticket from PQ 1'
+          badPart: u,
+          reason: 'Strict Ticket Issue Syntax Error: Must be "W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER" or "W¥PQ1-3¥ABG¥FINVAGT¥KP7¥ETR¥ER" (no missing or extra qualifiers).',
+          correctCmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
+          desc: 'Official Sabre E-Ticket Issuance Command (PDF Page 7)'
         };
       }
 
-      // 5. Currency Conversion typos (starts with DC)
-      if (cmd.startsWith('DC')) {
+      // 7. Printer Assignment (PTR/, DSIV)
+      if (u.startsWith('PTR') || u.startsWith('DSIV')) {
         return {
-          badPart: cmd,
-          reason: 'Currency Conversion requires DC* followed by 3-letter Currency + Amount / Target Currency.',
-          correctCmd: 'DC*USD100/BDT',
-          desc: 'Convert USD 100 to BDT'
+          badPart: u,
+          reason: 'Printer Assignment requires "PTR/C25A8E" (Ticket Printer) or "DSIVC25A8E" (Invoice Printer).',
+          correctCmd: u.startsWith('DSIV') ? 'DSIVC25A8E' : 'PTR/C25A8E',
+          desc: 'Designate Sabre Printer Address (PDF Page 7)'
         };
       }
 
-      // 6. Fare Quote / Fare Rules typos (starts with F or R)
-      if (cmd.startsWith('F') || cmd.startsWith('R')) {
+      // 8. Display Commands (*...)
+      if (u.startsWith('*')) {
         return {
-          badPart: cmd,
-          reason: 'For Fare Basis tariff display use FQ[ORIG][DEST][DATE]-[CARRIER]; for Fare Rules use RD1*M or RD1*16.',
+          badPart: u,
+          reason: `Invalid Display Command "${u}". Valid displays: *A (Full PNR), *I (Itin), *N (Names), *P (Phones), *T (Tickets), *PQ (Fare Load), *P3D (DOCS/SSR), *P5 (Remarks), *H (History), or *[6-DIGIT PNR].`,
+          correctCmd: '*A',
+          desc: 'Display Active PNR'
+        };
+      }
+
+      // 9. Availability (1...)
+      if (u.startsWith('1')) {
+        return {
+          badPart: u,
+          reason: `Invalid Availability Format "${u}". Must be 1[DDMMM][ORIG][DEST] (e.g. 125DECDACSIN), 125DECDACSIN¥SQ (Specific Airline), 120NOVDACSIN/D (Direct), 1R10JAN (Return), 1¥10 (After 10 days), or 1-15 (Before 15 days).`,
+          correctCmd: '125DECDACSIN¥SQ',
+          desc: 'Flight Availability Search (PDF Page 1)'
+        };
+      }
+
+      // 10. Seat Sell (0...)
+      if (u.startsWith('0')) {
+        return {
+          badPart: u,
+          reason: `Invalid Seat Sell Format "${u}". Must be 0[PAX][CLASS][LINE] (e.g. 01Y1 or 01W1), 01W1* (Connecting Same Class), or 01W5H6 (Connecting Different Class).`,
+          correctCmd: '01W1',
+          desc: 'Sell 1 Seat on Line 1 (PDF Page 1)'
+        };
+      }
+
+      // 11. Passenger Name (-...)
+      if (u.startsWith('-')) {
+        return {
+          badPart: u,
+          reason: `Invalid Name Format "${u}". Must be -[SURNAME]/[GIVEN] [MR/MRS/MS] (Adult), -[SURNAME]/[GIVEN] [MSTR/MISS]*C09 (Child), or -I/[SURNAME]/[GIVEN] [MSTR/MISS]*I18 (Infant).`,
+          correctCmd: '-TAWHA/MOKTADA AS SADAR MR',
+          desc: 'Add Adult Passenger Name (PDF Page 2)'
+        };
+      }
+
+      // 12. Phone (9...), Ticketing (7...), Received (6...)
+      if (u.startsWith('9')) {
+        return {
+          badPart: u,
+          reason: 'Invalid Phone Field (9). Must include Agency Name, CTC, Mobile Number & REF (e.g. 9 MTTCTC01980284967REFTAWHA).',
+          correctCmd: '9 MTTCTC01980284967REFTAWHA',
+          desc: 'Agency Phone Contact Field (PDF Page 2)'
+        };
+      }
+      if (u.startsWith('7')) {
+        return {
+          badPart: u,
+          reason: 'Invalid Ticketing Field (7). Must be "7TAW/".',
+          correctCmd: '7TAW/',
+          desc: 'Ticketing Time Limit (PDF Page 2)'
+        };
+      }
+      if (u.startsWith('6')) {
+        return {
+          badPart: u,
+          reason: 'Invalid Received From Field (6). Must be "6J" or "6TAWHA".',
+          correctCmd: '6TAWHA',
+          desc: 'Received From Agent Field (PDF Page 2)'
+        };
+      }
+
+      // 13. Fare Basis (FQ), Fare Rules (RD), Currency (DC), Meal Table (DU)
+      if (u.startsWith('FQ')) {
+        return {
+          badPart: u,
+          reason: 'Fare Basis Display requires "FQ[ORIG][DEST][DATE]-[CARRIER]" (e.g. FQDACDXB15NOV-EK).',
           correctCmd: 'FQDACDXB15NOV-EK',
           desc: 'Display Fare Basis Codes & Tariffs'
         };
       }
+      if (u.startsWith('RD')) {
+        return {
+          badPart: u,
+          reason: 'Fare Rules Display requires "RD1" (All Rules), "RD1*M" (Mini Rules), "RD1*16" (Penalties), "RD1*31" (Voluntary Changes), or "RD1*33" (Voluntary Refunds).',
+          correctCmd: 'RD1*16',
+          desc: 'Check Cat-16 Penalty Rules (PDF Page 7)'
+        };
+      }
+      if (u.startsWith('DC')) {
+        return {
+          badPart: u,
+          reason: 'Currency Conversion requires "DC*CUR" (Rate Table) or "DC*USD100/BDT" (Convert Amount).',
+          correctCmd: 'DC*USD100/BDT',
+          desc: 'Convert USD 100 to BDT'
+        };
+      }
+      if (u.startsWith('DU')) {
+        return {
+          badPart: u,
+          reason: 'Special Meal Table requires "DU*/SPM" (All Meals) or "DU*/SPM¥BG" (Carrier Specific Meal Table).',
+          correctCmd: 'DU*/SPM¥BG',
+          desc: 'Special Meal Table for Carrier (PDF Page 5)'
+        };
+      }
+      if (u.startsWith('4G')) {
+        return {
+          badPart: u,
+          reason: 'Seat Map requires "4G1*" (Display Map for Seg 1) or "4G1/12A" (Assign Seat 12A).',
+          correctCmd: '4G1*',
+          desc: 'Display Cabin Seat Map (PDF Page 6)'
+        };
+      }
 
-      // Default Smart Suggestion
+      // 14. General Unrecognized Command — Match closest keyword or suggest *A
       return {
-        badPart: cmd,
-        reason: `Command "${cmd}" is not a valid Sabre Host entry. Check prefix: 1 (Avail), 0 (Sell), - (Name), 9 (Phone), 7 (Ticket), 6 (Received), WP (Price), ER (Save).`,
-        correctCmd: '115NOVDACDXB',
-        desc: 'Start with Flight Availability Search'
+        badPart: u,
+        reason: `Unrecognized or misspelled Sabre command "${u}". Every character and prefix must match official Sabre host syntax without missing or extra words.`,
+        correctCmd: '*A',
+        desc: 'Display Active PNR (Or check Cheat Sheet for exact syntax)'
       };
     }
 
@@ -3938,7 +4573,26 @@
 
     function handleFareShoppingCommand(cmd) {
       const session = areaSessions[currentArea];
-      // e.g. JR. or JR.DAC/S-OYDXB15NOV
+      const draft = session.draft;
+
+      // Check if selling a line from JR response e.g. JR01 or JR03 or JR03,3S1 (PDF Page 5)
+      const jrSellMatch = cmd.match(/^JR0(\d)(?:,(\d)S(\d))?$/);
+      if (jrSellMatch) {
+        const lineNum = parseInt(jrSellMatch[1], 10);
+        const seatCnt = jrSellMatch[2] ? parseInt(jrSellMatch[2], 10) : 1;
+        const segIdx = draft.segments.length + 1;
+        draft.segments.push({
+          index: segIdx, carrier: 'SQ', flight: '447', bookingClass: 'W', seats: seatCnt,
+          date: '12AUG', orig: 'DAC', dest: 'SIN', dep: '2355', arr: '0605',
+          status: 'SS', baseFare: 33000 * seatCnt, taxes: 8700 * seatCnt, name: 'Singapore Airlines'
+        });
+        session.transcript.push({
+          type: 'success',
+          text: `JR0${lineNum} SOLD: ${segIdx} SQ 447W 12AUG SS${seatCnt} DACSIN 2355 0605 /E`
+        });
+        showToast(`Sold ${seatCnt} Seat(s) from Fare Shopping Line 0${lineNum}`);
+        return;
+      }
       session.transcript.push({
         type: 'output-header',
         text: `* SABRE BARGAIN FINDER / FARE SHOPPING ENGINE (${cmd}):`
@@ -4605,6 +5259,33 @@
        ====================================================================== */
 
     const CHEAT_SHEET_COMMANDS = [
+      { cat: 'avail', label: 'One-Way All Airlines (PDF p.1)', cmd: '125DECDACSIN', desc: 'Searches all airlines from DAC to SIN on 25DEC' },
+      { cat: 'avail', label: 'Specific Airline Avail (PDF p.1)', cmd: '125DECDACSIN¥SQ', desc: 'Searches Singapore Airlines (SQ) flights only' },
+      { cat: 'avail', label: 'Direct Flight Only (/D)', cmd: '120NOVDACSIN/D', desc: 'Searches non-stop direct flights only (/D)' },
+      { cat: 'avail', label: 'After 10 Days Avail (1¥10)', cmd: '1¥10', desc: 'Moves availability display 10 days forward' },
+      { cat: 'avail', label: 'Before 15 Days Avail (1-15)', cmd: '1-15', desc: 'Moves availability display 15 days backward' },
+      { cat: 'avail', label: 'Extended Schedule Check (PDF p.1)', cmd: 'S15DECDACSIN/ES¥SQ', desc: 'Checks extended airline schedule for specific date & carrier' },
+      { cat: 'avail', label: 'Fare Shopping Round-Trip (PDF p.5)', cmd: 'JR.DAC/S-OYSIN12AUG/S-OYDAC15AUG', desc: 'Sabre JR. Low-Fare Shopping for Round-Trip' },
+      { cat: 'avail', label: 'Fare Shopping Multi-Pax (PDF p.5)', cmd: 'JR.DAC/S-OYSIN12AUGSQ/P-2ADT1CO91INF', desc: 'Fare shopping for 2 Adults, 1 Child (9 yrs) & 1 Infant' },
+      { cat: 'avail', label: 'Sell from Fare Shopping (JR03)', cmd: 'JR03', desc: 'Sells itinerary option 03 from JR. Fare Shopping list' },
+      { cat: 'pnr', label: 'Two-Class Connecting Sell (01W5H6)', cmd: '01W5H6', desc: 'Sells W class on line 5 and H class on connecting line 6' },
+      { cat: 'pnr', label: 'Same-Class Connecting Sell (01W1*)', cmd: '01W1*', desc: 'Sells connecting flights in same booking class (*)' },
+      { cat: 'pnr', label: 'Agency Phone CTC Format (PDF p.2)', cmd: '9 MTTCTC01980284967REFTAWHA', desc: 'Official agency phone contact with CTC mobile & REF ID' },
+      { cat: 'pnr', label: 'Confirm KK to HK (EWR - PDF p.3)', cmd: 'EWR', desc: 'Updates carrier confirmed (KK/TK) status to Holding Confirmed (HK)' },
+      { cat: 'price', label: 'Price by Carrier & Segs (PDF p.4)', cmd: 'WPASQ¥S1-4', desc: 'Prices segments 1-4 on validating carrier SQ with 7% commission calc' },
+      { cat: 'price', label: 'Lowest Fare by Segment (PDF p.4)', cmd: 'WPNCB¥S1-4', desc: 'Rebooks lowest available fare across segments 1-4' },
+      { cat: 'price', label: 'Delete All Stored PQ (PQD-ALL)', cmd: 'PQD-ALL', desc: 'Deletes all retained Price Quote (PQ) records from PNR' },
+      { cat: 'price', label: 'Printer Profile Check (PE*8MDJ)', cmd: 'PE*8MDJ', desc: 'Displays agency printer station code (Ex: C25A8E)' },
+      { cat: 'price', label: 'Full Ticket Issue Command (PDF p.7)', cmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER', desc: 'Issues E-Ticket for PQ1, Pax 1.1, Carrier BG, FOP INVAGT, 7% Comm' },
+      { cat: 'reissue', label: 'Revalidate E-Ticket Coupon (WETRL)', cmd: 'WETRL/S1/C1', desc: 'Revalidates flight coupon 1 to match segment 1 without reissue fee' },
+      { cat: 'reissue', label: 'Display Ticket History (WETR*2/H)', cmd: 'WETR*2/H', desc: 'Displays complete E-Ticket coupon & exchange/refund audit history' },
+      { cat: 'reissue', label: 'Void Ticket from WETR (WETRV)', cmd: 'WETRV', desc: 'Voids active displayed electronic ticket record' },
+      { cat: 'ssr', label: 'Add Customer Email (PE¥ - PDF p.5)', cmd: 'PE¥MOKTADA200644@GMAIL.COM¥-1.1', desc: 'Adds customer email to PNR for itinerary receipt (EM)' },
+      { cat: 'ssr', label: 'VIP / Language OSI (PDF p.5)', cmd: '3OSI BG PAX IS AN ACTOR-1.1', desc: 'Sends VIP or language assistance OSI message to airline' },
+      { cat: 'ssr', label: 'Delete SSR/OSI Line 8 (38¤)', cmd: '38¤', desc: 'Deletes line 8 from *P3D SSR/OSI list using Change Key (¤)' },
+      { cat: 'ssr', label: 'Baby Bassinet Request (3BSCT-1.1)', cmd: '3BSCT-1.1', desc: 'Requests infant baby bassinet on board' },
+      { cat: 'ssr', label: 'Wheelchair Request (3WCHR)', cmd: '3WCHR/PAX IS UNABLE TO WALK-2.1', desc: 'Requests wheelchair assistance for passenger 2.1' },
+      { cat: 'ssr', label: 'Window / Aisle Seat (3NSSW / 3NSSA)', cmd: '3NSSW-1.1', desc: 'Requests window seat (3NSSW-1.1) or aisle seat (3NSSA-1.1)' },
       { cat: 'avail', label: 'Search Availability (DAC -> DXB)', cmd: '115NOVDACDXB', desc: 'Displays direct and connecting flights with seat counts' },
       { cat: 'avail', label: 'Return Flight Availability (1R)', cmd: '1R25NOV', desc: 'Searches return flights (DXB -> DAC) for 25NOV after outbound search' },
       { cat: 'avail', label: 'Fare Shopping Matrix (JR.)', cmd: 'JR.DAC/S-OYDXB15NOV', desc: 'Opens multi-carrier low fare shopping comparison matrix' },
