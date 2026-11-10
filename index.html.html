@@ -6,7 +6,7 @@
   <title>Sabre Red 360 GDS Training Simulator & Practice Environment</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
     
     :root {
       --sabre-bg: #070b13;
@@ -103,7 +103,45 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+    .font-bangla {
+      font-family: 'Hind Siliguri', 'Inter', sans-serif;
+    }
+    /* 60-30-10 Color Rule Variables & Glassmorphism */
+    .rule-60-bg {
+      background-color: #f8fafc;
+    }
+    .rule-60-bg-dark {
+      background-color: #0b1120 !important;
+      color: #f1f5f9 !important;
+    }
+    .rule-30-card {
+      background-color: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .rule-10-accent-gold {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    .rule-10-accent-emerald {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+    /* Rule of Thirds Visual Grid Overlay (Toggleable) */
+    .thirds-grid-overlay {
+      background-image:
+        linear-gradient(to right, rgba(56, 189, 248, 0.22) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.22) 1px, transparent 1px);
+      background-size: 33.333% 33.333%;
+    }
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -24; }
+    }
+    .flight-arc-animated {
+      stroke-dasharray: 6 6;
+      animation: dash-flow 1.2s linear infinite;
+    }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-[#070b13] text-slate-200 select-none">
 
@@ -1003,6 +1041,10 @@
             <span>FARE SHOPPING (JR.)</span>
             <span>›</span>
           </button>
+          <button type="button" class="home-nav-launch w-full bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-600 hover:to-emerald-700 text-white font-extrabold px-3.5 py-2 rounded-full shadow-md flex items-center justify-between text-[11px] tracking-wide transition ring-2 ring-amber-300/50" data-target="viral-map">
+            <span>✈️ BD FLIGHT MAP &amp; PASS</span>
+            <span class="bg-white/25 px-1.5 py-0.2 rounded text-[9px]">VIRAL</span>
+          </button>
         </div>
 
         <!-- LEARNING CENTER NAVIGATION -->
@@ -1029,6 +1071,13 @@
           </button>
           <button type="button" class="home-nav-launch w-full text-left px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold text-xs flex items-center gap-2 transition" data-target="cert">
             <span>🎓</span><span>Official Certificate</span>
+          </button>
+          <button type="button" class="home-nav-launch w-full text-left px-3 py-1.5 rounded-lg text-emerald-700 bg-emerald-50/80 hover:bg-emerald-100 font-bold text-xs flex items-center justify-between transition" data-target="viral-map">
+            <span class="flex items-center gap-2"><span>🗺️</span><span class="font-bangla">আকাশে আমার বাংলাদেশ</span></span>
+            <span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.5 rounded-full">NEW</span>
+          </button>
+          <button type="button" class="home-nav-launch w-full text-left px-3 py-1.5 rounded-lg text-amber-700 hover:bg-amber-50 font-semibold text-xs flex items-center gap-2 transition" data-target="frameworks">
+            <span>📐</span><span>UI/UX &amp; Viral Rules</span>
           </button>
         </div>
       </div>
@@ -1058,17 +1107,34 @@
           <a href="#homeFaqSection" class="hover:text-blue-600 transition hidden md:inline">❓ FAQ</a>
         </div>
 
-        <!-- Global Search & Direct Sabre Launch -->
-        <div class="flex items-center gap-2.5">
+        <!-- Global Search, Minimalist Focus Mode, Language Switcher & Direct Launch -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Minimalist Focus Mode Toggle (Solves Cognitive Overload / Hick's Law) -->
+          <button type="button" id="btnToggleMinimalHome" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-bold text-[11px] px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5" title="Toggle Minimalist 3-Step View vs Full View (Hick's Law)">
+            <span id="minimalModeDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span id="minimalModeLabel">✨ Minimal Mode: OFF</span>
+          </button>
+          <!-- Bangla / English Language Toggle (Like Unseen Bangladesh) -->
+          <button type="button" id="btnToggleLangBnEn" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[11px] px-2.5 py-1.5 rounded-lg transition font-bangla">
+            বাং ⇄ EN
+          </button>
+          <!-- UI/UX & Marketing Frameworks Audit Modal Trigger -->
+          <button type="button" id="btnOpenFrameworksModal" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-[11px] px-2.5 py-1.5 rounded-lg transition hidden xl:flex items-center gap-1">
+            <span>📐</span><span>60-30-10 &amp; UX Specs</span>
+          </button>
           <input
             id="homeGlobalSearchInput"
             type="text"
-            placeholder="Search city code (DAC), airline (EK), or command..."
-            class="bg-slate-100 hover:bg-slate-200/70 focus:bg-white text-slate-800 border border-slate-200 focus:border-blue-500 rounded-lg px-3 py-1.5 text-xs w-52 sm:w-64 focus:outline-none transition"
+            placeholder="Search city (DAC/CXB), airline (BG), cmd..."
+            class="bg-slate-100 hover:bg-slate-200/70 focus:bg-white text-slate-800 border border-slate-200 focus:border-blue-500 rounded-lg px-3 py-1.5 text-xs w-44 sm:w-56 focus:outline-none transition"
           >
-          <button type="button" id="btnHomeQuickLaunchSabre" class="bg-[#0f294a] hover:bg-[#1e3a8a] text-white font-bold text-xs px-4 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
+          <button type="button" id="btnTopOpenViralMap" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5 font-bangla">
+            <span>✈️</span>
+            <span data-i18n="top_viral_btn">ভ্রমণ ম্যাপ ও পাস</span>
+          </button>
+          <button type="button" id="btnHomeQuickLaunchSabre" class="bg-[#0f294a] hover:bg-[#1e3a8a] text-white font-bold text-xs px-3.5 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
             <span class="font-mono">&gt;_</span>
-            <span>Open Sabre Terminal</span>
+            <span data-i18n="top_sabre_btn">Open Sabre Terminal</span>
           </button>
         </div>
       </header>
@@ -1113,7 +1179,98 @@
               <button type="button" id="btnDashOpenNdcSim" class="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-md transition flex items-center gap-1.5">
                 <span>⚡</span><span>NDC Simulator</span>
               </button>
+              <button type="button" id="btnHeroOpenViralMap" class="bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-lg shadow-lg transition flex items-center gap-1.5 font-bangla ring-2 ring-white/40">
+                <span>🎫</span><span data-i18n="hero_viral_cta">নিজের ফ্লাইট ম্যাপ ও বোর্ডিং পাস বানান (ফ্রি)</span>
+              </button>
             </div>
+          </div>
+
+          <!-- RULE OF THIRDS RIGHT INTERSECTION (1/3 FOCAL WIDGET): LIVE VIRAL SKY BANGLADESH CARD -->
+          <div class="relative z-10 hidden lg:flex flex-col justify-between bg-[#0b1528]/90 backdrop-blur-md border border-amber-400/40 rounded-2xl p-4 mr-6 my-4 w-80 text-white shadow-2xl shrink-0">
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-2">
+              <div class="flex items-center gap-1.5">
+                <span class="text-base">🇧🇩</span>
+                <div>
+                  <div class="text-[10px] font-mono uppercase tracking-wider text-amber-300 font-bold">VIRAL CHALLENGE • ZERO SIGNUP</div>
+                  <div class="text-xs font-extrabold font-bangla" data-i18n="hero_widget_title">আকাশপথে কতটুকু বাংলাদেশ দেখেছেন?</div>
+                </div>
+              </div>
+              <span id="heroWidgetPctBadge" class="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-mono font-black text-xs px-2 py-0.5 rounded-full">0%</span>
+            </div>
+
+            <div class="py-2.5 space-y-2">
+              <div class="grid grid-cols-3 gap-1.5 text-center">
+                <div class="bg-slate-900/90 border border-slate-700/80 rounded-lg p-1.5">
+                  <div id="heroWidgetAirportsCount" class="text-sm font-black text-amber-400 font-mono">0/8</div>
+                  <div class="text-[9px] text-slate-300 font-bangla">বিমানবন্দর</div>
+                </div>
+                <div class="bg-slate-900/90 border border-slate-700/80 rounded-lg p-1.5">
+                  <div id="heroWidgetDistrictsCount" class="text-sm font-black text-cyan-400 font-mono">0/64</div>
+                  <div class="text-[9px] text-slate-300 font-bangla">জেলা ভ্রমণ</div>
+                </div>
+                <div class="bg-slate-900/90 border border-slate-700/80 rounded-lg p-1.5">
+                  <div id="heroWidgetMilesCount" class="text-sm font-black text-emerald-400 font-mono">0</div>
+                  <div class="text-[9px] text-slate-300 font-bangla">এয়ার মাইলস</div>
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-300 font-bangla leading-snug">
+                ঢাকা, কক্সবাজার, সিলেট, চট্টগ্রাম, সৈয়দপুর, যশোর, রাজশাহী ও বরিশাল—আপনার ঘোরা বিমানবন্দর ও জেলা রাঙিয়ে ডাউনলোড করুন **VIP Boarding Pass &amp; Map**!
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <button type="button" id="btnHeroCardOpenViralMap" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs py-2 px-3 rounded-xl shadow-md transition flex items-center justify-center gap-1.5 font-bangla">
+                <span>✈️</span><span data-i18n="hero_widget_btn">ম্যাপ ও বোর্ডিং পাস তৈরি করুন →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.5 VIRAL FEATURE SECTION (INSPIRED BY UNSEEN BANGLADESH + AVIATION EDITION): আকাশে আমার বাংলাদেশ -->
+        <div id="homeViralBannerSection" class="bg-gradient-to-r from-[#071326] via-[#0c2340] to-[#062c28] text-white rounded-2xl p-5 sm:p-6 shadow-md border border-emerald-500/30 flex flex-col lg:flex-row items-center justify-between gap-5">
+          <div class="space-y-2.5 max-w-2xl">
+            <div class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/40 px-3 py-0.5 rounded-full text-[11px] font-bold text-emerald-300 font-bangla">
+              <span>🔥 ভাইরাল ফিচার · ০১</span>
+              <span>•</span>
+              <span>Unseen Sky Bangladesh — ৬৪ জেলা ও ৮ ডোমেস্টিক এয়ারপোর্ট ট্র্যাকার</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black tracking-tight font-bangla" data-i18n="viral_sec_heading">
+              ডোমেস্টিক ফ্লাইটে বাংলাদেশের কোন কোন জায়গায় ভ্রমণ করেছেন? ✈️
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-bangla" data-i18n="viral_sec_desc">
+              কোনো সাইন-আপ ছাড়াই এক ক্লিকে সিলেক্ট করুন আপনার ভ্রমণ করা **৮টি ডোমেস্টিক বিমানবন্দর (DAC, CXB, CGP, ZYL, SPD, JSR, RJH, BZL)**, **৪টি দেশি এয়ারলাইন্স (Biman, US-Bangla, Novoair, Air Astra)** এবং **৬৪টি জেলা**। নিজের নাম ও ছবি দিয়ে ডাউনলোড করুন সোশ্যাল মিডিয়া রেডি **HD Travel Map &amp; Golden Boarding Pass**!
+            </p>
+            <!-- Quick Clickable Domestic Airport Pills right on the Home Page -->
+            <div class="pt-1">
+              <div class="text-[10px] font-mono uppercase tracking-wider text-amber-300 mb-1.5">QUICK SELECT AIRPORTS YOU HAVE FLOWN (ট্যাপ করে বাছুন):</div>
+              <div class="flex flex-wrap items-center gap-1.5" id="homeQuickAirportPills">
+                <!-- Populated dynamically by renderHomeQuickAirportPills() -->
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 w-full lg:w-80 shrink-0 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-[10px] text-emerald-300 font-mono uppercase">YOUR SKY EXPLORER SCORE</div>
+                <div id="homeViralRankTitle" class="text-sm font-black text-white font-bangla">🛫 বোর্ডিং গেট এক্সপ্লোরার</div>
+              </div>
+              <div class="text-right">
+                <div id="homeViralScoreBig" class="text-2xl font-black text-amber-400 font-mono">0/8</div>
+                <div class="text-[10px] text-slate-300 font-bangla">এয়ারপোর্ট সম্পন্ন</div>
+              </div>
+            </div>
+            <div class="w-full bg-slate-900/80 h-2 rounded-full overflow-hidden border border-slate-700">
+              <div id="homeViralProgressBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-200 font-bangla">
+              <span>জেলা কভারেজ: <strong id="homeViralDistText" class="text-cyan-300 font-mono">0/64 (0%)</strong></span>
+              <span>এয়ারলাইন্স: <strong id="homeViralAirlinesText" class="text-amber-300 font-mono">0/4</strong></span>
+            </div>
+            <button type="button" id="btnBannerOpenViralStudio" class="w-full bg-gradient-to-r from-amber-400 to-emerald-400 hover:from-amber-300 hover:to-emerald-300 text-slate-950 font-black text-xs py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 font-bangla">
+              <span>🗺️</span>
+              <span>সম্পূর্ণ ম্যাপ ও বোর্ডিং পাস ডাউনলোড করুন →</span>
+            </button>
           </div>
         </div>
 
@@ -1143,17 +1300,23 @@
 
         <!-- 3. INTERACTIVE MODULE CARDS (Click Any Card to Open That Module — Closing Returns Right Back Here!) -->
         <div class="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 class="font-extrabold text-slate-800 text-sm">&gt;_ Choose a Training Workspace or Reference Module</h2>
-              <p class="text-[11px] text-slate-500">Click any module below to enter. Closing any popup module keeps you right here on the Home Portal.</p>
+              <h2 class="font-extrabold text-slate-800 text-sm" data-i18n="modules_heading">&gt;_ Choose a Focused Workspace (Progressive Disclosure — 60-30-10 UI)</h2>
+              <p class="text-[11px] text-slate-500" data-i18n="modules_sub">Filter by category below so you only see what you need right now, or launch any simulator directly.</p>
             </div>
-            <button type="button" id="btnDashExploreCourses" class="text-xs font-bold text-blue-600 hover:underline">View 7 Scenarios ›</button>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" class="module-cat-btn bg-[#0f294a] text-white text-[11px] font-bold px-3 py-1 rounded-full transition" data-modcat="all">All (7)</button>
+              <button type="button" class="module-cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1 rounded-full transition" data-modcat="sim">🚀 GDS &amp; NDC Simulators</button>
+              <button type="button" class="module-cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1 rounded-full transition" data-modcat="study">🌍 IATA Study &amp; Codes</button>
+              <button type="button" class="module-cat-btn bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-bold px-3 py-1 rounded-full transition font-bangla" data-modcat="viral">✈️ ভ্রমণ ম্যাপ ও পাস</button>
+              <button type="button" id="btnDashExploreCourses" class="text-xs font-bold text-blue-600 hover:underline ml-2">View 7 Scenarios ›</button>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             <!-- Card 1: Sabre Red 360 Terminal -->
-            <button type="button" class="dash-launch-card bg-gradient-to-br from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="terminal">
+            <button type="button" data-cat="sim" class="dash-launch-card bg-gradient-to-br from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="terminal">
               <div class="flex items-center justify-between">
                 <span class="font-black text-base">1. Sabre Red 360 (CERT)</span>
                 <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">HOST 1S</span>
@@ -1163,7 +1326,7 @@
             </button>
 
             <!-- Card 2: IATA Geography & Global Indicators -->
-            <button type="button" class="dash-launch-card bg-gradient-to-br from-[#0284c7] to-[#0369a1] hover:from-[#0369a1] hover:to-[#075985] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="geography">
+            <button type="button" data-cat="study" class="dash-launch-card bg-gradient-to-br from-[#0284c7] to-[#0369a1] hover:from-[#0369a1] hover:to-[#075985] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="geography">
               <div class="flex items-center justify-between">
                 <span class="font-black text-base">2. IATA World Geography</span>
                 <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">TC1 • TC2 • TC3</span>
@@ -1173,7 +1336,7 @@
             </button>
 
             <!-- Card 3: 230+ City, Airport, Airline & Currency Directory -->
-            <button type="button" class="dash-launch-card bg-gradient-to-br from-[#0d9488] to-[#0f766e] hover:from-[#0f766e] hover:to-[#115e59] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="glossary">
+            <button type="button" data-cat="study" class="dash-launch-card bg-gradient-to-br from-[#0d9488] to-[#0f766e] hover:from-[#0f766e] hover:to-[#115e59] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="glossary">
               <div class="flex items-center justify-between">
                 <span class="font-black text-base">3. Master Code Directory</span>
                 <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">230+ CODES</span>
@@ -1183,7 +1346,7 @@
             </button>
 
             <!-- Card 4: IATA NDC 21.3 Simulator -->
-            <button type="button" class="dash-launch-card bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] hover:from-[#6d28d9] hover:to-[#5b21b6] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="ndc-sim">
+            <button type="button" data-cat="sim" class="dash-launch-card bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] hover:from-[#6d28d9] hover:to-[#5b21b6] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="ndc-sim">
               <div class="flex items-center justify-between">
                 <span class="font-black text-base">4. IATA NDC Simulator</span>
                 <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">NDC 21.3</span>
@@ -1193,7 +1356,7 @@
             </button>
 
             <!-- Card 5: QREX Automated Refund & Reissue -->
-            <button type="button" class="dash-launch-card bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="qrex-demo">
+            <button type="button" data-cat="sim" class="dash-launch-card bg-gradient-to-br from-[#2563eb] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="qrex-demo">
               <div class="flex items-center justify-between">
                 <span class="font-black text-base">5. QREX Refund &amp; Reissue</span>
                 <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">WFRF / WFR</span>
@@ -1203,13 +1366,28 @@
             </button>
 
             <!-- Card 6: Sabre Knowledge Quiz & 15-Min Timed Exam -->
-            <button type="button" class="dash-launch-card bg-gradient-to-br from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="quiz">
+            <button type="button" data-cat="study" class="dash-launch-card bg-gradient-to-br from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group" data-target="quiz">
               <div class="flex items-center justify-between">
                 <span class="font-black text-base">6. Exam Quiz &amp; Certificate</span>
                 <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">CERTIFY</span>
               </div>
               <p class="text-xs text-amber-100 mt-1.5">Test your Sabre GDS &amp; IATA Geography knowledge or start a 15-minute practical exam.</p>
               <div class="text-xs text-white mt-3 font-bold group-hover:translate-x-1 transition">Start Certification Exam ›</div>
+            </button>
+
+            <!-- Card 7: Viral Bangladesh Domestic Flight Map & VIP Boarding Pass Maker -->
+            <button type="button" data-cat="viral" class="dash-launch-card sm:col-span-2 lg:col-span-3 bg-gradient-to-r from-[#065f46] via-[#047857] to-[#0f766e] hover:from-[#047857] hover:to-[#115e59] text-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition group border border-emerald-400/40" data-target="viral-map">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-black text-base font-bangla">7. আকাশে আমার বাংলাদেশ — Domestic Flight Map, 64 Districts &amp; VIP Boarding Pass Maker</span>
+                  <span class="text-[10px] font-mono bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-black">VIRAL SHARE STUDIO</span>
+                </div>
+                <span class="text-[11px] font-mono bg-white/15 px-2.5 py-0.5 rounded font-bold">8 AIRPORTS • 64 DISTRICTS • HD PNG</span>
+              </div>
+              <p class="text-xs text-emerald-100 mt-1.5 font-bangla">
+                Unseen Bangladesh-এর মতো নিজের ঘোরা বাংলাদেশের ৮টি ডোমেস্টিক বিমানবন্দর (DAC, CXB, CGP, ZYL, SPD, JSR, RJH, BZL) ও ৬৪ জেলা সিলেক্ট করে নিজের ছবি ও নামসহ ডাউনলোড করুন লাক্সারি বোর্ডিং পাস ও ম্যাপ পোস্টার!
+              </p>
+              <div class="text-xs text-amber-300 mt-2.5 font-extrabold group-hover:translate-x-1 transition font-bangla">Open Domestic Flight Map &amp; Boarding Pass Maker ›</div>
             </button>
           </div>
         </div>
@@ -1786,6 +1964,333 @@
     </div>
   </div>
 
+  <!-- ============================================================================
+       VIRAL STUDIO MODAL: আকাশে আমার বাংলাদেশ (MY SKY BANGLADESH)
+       DOMESTIC FLIGHT MAP (8 AIRPORTS) + 64 DISTRICTS + VIP BOARDING PASS GENERATOR
+       ============================================================================ -->
+  <div id="viralFlightMapModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 select-none">
+    <div class="bg-[#0b1120] text-slate-100 border border-slate-700/90 rounded-2xl max-w-7xl w-full max-h-[96vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Top Studio Header -->
+      <div class="bg-gradient-to-r from-[#071326] via-[#064e3b] to-[#0f172a] border-b border-emerald-500/30 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="bg-amber-400 text-slate-950 font-mono font-black px-2.5 py-1 rounded-lg text-xs shadow">✈️ UNSEEN SKY BD</span>
+          <div>
+            <h3 class="font-black text-sm sm:text-base text-white font-bangla">
+              আকাশে আমার বাংলাদেশ — Domestic Flight Map, 64 Districts &amp; VIP Boarding Pass Studio
+            </h3>
+            <p class="text-[11px] text-emerald-300 font-bangla">
+              আপনার ভ্রমণ করা ডোমেস্টিক বিমানবন্দর ও জেলাগুলো সিলেক্ট করুন, নিজের নাম ও ছবি দিন এবং ১ ক্লিকে ডাউনলোড করুন সোশ্যাল মিডিয়া পোস্টার!
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnViralResetAll" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold transition font-bangla">
+            ↺ সব মুছুন (Reset)
+          </button>
+          <button type="button" id="btnViralSelectAllAirports" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/50 px-3 py-1.5 rounded-lg text-xs font-bold transition font-bangla">
+            ✓ ৮টি বিমানবন্দরই বাছুন
+          </button>
+          <button type="button" id="btnCloseViralMapModal" class="bg-red-600 hover:bg-red-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition">
+            ✕ Close Studio
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Studio Body: 3-Column Responsive Grid (Rule of Thirds) -->
+      <div class="flex-1 overflow-y-auto p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- COLUMN 1 (5 Cols): INTERACTIVE BANGLADESH DOMESTIC FLIGHT MAP (VECTOR + LEAFLET SATELLITE TOGGLE) & AIRPORT SELECTOR -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <!-- Live Score & Rank Banner -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] font-mono uppercase text-amber-400 font-bold">YOUR BANGLADESH SKY RECORD</div>
+              <div id="viralModalRankBadge" class="text-sm font-black text-white font-bangla mt-0.5">🛫 ফার্স্ট-টাইম ফ্লাইয়ার (0/8 Airports)</div>
+              <div id="viralModalSubStats" class="text-[11px] text-slate-400 font-bangla">০টি জেলা • ০ এয়ার মাইলস • ০% আকাশপথ সম্পন্ন</div>
+            </div>
+            <div class="text-right">
+              <div id="viralModalPctBig" class="text-2xl font-black text-emerald-400 font-mono">0%</div>
+              <div class="text-[10px] text-slate-400 font-mono">SKY COVERAGE</div>
+            </div>
+          </div>
+
+          <!-- Map Mode Switcher: Interactive Vector Flight Map vs Live Esri Satellite/Street Map -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-col gap-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-cyan-300 font-bangla">🗺️ ম্যাপে ট্যাপ করে বিমানবন্দর সিলেক্ট করুন:</span>
+              <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px]">
+                <button type="button" id="btnViralMapModeSvg" class="bg-emerald-600 text-white font-bold px-2.5 py-1 rounded transition">Vector Radar Map</button>
+                <button type="button" id="btnViralMapModeLeaflet" class="text-slate-400 hover:text-white font-bold px-2.5 py-1 rounded transition">Satellite / GIS Map</button>
+              </div>
+            </div>
+
+            <!-- Interactive SVG Radar Flight Map of Bangladesh (8 Airports + Flight Arcs + Division Regions) -->
+            <div id="viralSvgMapContainer" class="relative w-full h-[360px] bg-[#060d1a] rounded-xl border border-slate-800/90 overflow-hidden flex items-center justify-center">
+              <svg id="bdDomesticFlightSvg" viewBox="0 0 500 620" class="w-full h-full select-none">
+                <defs>
+                  <radialGradient id="bdRadarGlow" cx="50%" cy="50%" r="55%">
+                    <stop offset="0%" stop-color="#059669" stop-opacity="0.22"/>
+                    <stop offset="65%" stop-color="#0284c7" stop-opacity="0.08"/>
+                    <stop offset="100%" stop-color="#060d1a" stop-opacity="0"/>
+                  </radialGradient>
+                  <linearGradient id="activeArcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fbbf24"/>
+                    <stop offset="100%" stop-color="#34d399"/>
+                  </linearGradient>
+                </defs>
+                <!-- Radar Background Grid -->
+                <rect width="500" height="620" fill="url(#bdRadarGlow)"/>
+                <circle cx="255" cy="305" r="95" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4"/>
+                <circle cx="255" cy="305" r="185" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4"/>
+                <circle cx="255" cy="305" r="265" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4"/>
+                <!-- Geographic Regional Silhouette & Division Polygons of Bangladesh -->
+                <g id="bdDivisionRegionsGroup"></g>
+                <!-- Flight Route Arcs from Dhaka (DAC) & Inter-Hubs -->
+                <g id="bdFlightArcsGroup"></g>
+                <!-- 8 Commercial Airport Nodes -->
+                <g id="bdAirportNodesGroup"></g>
+              </svg>
+              <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-[10px] font-mono text-slate-400 bg-slate-950/85 px-2.5 py-1 rounded border border-slate-800">
+                <span>🟢 Flown Airport</span>
+                <span>⚪ Unvisited Airport</span>
+                <span>✨ Dashed Arc = Active Flight Sector</span>
+              </div>
+            </div>
+
+            <!-- Keyless ArcGIS MapServer Leaflet Map Container (Explicit 360px height) -->
+            <div id="viralLeafletMapContainer" class="hidden relative w-full h-[360px] rounded-xl border border-slate-800 overflow-hidden bg-slate-950"></div>
+          </div>
+
+          <!-- 8 Operational Domestic Airports Checklist Grid -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-white font-bangla">✈️ বাংলাদেশের ৮টি সচল বিমানবন্দর (৮টি রুট):</span>
+              <span class="text-[10px] font-mono text-emerald-400">Click to Toggle Flown Status</span>
+            </div>
+            <div id="viralAirportCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <!-- Populated by renderViralAirportCards() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2 (3 Cols): PERSONALIZATION, AIRLINES FLOWN & 64 DISTRICTS BY AIR HUB -->
+        <div class="lg:col-span-3 flex flex-col gap-4">
+          <!-- Step 1: Traveler Identity & Photo Upload -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-3">
+            <div class="text-xs font-extrabold text-amber-400 uppercase tracking-wider font-bangla">১. আপনার নাম, ছবি ও থিম (Personalize)</div>
+            <div class="space-y-2">
+              <div>
+                <label class="text-[11px] text-slate-300 font-bangla block mb-1">আপনার নাম (Name on Map &amp; Boarding Pass):</label>
+                <input id="viralTravelerNameInput" type="text" value="MOKTADA AS SADAR TAWHA" placeholder="আপনার নাম লিখুন..." class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-lg px-3 py-1.5 text-xs text-white font-bold focus:outline-none">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[11px] text-slate-300 font-bangla block mb-1">পছন্দের ফ্লাইট রুট:</label>
+                  <select id="viralDreamRouteSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white font-mono">
+                    <option value="DAC ✈ CXB">DAC ✈ CXB (Cox's Bazar)</option>
+                    <option value="DAC ✈ ZYL">DAC ✈ ZYL (Sylhet)</option>
+                    <option value="DAC ✈ CGP">DAC ✈ CGP (Chattogram)</option>
+                    <option value="DAC ✈ SPD">DAC ✈ SPD (Saidpur)</option>
+                    <option value="DAC ✈ JSR">DAC ✈ JSR (Jashore)</option>
+                    <option value="DAC ✈ RJH">DAC ✈ RJH (Rajshahi)</option>
+                    <option value="DAC ✈ BZL">DAC ✈ BZL (Barishal)</option>
+                    <option value="DAC ✈ DXB">DAC ✈ DXB (Dubai VIP)</option>
+                    <option value="DAC ✈ LHR">DAC ✈ LHR (London VIP)</option>
+                    <option value="DAC ✈ JFK">DAC ✈ JFK (New York VIP)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-300 font-bangla block mb-1">সিট ও ক্লাস (Seat):</label>
+                  <select id="viralSeatClassSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white font-mono">
+                    <option value="1A • FIRST CLASS">1A • FIRST CLASS</option>
+                    <option value="2K • BUSINESS VIP">2K • BUSINESS VIP</option>
+                    <option value="14F • WINDOW SEAT">14F • WINDOW SEAT</option>
+                    <option value="0A • COCKPIT JUMPSEAT">0A • COCKPIT CAPTAIN</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Custom Photo Upload or Avatar Picker -->
+              <div>
+                <label class="text-[11px] text-slate-300 font-bangla block mb-1">নিজের ছবি যুক্ত করুন (Optional Photo):</label>
+                <div class="flex items-center gap-2">
+                  <label for="viralPhotoUploadInput" class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-600 px-3 py-1.5 rounded-lg text-[11px] font-bold transition flex-1 text-center font-bangla">
+                    📷 ছবি আপলোড করুন
+                  </label>
+                  <input id="viralPhotoUploadInput" type="file" accept="image/*" class="hidden">
+                  <button type="button" id="btnViralClearPhoto" class="bg-slate-800 hover:bg-slate-700 text-slate-400 px-2.5 py-1.5 rounded-lg text-[11px]" title="Remove Photo">✕</button>
+                </div>
+              </div>
+
+              <!-- 5 Designer Color Themes (Like Unseen Bangladesh + Luxury Aviation) -->
+              <div>
+                <label class="text-[11px] text-slate-300 font-bangla block mb-1">পোস্টার কালার থিম (5 Themes):</label>
+                <div class="grid grid-cols-5 gap-1.5" id="viralThemeButtonsContainer">
+                  <button type="button" data-vtheme="emerald" class="viral-theme-btn ring-2 ring-white rounded-lg p-1.5 bg-gradient-to-br from-emerald-900 to-teal-950 text-[10px] font-bold text-emerald-200 text-center">Emerald</button>
+                  <button type="button" data-vtheme="gold" class="viral-theme-btn rounded-lg p-1.5 bg-gradient-to-br from-amber-900 to-slate-950 text-[10px] font-bold text-amber-200 text-center">VIP Gold</button>
+                  <button type="button" data-vtheme="sabre" class="viral-theme-btn rounded-lg p-1.5 bg-gradient-to-br from-sky-900 to-slate-950 text-[10px] font-bold text-cyan-200 text-center">Sabre 360</button>
+                  <button type="button" data-vtheme="biman" class="viral-theme-btn rounded-lg p-1.5 bg-gradient-to-br from-rose-900 to-emerald-950 text-[10px] font-bold text-rose-200 text-center">Biman</button>
+                  <button type="button" data-vtheme="light" class="viral-theme-btn rounded-lg p-1.5 bg-slate-100 text-[10px] font-bold text-slate-900 text-center">Clean Light</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Bangladeshi Domestic Airlines Flown -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2">
+            <div class="text-xs font-extrabold text-cyan-300 font-bangla">২. কোন কোন দেশি এয়ারলাইন্সে চড়েছেন?</div>
+            <div id="viralAirlinesCheckGrid" class="grid grid-cols-2 gap-1.5 text-xs">
+              <!-- Populated by renderViralAirlinesGrid() -->
+            </div>
+          </div>
+
+          <!-- Step 3: 64 Districts of Bangladesh Selector (Grouped by Nearest Domestic Airport Hub) -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex-1 flex flex-col gap-2 min-h-[250px]">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-emerald-300 font-bangla">৩. ৬৪ জেলার মধ্যে কোনগুলো ঘুরেছেন?</span>
+              <div class="flex items-center gap-1">
+                <button type="button" id="btnViralAutoFillHubDistricts" class="text-[10px] bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 px-2 py-0.5 rounded border border-emerald-500/40 font-bangla" title="Automatically select districts connected to your flown airports">Auto-Fill by Airport</button>
+                <button type="button" id="btnViralSelectAll64" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded border border-slate-700">All 64</button>
+              </div>
+            </div>
+            <input id="viralDistrictSearchInput" type="text" placeholder="জেলা খুঁজুন (যেমন: Dhaka, Sylhet, বান্দরবান)..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none">
+            <div id="viralDistrictsListContainer" class="flex-1 overflow-y-auto max-h-48 grid grid-cols-2 gap-1 pr-1 pt-1">
+              <!-- Populated by renderViralDistrictsList() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 3 (4 Cols): LIVE HD SOCIAL MEDIA POSTER PREVIEW (HTML5 CANVAS) & 1-CLICK SHARE / DOWNLOAD -->
+        <div class="lg:col-span-4 flex flex-col gap-3">
+          <div class="bg-slate-900/90 border border-amber-500/40 rounded-xl p-3.5 flex flex-col items-center gap-3">
+            <div class="w-full flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-300 font-bangla">🎨 লাইভ সোশ্যাল মিডিয়া পোস্টার প্রিভিউ (HD):</span>
+              <span class="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">1080 × 1350 PX</span>
+            </div>
+
+            <!-- Responsive Canvas Container -->
+            <div class="w-full bg-slate-950 rounded-xl p-2 border border-slate-800 flex items-center justify-center overflow-hidden shadow-inner">
+              <canvas id="viralPosterCanvas" width="1080" height="1350" class="w-full max-w-[330px] h-auto rounded-lg shadow-2xl"></canvas>
+            </div>
+
+            <!-- Primary Viral Action Buttons -->
+            <div class="w-full space-y-2">
+              <button type="button" id="btnDownloadViralPoster" class="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 hover:from-amber-400 hover:to-emerald-300 text-slate-950 font-black text-xs py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 font-bangla">
+                <span>📥</span>
+                <span>আপনার ম্যাপ ও বোর্ডিং পাস ডাউনলোড করুন (HD PNG)</span>
+              </button>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" id="btnCopyViralShareText" class="bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-600 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 font-bangla">
+                  <span>📋</span><span>ভাইরাল ক্যাপশন কপি</span>
+                </button>
+                <button type="button" id="btnBookDomesticInSabre" class="bg-[#e11d48] hover:bg-[#be123c] text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 font-bangla">
+                  <span>&gt;_</span><span>Sabre-এ টিকিট কাটুন</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       UI/UX, GRAPHIC DESIGN, COPYWRITING, MARKETING & PHOTOGRAPHY FRAMEWORKS MODAL
+       ============================================================================ -->
+  <div id="designFrameworksModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 select-none">
+    <div class="bg-white text-slate-800 border border-slate-200 rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="bg-gradient-to-r from-[#0f294a] via-[#1e3a8a] to-[#065f46] text-white px-6 py-4 flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono uppercase tracking-widest text-amber-300 font-bold">COMPLETE DESIGN &amp; VIRAL ENGINEERING AUDIT</div>
+          <h3 class="text-base sm:text-lg font-black font-bangla">📐 Graphic Design, UI/UX, Copywriting, Marketing &amp; Photography Frameworks Applied</h3>
+        </div>
+        <button type="button" id="btnCloseFrameworksModal" class="bg-white/15 hover:bg-white/25 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition">✕ Close</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-5 text-xs leading-relaxed">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- 1. UI/UX Design Rules -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+            <div class="font-black text-sm text-[#0f294a] flex items-center justify-between">
+              <span>1. UI/UX Design Frameworks</span>
+              <span class="text-[10px] font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Hick's + Fitts's Law</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 font-bangla">
+              <li>• <strong>Hick's Law &amp; Progressive Disclosure:</strong> স্যারের পরামর্শ অনুযায়ী এক পেজে সব অপশন গাদাগাদি না রেখে <em>Minimal Mode Toggle</em> এবং <em>Category Filter Tabs (All / Simulators / Study / Viral Map)</em> যুক্ত করা হয়েছে।</li>
+              <li>• <strong>Fitts's Law:</strong> প্রাইমারি অ্যাকশন বাটনগুলো (`Launch Sabre Red 360` ও `Create Flight Map & Pass`) বড় এবং থাম্ব-ফ্রেন্ডলি জোনে রাখা হয়েছে।</li>
+              <li>• <strong>Zero-Friction Onboarding:</strong> কোনো সাইন-আপ বা লগইন ছাড়াই ১ ক্লিকে ম্যাপ ও টার্মিনাল ব্যবহার করা যায়।</li>
+            </ul>
+          </div>
+
+          <!-- 2. Graphic Design Rules -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+            <div class="font-black text-sm text-[#0f294a] flex items-center justify-between">
+              <span>2. Graphic Design Rules</span>
+              <span class="text-[10px] font-mono bg-amber-100 text-amber-800 px-2 py-0.5 rounded">60-30-10 + Golden Ratio</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 font-bangla">
+              <li>• <strong>60-30-10 Color Rule:</strong> ৬০% আরামদায়ক নিউট্রাল ব্যাকগ্রাউন্ড (`#F8FAFC` / `#0B1120`), ৩০% স্ট্রাকচারাল কার্ড (`#FFFFFF` / `#1E293B`), এবং মাত্র ১০% অ্যাকশন কালার (Gold `#F59E0B`, Crimson `#E11D48` ও Emerald `#059669`)।</li>
+              <li>• <strong>Rule of Thirds &amp; Golden Ratio (1:1.618):</strong> হিরো ব্যানারের বাম ২/৩ অংশে (62%) ভ্যালু প্রপোজিশন ও হুক, এবং ডান ১/৩ ফোকাল পয়েন্টে (38%) লাইভ ভাইরাল ম্যাপ কার্ড।</li>
+              <li>• <strong>Bilingual Visual Hierarchy:</strong> বাংলা (`Hind Siliguri`) এবং ইংরেজি (`Inter` + `Fira Code`) ফন্টের নিখুঁত কন্ট্রাস্ট।</li>
+            </ul>
+          </div>
+
+          <!-- 3. Copywriting Frameworks -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+            <div class="font-black text-sm text-[#0f294a] flex items-center justify-between">
+              <span>3. Copywriting Frameworks</span>
+              <span class="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">SB7 + PAS + AIDA</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 font-bangla">
+              <li>• <strong>StoryBrand (SB7):</strong> শিক্ষার্থী এখানে নায়ক (Hero), আর MY AIR ACADEMY হলো গাইড—যে তাকে ৩টি সহজ ধাপে (Learn Codes ➔ Practice PNR ➔ Get Certified) সফল করে।</li>
+              <li>• <strong>PAS (Problem-Agitate-Solve):</strong> দামি পেইড GDS লাইসেন্সের সমস্যা দূর করে সম্পূর্ণ ফ্রি রিয়েল-হোস্ট সিমুলেশন।</li>
+              <li>• <strong>AIDA Hook:</strong> <em>"ডোমেস্টিক ফ্লাইটে বাংলাদেশের কোন কোন জায়গায় ভ্রমণ করেছেন?"</em>—যা দেখামাত্র ইউজার ক্লিক করতে আগ্রহী হয়।</li>
+            </ul>
+          </div>
+
+          <!-- 4. Viral Marketing Engine -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+            <div class="font-black text-sm text-[#0f294a] flex items-center justify-between">
+              <span>4. Viral Marketing Loop</span>
+              <span class="text-[10px] font-mono bg-purple-100 text-purple-800 px-2 py-0.5 rounded">Hooked + K-Factor</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 font-bangla">
+              <li>• <strong>Identity &amp; Ego Bait (Unseen Bangladesh Formula):</strong> মানুষ নিজের নাম, ছবি ও ভ্রমণের স্কোর (`8/8 Airports • 64 Districts`) বন্ধুদের দেখাতে গর্ববোধ করে।</li>
+              <li>• <strong>Gamified Rank Progression:</strong> প্রতি ক্লিকে স্কোর বাড়ে এবং <em>Sky Explorer Rank</em> আপডেট হয়।</li>
+              <li>• <strong>Built-in Watermark Attribution:</strong> ডাউনলোড করা প্রতিটি বোর্ডিং পাস ও ম্যাপ কার্ডের নিচে `MY AIR ACADEMY` ব্র্যান্ডিং থাকে, যা ফ্রি অর্গানিক মার্কেটিং নিশ্চিত করে।</li>
+            </ul>
+          </div>
+
+          <!-- 5. Photography & Visual Direction -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+            <div class="font-black text-sm text-[#0f294a] flex items-center justify-between">
+              <span>5. Photography Principles</span>
+              <span class="text-[10px] font-mono bg-rose-100 text-rose-800 px-2 py-0.5 rounded">Leading Lines + HDR</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 font-bangla">
+              <li>• <strong>Directional Leading Lines:</strong> হিরো সেকশনের কমার্শিয়াল এয়ারক্রাফটের নোজ ও উইংস সরাসরি কল-টু-অ্যাকশন (CTA) বাটনের দিকে চোখকে গাইড করে।</li>
+              <li>• <strong>Figure-Ground Contrast:</strong> বাম দিকে ডার্ক গ্রেডিয়েন্ট মাস্কিং ব্যবহার করা হয়েছে যাতে সাদা ও গোল্ডেন টেক্সট ১০০% স্পষ্টভাবে পড়া যায়।</li>
+            </ul>
+          </div>
+
+          <!-- 6. Interactive Rule of Thirds Grid Inspector -->
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col justify-between space-y-2">
+            <div>
+              <div class="font-black text-sm text-amber-900">6. Live Visual Grid Inspector</div>
+              <p class="text-amber-800 mt-1 font-bangla">
+                আপনি চাইলে হোমপেজের হিরো ব্যানারের ওপর <strong>Rule of Thirds Grid Lines</strong> অন করে আপনার স্যারকে সরাসরি দেখাতে পারবেন কীভাবে ৩ ভাগে ফোকাস পয়েন্ট তৈরি করা হয়েছে!
+              </p>
+            </div>
+            <button type="button" id="btnToggleHeroThirdsGrid" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-3 rounded-lg text-xs transition">
+              ⊞ Toggle Rule of Thirds Grid on Hero
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toastNotification" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
     <div class="bg-slate-900 border border-cyan-500/80 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2">
@@ -1841,6 +2346,39 @@
       'DACSIN': [
         { line: 1, carrier: 'SQ', flight: '447', dep: '2355', arr: '0605', eq: '359', stops: 0, classes: { Y: 9, B: 9, M: 9, Q: 7, J: 9, C: 8, D: 5, A: 2, F: 0 }, name: 'Singapore Airlines', baseFare: 44000, taxes: 11800 },
         { line: 2, carrier: 'BG', flight: '584', dep: '0815', arr: '1415', eq: '738', stops: 0, classes: { Y: 7, B: 5, M: 3, Q: 1, J: 2, C: 1, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 33000, taxes: 8700 }
+      ],
+      'DACCXB': [
+        { line: 1, carrier: 'BG', flight: '433', dep: '0800', arr: '0915', eq: '788', stops: 0, classes: { Y: 9, B: 9, M: 8, Q: 6, J: 6, C: 4, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 4200, taxes: 950 },
+        { line: 2, carrier: 'BS', flight: '141', dep: '0930', arr: '1035', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 6, Q: 4, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'US-Bangla Airlines', baseFare: 4500, taxes: 950 },
+        { line: 3, carrier: 'VQ', flight: '931', dep: '1115', arr: '1220', eq: '320', stops: 0, classes: { Y: 9, B: 7, M: 5, Q: 3, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Novoair', baseFare: 4400, taxes: 950 },
+        { line: 4, carrier: '2A', flight: '441', dep: '1340', arr: '1445', eq: '320', stops: 0, classes: { Y: 9, B: 8, M: 5, Q: 2, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Air Astra', baseFare: 4300, taxes: 950 }
+      ],
+      'DACCGP': [
+        { line: 1, carrier: 'BG', flight: '411', dep: '0730', arr: '0825', eq: '738', stops: 0, classes: { Y: 9, B: 9, M: 7, Q: 5, J: 4, C: 2, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 3200, taxes: 850 },
+        { line: 2, carrier: 'BS', flight: '101', dep: '0845', arr: '0940', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 6, Q: 4, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'US-Bangla Airlines', baseFare: 3500, taxes: 850 },
+        { line: 3, carrier: 'VQ', flight: '901', dep: '1030', arr: '1125', eq: '320', stops: 0, classes: { Y: 9, B: 7, M: 5, Q: 3, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Novoair', baseFare: 3400, taxes: 850 }
+      ],
+      'DACZYL': [
+        { line: 1, carrier: 'BG', flight: '601', dep: '0815', arr: '0905', eq: '788', stops: 0, classes: { Y: 9, B: 9, M: 7, Q: 5, J: 6, C: 3, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 3100, taxes: 850 },
+        { line: 2, carrier: 'BS', flight: '531', dep: '1020', arr: '1110', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 5, Q: 3, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'US-Bangla Airlines', baseFare: 3400, taxes: 850 },
+        { line: 3, carrier: '2A', flight: '211', dep: '1245', arr: '1335', eq: '320', stops: 0, classes: { Y: 9, B: 7, M: 4, Q: 2, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Air Astra', baseFare: 3300, taxes: 850 }
+      ],
+      'DACSPD': [
+        { line: 1, carrier: 'BG', flight: '493', dep: '0745', arr: '0845', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 6, Q: 4, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 3600, taxes: 850 },
+        { line: 2, carrier: 'BS', flight: '151', dep: '0915', arr: '1015', eq: '738', stops: 0, classes: { Y: 9, B: 7, M: 5, Q: 3, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'US-Bangla Airlines', baseFare: 3800, taxes: 850 },
+        { line: 3, carrier: 'VQ', flight: '961', dep: '1140', arr: '1240', eq: '320', stops: 0, classes: { Y: 9, B: 7, M: 4, Q: 2, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Novoair', baseFare: 3750, taxes: 850 }
+      ],
+      'DACJSR': [
+        { line: 1, carrier: 'BG', flight: '461', dep: '0830', arr: '0915', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 6, Q: 4, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 2900, taxes: 850 },
+        { line: 2, carrier: 'BS', flight: '121', dep: '1000', arr: '1045', eq: '738', stops: 0, classes: { Y: 9, B: 7, M: 5, Q: 3, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'US-Bangla Airlines', baseFare: 3100, taxes: 850 }
+      ],
+      'DACRJH': [
+        { line: 1, carrier: 'BG', flight: '481', dep: '0900', arr: '0950', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 6, Q: 4, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 3300, taxes: 850 },
+        { line: 2, carrier: 'VQ', flight: '981', dep: '1415', arr: '1505', eq: '320', stops: 0, classes: { Y: 9, B: 7, M: 5, Q: 3, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Novoair', baseFare: 3450, taxes: 850 }
+      ],
+      'DACBZL': [
+        { line: 1, carrier: 'BG', flight: '451', dep: '1015', arr: '1055', eq: '738', stops: 0, classes: { Y: 9, B: 8, M: 6, Q: 4, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'Biman Bangladesh', baseFare: 2800, taxes: 850 },
+        { line: 2, carrier: 'BS', flight: '131', dep: '1500', arr: '1540', eq: '738', stops: 0, classes: { Y: 9, B: 7, M: 4, Q: 2, J: 0, C: 0, D: 0, A: 0, F: 0 }, name: 'US-Bangla Airlines', baseFare: 3000, taxes: 850 }
       ]
     };
 
@@ -2095,6 +2633,10 @@
       { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: 'CHITTAGONG (SHAH AMANAT)', code: 'CGP', cap: false, cur: 'BDT' },
       { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: 'SYLHET (OSMANI INTL)', code: 'ZYL', cap: false, cur: 'BDT' },
       { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: "COX'S BAZAR", code: 'CXB', cap: false, cur: 'BDT' },
+      { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: 'SAIDPUR (NILPHAMARI)', code: 'SPD', cap: false, cur: 'BDT' },
+      { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: 'JASHORE (JESSORE)', code: 'JSR', cap: false, cur: 'BDT' },
+      { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: 'RAJSHAHI (SHAH MAKHDUM)', code: 'RJH', cap: false, cur: 'BDT' },
+      { tc: 'TC3', region: 'Asia (South Asian Subcontinent)', country: 'BANGLADESH', cCode: 'BD', city: 'BARISHAL', code: 'BZL', cap: false, cur: 'BDT' },
       { tc: 'TC3', region: 'Asia (South East Asia)', country: 'CHINA', cCode: 'CN', city: 'BEIJING ©', code: 'BJS', cap: true, cur: 'CNY' },
       { tc: 'TC3', region: 'Asia (South East Asia)', country: 'CHINA', cCode: 'CN', city: 'SHANGHAI', code: 'SHA', cap: false, cur: 'CNY' },
       { tc: 'TC3', region: 'Asia (South East Asia)', country: 'CHINA', cCode: 'CN', city: 'GUANGZHOU', code: 'CAN', cap: false, cur: 'CNY' },
@@ -8361,6 +8903,878 @@
         navigator.clipboard?.writeText(text);
         showToast('E-Ticket Passenger Receipt Copied to Clipboard!');
       });
+
+      /* ======================================================================
+         UNSEEN SKY BANGLADESH: VIRAL DOMESTIC FLIGHT MAP (8 AIRPORTS),
+         64 DISTRICTS & VIP BOARDING PASS STUDIO + 60-30-10 UX CONTROLLERS
+         ====================================================================== */
+      const BD_DOMESTIC_AIRPORTS = [
+        { code: 'DAC', icao: 'VGHS', name: 'Hazrat Shahjalal Intl', bn: 'ঢাকা (হযরত শাহজালাল)', division: 'Dhaka', lat: 23.8433, lng: 90.3978, svgX: 255, svgY: 300, milesFromDac: 50, duration: 'Hub', airlines: ['BG', 'BS', 'VQ', '2A'], districts: ['Dhaka', 'Gazipur', 'Narayanganj', 'Narsingdi', 'Manikganj', 'Munshiganj', 'Tangail', 'Kishoreganj', 'Faridpur', 'Gopalganj', 'Madaripur', 'Rajbari', 'Shariatpur', 'Mymensingh', 'Jamalpur', 'Netrokona', 'Sherpur', 'Comilla', 'Brahmanbaria', 'Chandpur'] },
+        { code: 'CXB', icao: 'VGCB', name: "Cox's Bazar Airport", bn: 'কক্সবাজার বিমানবন্দর', division: 'Chattogram', lat: 21.4522, lng: 91.9639, svgX: 392, svgY: 545, milesFromDac: 195, duration: '1h 05m', airlines: ['BG', 'BS', 'VQ', '2A'], districts: ["Cox's Bazar", 'Bandarban'] },
+        { code: 'CGP', icao: 'VGEG', name: 'Shah Amanat Intl', bn: 'চট্টগ্রাম (শাহ আমানত)', division: 'Chattogram', lat: 22.2496, lng: 91.8133, svgX: 372, svgY: 455, milesFromDac: 148, duration: '50m', airlines: ['BG', 'BS', 'VQ', '2A'], districts: ['Chattogram', 'Rangamati', 'Khagrachhari', 'Noakhali', 'Feni', 'Lakshmipur'] },
+        { code: 'ZYL', icao: 'VGSY', name: 'Osmani Intl Airport', bn: 'সিলেট (ওসমানী বিমানবন্দর)', division: 'Sylhet', lat: 24.9656, lng: 91.8672, svgX: 382, svgY: 185, milesFromDac: 125, duration: '45m', airlines: ['BG', 'BS', 'VQ', '2A'], districts: ['Sylhet', 'Moulvibazar', 'Habiganj', 'Sunamganj'] },
+        { code: 'SPD', icao: 'VGSD', name: 'Saidpur Airport', bn: 'সৈয়দপুর বিমানবন্দর (রংপুর)', division: 'Rangpur', lat: 25.7592, lng: 88.9089, svgX: 132, svgY: 105, milesFromDac: 165, duration: '55m', airlines: ['BG', 'BS', 'VQ', '2A'], districts: ['Nilphamari', 'Rangpur', 'Dinajpur', 'Panchagarh', 'Thakurgaon', 'Kurigram', 'Lalmonirhat', 'Gaibandha'] },
+        { code: 'JSR', icao: 'VGJR', name: 'Jashore Airport', bn: 'যশোর বিমানবন্দর (খুলনা)', division: 'Khulna', lat: 23.1838, lng: 89.1608, svgX: 152, svgY: 372, milesFromDac: 95, duration: '40m', airlines: ['BG', 'BS', 'VQ', '2A'], districts: ['Jashore', 'Khulna', 'Satkhira', 'Bagerhat', 'Narail', 'Magura', 'Jhenaidah', 'Kushtia', 'Chuadanga', 'Meherpur'] },
+        { code: 'RJH', icao: 'VGRJ', name: 'Shah Makhdum Airport', bn: 'রাজশাহী (শাহ মখদুম)', division: 'Rajshahi', lat: 24.4369, lng: 88.6164, svgX: 105, svgY: 245, milesFromDac: 132, duration: '45m', airlines: ['BG', 'BS', 'VQ'], districts: ['Rajshahi', 'Chapainawabganj', 'Natore', 'Naogaon', 'Pabna', 'Sirajganj', 'Bogura', 'Joypurhat'] },
+        { code: 'BZL', icao: 'VGBR', name: 'Barishal Airport', bn: 'বরিশাল বিমানবন্দর (কুয়াকাটা)', division: 'Barishal', lat: 22.8011, lng: 90.3011, svgX: 252, svgY: 418, milesFromDac: 78, duration: '35m', airlines: ['BG', 'BS'], districts: ['Barishal', 'Patuakhali', 'Bhola', 'Pirojpur', 'Barguna', 'Jhalokati'] }
+      ];
+
+      const BD_DOMESTIC_AIRLINES = [
+        { code: 'BG', name: 'Biman Bangladesh', bn: 'বিমান বাংলাদেশ', fleet: 'B787 / Dash 8-Q400', color: '#dc2626' },
+        { code: 'BS', name: 'US-Bangla Airlines', bn: 'ইউএস-বাংলা', fleet: 'B737 / ATR 72-600', color: '#0284c7' },
+        { code: 'VQ', name: 'Novoair', bn: 'নভোএয়ার', fleet: 'ATR 72-500', color: '#f59e0b' },
+        { code: '2A', name: 'Air Astra', bn: 'এয়ার অ্যাস্ট্রা', fleet: 'ATR 72-600', color: '#10b981' }
+      ];
+
+      const BD_DIVISION_POLYGONS = [
+        { name: 'Rangpur', hub: 'SPD', path: 'M 75,35 L 185,42 L 205,135 L 165,165 L 85,150 Z' },
+        { name: 'Rajshahi', hub: 'RJH', path: 'M 85,150 L 165,165 L 205,215 L 195,295 L 80,275 Z' },
+        { name: 'Mymensingh', hub: 'DAC', path: 'M 205,135 L 325,145 L 320,225 L 205,215 Z' },
+        { name: 'Sylhet', hub: 'ZYL', path: 'M 325,145 L 445,155 L 435,255 L 320,240 Z' },
+        { name: 'Dhaka', hub: 'DAC', path: 'M 195,215 L 320,225 L 325,365 L 205,365 Z' },
+        { name: 'Khulna', hub: 'JSR', path: 'M 105,275 L 195,295 L 205,485 L 118,475 Z' },
+        { name: 'Barishal', hub: 'BZL', path: 'M 205,365 L 305,375 L 295,495 L 205,485 Z' },
+        { name: 'Chattogram', hub: 'CGP', path: 'M 325,245 L 435,255 L 440,585 L 365,595 L 305,435 Z' }
+      ];
+
+      // Build complete 64 districts list mapped to their domestic airport hub
+      const ALL_64_DISTRICTS = [];
+      BD_DOMESTIC_AIRPORTS.forEach(ap => {
+        ap.districts.forEach(d => {
+          ALL_64_DISTRICTS.push({ name: d, hub: ap.code, division: ap.division });
+        });
+      });
+
+      // Default initial state: DAC & CXB selected so preview looks immediately vibrant & inspiring!
+      let viralState = {
+        airports: ['DAC', 'CXB', 'ZYL'],
+        airlines: ['BG', 'BS'],
+        districts: ['Dhaka', "Cox's Bazar", 'Sylhet'],
+        travelerName: 'MOKTADA AS SADAR TAWHA',
+        dreamRoute: 'DAC ✈ CXB',
+        seatClass: '1A • FIRST CLASS',
+        theme: 'emerald',
+        photoDataUrl: null,
+        mapMode: 'svg',
+        lang: 'bn',
+        minimalHome: false
+      };
+
+      try {
+        const savedViral = localStorage.getItem('my_air_academy_viral_v1');
+        if (savedViral) {
+          const parsed = JSON.parse(savedViral);
+          if (parsed && Array.isArray(parsed.airports)) {
+            viralState = Object.assign(viralState, parsed);
+          }
+        }
+      } catch (e) {}
+
+      function saveViralState() {
+        try {
+          localStorage.setItem('my_air_academy_viral_v1', JSON.stringify(viralState));
+        } catch (e) {}
+      }
+
+      function getSkyExplorerRank(apCount, distCount) {
+        if (apCount >= 8 || distCount >= 50) return { title: '🏆 বেঙ্গল স্কাই লিজেন্ড (Legend of Bengal Skies)', en: 'LEGEND OF BENGAL SKIES' };
+        if (apCount >= 5 || distCount >= 25) return { title: '👨‍✈️ ডোমেস্টিক স্কাই ক্যাপ্টেন (Sky Captain)', en: 'DOMESTIC SKY CAPTAIN' };
+        if (apCount >= 3 || distCount >= 10) return { title: '✈️ ক্লাউড হপার এক্সপ্লোরার (Cloud Hopper)', en: 'CLOUD HOPPER EXPLORER' };
+        if (apCount >= 1 || distCount >= 1) return { title: '🛫 টেক-অফ ট্রাভেলার (Take-Off Flyer)', en: 'TAKE-OFF FLYER' };
+        return { title: '🎫 বোর্ডিং গেট রুকি (Ready for Take-Off)', en: 'READY FOR TAKE-OFF' };
+      }
+
+      function computeViralStats() {
+        const apCount = viralState.airports.length;
+        const distCount = viralState.districts.length;
+        const alCount = viralState.airlines.length;
+        const skyPct = Math.round(((apCount / 8) * 0.65 + (distCount / 64) * 0.35) * 100);
+        const totalMiles = BD_DOMESTIC_AIRPORTS
+          .filter(a => viralState.airports.includes(a.code))
+          .reduce((sum, a) => sum + a.milesFromDac, 0);
+        const rank = getSkyExplorerRank(apCount, distCount);
+        return { apCount, distCount, alCount, skyPct, totalMiles, rank };
+      }
+
+      function renderHomeQuickAirportPills() {
+        const container = document.getElementById('homeQuickAirportPills');
+        if (!container) return;
+        container.innerHTML = BD_DOMESTIC_AIRPORTS.map(ap => {
+          const active = viralState.airports.includes(ap.code);
+          return `
+            <button type="button" data-apcode="${ap.code}" class="home-quick-ap-pill px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+              active
+                ? 'bg-emerald-500 text-slate-950 border-emerald-300 shadow-sm'
+                : 'bg-slate-900/70 text-slate-200 border-slate-700 hover:border-emerald-400'
+            }">
+              <span>${active ? '✓' : '✈'}</span>
+              <span class="font-mono font-black">${ap.code}</span>
+              <span class="font-bangla text-[11px]">${ap.bn.split(' ')[0]}</span>
+            </button>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.home-quick-ap-pill').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const code = e.currentTarget.getAttribute('data-apcode');
+            toggleAirportSelection(code);
+          });
+        });
+      }
+
+      function updateHomeViralSummaryWidgets() {
+        const st = computeViralStats();
+        const pctBadge = document.getElementById('heroWidgetPctBadge');
+        const apEl = document.getElementById('heroWidgetAirportsCount');
+        const dtEl = document.getElementById('heroWidgetDistrictsCount');
+        const mlEl = document.getElementById('heroWidgetMilesCount');
+        if (pctBadge) pctBadge.textContent = `${st.skyPct}%`;
+        if (apEl) apEl.textContent = `${st.apCount}/8`;
+        if (dtEl) dtEl.textContent = `${st.distCount}/64`;
+        if (mlEl) mlEl.textContent = `${st.totalMiles}`;
+
+        const rankTitle = document.getElementById('homeViralRankTitle');
+        const scoreBig = document.getElementById('homeViralScoreBig');
+        const progBar = document.getElementById('homeViralProgressBar');
+        const distTxt = document.getElementById('homeViralDistText');
+        const alTxt = document.getElementById('homeViralAirlinesText');
+        if (rankTitle) rankTitle.textContent = st.rank.title;
+        if (scoreBig) scoreBig.textContent = `${st.apCount}/8`;
+        if (progBar) progBar.style.width = `${Math.max(4, st.skyPct)}%`;
+        if (distTxt) distTxt.textContent = `${st.distCount}/64 (${Math.round((st.distCount / 64) * 100)}%)`;
+        if (alTxt) alTxt.textContent = `${st.alCount}/4`;
+
+        const mRank = document.getElementById('viralModalRankBadge');
+        const mSub = document.getElementById('viralModalSubStats');
+        const mPct = document.getElementById('viralModalPctBig');
+        if (mRank) mRank.textContent = `${st.rank.title}`;
+        if (mSub) mSub.textContent = `${st.apCount}/8 বিমানবন্দর • ${st.distCount}/64 জেলা • ${st.totalMiles} এয়ার মাইলস`;
+        if (mPct) mPct.textContent = `${st.skyPct}%`;
+      }
+
+      function toggleAirportSelection(code) {
+        const idx = viralState.airports.indexOf(code);
+        const apObj = BD_DOMESTIC_AIRPORTS.find(a => a.code === code);
+        if (idx >= 0) {
+          viralState.airports.splice(idx, 1);
+        } else {
+          viralState.airports.push(code);
+          // Also ensure primary city district is checked
+          if (apObj && apObj.districts[0] && !viralState.districts.includes(apObj.districts[0])) {
+            viralState.districts.push(apObj.districts[0]);
+          }
+        }
+        saveViralState();
+        refreshAllViralViews();
+      }
+
+      function renderViralSvgRadarMap() {
+        const regGroup = document.getElementById('bdDivisionRegionsGroup');
+        const arcsGroup = document.getElementById('bdFlightArcsGroup');
+        const nodesGroup = document.getElementById('bdAirportNodesGroup');
+        if (!regGroup || !arcsGroup || !nodesGroup) return;
+
+        // 1. Render Division Polygons
+        regGroup.innerHTML = BD_DIVISION_POLYGONS.map(div => {
+          const isVisited = viralState.airports.includes(div.hub);
+          return `
+            <path d="${div.path}"
+              fill="${isVisited ? 'rgba(16, 185, 129, 0.25)' : 'rgba(30, 41, 59, 0.55)'}"
+              stroke="${isVisited ? '#34d399' : '#334155'}"
+              stroke-width="${isVisited ? '2' : '1.2'}"
+              class="cursor-pointer transition-all duration-300"
+              data-hub="${div.hub}"
+            />
+          `;
+        }).join('');
+
+        regGroup.querySelectorAll('path').forEach(p => {
+          p.addEventListener('click', (e) => {
+            toggleAirportSelection(e.currentTarget.getAttribute('data-hub'));
+          });
+        });
+
+        // 2. Render Flight Route Arcs from Dhaka (DAC)
+        const dac = BD_DOMESTIC_AIRPORTS[0];
+        arcsGroup.innerHTML = BD_DOMESTIC_AIRPORTS.slice(1).map(ap => {
+          const active = viralState.airports.includes(ap.code) && viralState.airports.includes('DAC');
+          const midX = (dac.svgX + ap.svgX) / 2 + (ap.svgY > dac.svgY ? 22 : -22);
+          const midY = (dac.svgY + ap.svgY) / 2 - 18;
+          return `
+            <path d="M ${dac.svgX},${dac.svgY} Q ${midX},${midY} ${ap.svgX},${ap.svgY}"
+              fill="none"
+              stroke="${active ? 'url(#activeArcGrad)' : '#1e293b'}"
+              stroke-width="${active ? '2.8' : '1.2'}"
+              class="${active ? 'flight-arc-animated' : ''}"
+            />
+          `;
+        }).join('');
+
+        // 3. Render 8 Airport Nodes
+        nodesGroup.innerHTML = BD_DOMESTIC_AIRPORTS.map(ap => {
+          const active = viralState.airports.includes(ap.code);
+          return `
+            <g class="bd-svg-airport-node cursor-pointer" data-apcode="${ap.code}" transform="translate(${ap.svgX}, ${ap.svgY})">
+              ${active ? `<circle r="18" fill="rgba(16, 185, 129, 0.22)" stroke="#34d399" stroke-width="1"/>` : ''}
+              <circle r="10" fill="${active ? '#10b981' : '#0f172a'}" stroke="${active ? '#fef08a' : '#64748b'}" stroke-width="2.2"/>
+              <text y="3.5" text-anchor="middle" fill="${active ? '#022c22' : '#e2e8f0'}" font-size="8" font-weight="900" font-family="Fira Code, monospace">✈</text>
+              <rect x="-24" y="13" width="48" height="15" rx="4" fill="${active ? '#064e3b' : '#0f172a'}" stroke="${active ? '#34d399' : '#334155'}" stroke-width="1"/>
+              <text y="23.5" text-anchor="middle" fill="${active ? '#fde047' : '#94a3b8'}" font-size="9.5" font-weight="800" font-family="Fira Code, monospace">${ap.code}</text>
+            </g>
+          `;
+        }).join('');
+
+        nodesGroup.querySelectorAll('.bd-svg-airport-node').forEach(node => {
+          node.addEventListener('click', (e) => {
+            const code = e.currentTarget.getAttribute('data-apcode');
+            toggleAirportSelection(code);
+          });
+        });
+      }
+
+      // Leaflet Map Instance for Satellite / Street GIS View
+      let viralLeafletMap = null;
+      let viralLeafletLayerGroup = null;
+      function initOrUpdateViralLeafletMap() {
+        const container = document.getElementById('viralLeafletMapContainer');
+        if (!container || typeof L === 'undefined') return;
+        if (!viralLeafletMap) {
+          viralLeafletMap = L.map('viralLeafletMapContainer', {
+            center: [23.6850, 90.3563],
+            zoom: 7,
+            zoomControl: true
+          });
+          L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; CAAB Bangladesh Domestic Airspace'
+          }).addTo(viralLeafletMap);
+          viralLeafletLayerGroup = L.layerGroup().addTo(viralLeafletMap);
+        }
+        viralLeafletLayerGroup.clearLayers();
+        const dac = BD_DOMESTIC_AIRPORTS[0];
+        BD_DOMESTIC_AIRPORTS.slice(1).forEach(ap => {
+          const isActive = viralState.airports.includes(ap.code) && viralState.airports.includes('DAC');
+          L.polyline([[dac.lat, dac.lng], [ap.lat, ap.lng]], {
+            color: isActive ? '#fbbf24' : '#475569',
+            weight: isActive ? 3 : 1.5,
+            dashArray: isActive ? '6, 6' : '3, 6',
+            opacity: isActive ? 0.95 : 0.5
+          }).addTo(viralLeafletLayerGroup);
+        });
+
+        BD_DOMESTIC_AIRPORTS.forEach(ap => {
+          const active = viralState.airports.includes(ap.code);
+          const marker = L.circleMarker([ap.lat, ap.lng], {
+            radius: active ? 10 : 7,
+            fillColor: active ? '#10b981' : '#1e293b',
+            color: active ? '#fde047' : '#94a3b8',
+            weight: 2.5,
+            fillOpacity: 0.95
+          }).addTo(viralLeafletLayerGroup);
+          marker.bindTooltip(`<b>${ap.code} (${ap.icao})</b> — ${ap.bn}`, { permanent: false, direction: 'top' });
+          marker.on('click', () => toggleAirportSelection(ap.code));
+        });
+      }
+
+      function renderViralAirportCards() {
+        const grid = document.getElementById('viralAirportCardsGrid');
+        if (!grid) return;
+        grid.innerHTML = BD_DOMESTIC_AIRPORTS.map(ap => {
+          const active = viralState.airports.includes(ap.code);
+          return `
+            <button type="button" data-apcode="${ap.code}" class="viral-ap-card p-2.5 rounded-xl border text-left transition flex items-center justify-between ${
+              active
+                ? 'bg-emerald-950/80 border-emerald-400 text-white shadow-md'
+                : 'bg-slate-950/70 border-slate-800 text-slate-400 hover:border-slate-600'
+            }">
+              <div class="min-w-0 pr-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-mono font-black text-xs ${active ? 'text-amber-300' : 'text-slate-300'}">${ap.code}</span>
+                  <span class="text-[10px] font-mono text-slate-400">${ap.icao}</span>
+                  <span class="text-[10px] bg-slate-800 px-1.5 rounded text-cyan-300 font-mono">${ap.duration}</span>
+                </div>
+                <div class="text-xs font-bold font-bangla truncate mt-0.5 ${active ? 'text-white' : 'text-slate-300'}">${ap.bn}</div>
+                <div class="text-[10px] text-slate-400 truncate">${ap.districts.length} Districts Hub</div>
+              </div>
+              <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                active ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+              }">${active ? '✓' : '+'}</span>
+            </button>
+          `;
+        }).join('');
+
+        grid.querySelectorAll('.viral-ap-card').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            toggleAirportSelection(e.currentTarget.getAttribute('data-apcode'));
+          });
+        });
+      }
+
+      function renderViralAirlinesGrid() {
+        const grid = document.getElementById('viralAirlinesCheckGrid');
+        if (!grid) return;
+        grid.innerHTML = BD_DOMESTIC_AIRLINES.map(al => {
+          const active = viralState.airlines.includes(al.code);
+          return `
+            <button type="button" data-alcode="${al.code}" class="viral-al-btn p-2 rounded-lg border text-left transition flex items-center justify-between ${
+              active
+                ? 'bg-sky-950/80 border-cyan-400 text-white'
+                : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+            }">
+              <div>
+                <div class="font-mono font-black text-xs text-amber-300">${al.code} • ${al.bn}</div>
+                <div class="text-[10px] text-slate-400">${al.fleet}</div>
+              </div>
+              <span class="text-xs font-bold ${active ? 'text-emerald-400' : 'text-slate-600'}">${active ? '✓' : '○'}</span>
+            </button>
+          `;
+        }).join('');
+
+        grid.querySelectorAll('.viral-al-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const code = e.currentTarget.getAttribute('data-alcode');
+            const idx = viralState.airlines.indexOf(code);
+            if (idx >= 0) viralState.airlines.splice(idx, 1);
+            else viralState.airlines.push(code);
+            saveViralState();
+            refreshAllViralViews();
+          });
+        });
+      }
+
+      function renderViralDistrictsList() {
+        const container = document.getElementById('viralDistrictsListContainer');
+        if (!container) return;
+        const q = (document.getElementById('viralDistrictSearchInput')?.value || '').trim().toLowerCase();
+        const filtered = ALL_64_DISTRICTS.filter(d => !q || d.name.toLowerCase().includes(q) || d.hub.toLowerCase().includes(q));
+        container.innerHTML = filtered.map(d => {
+          const active = viralState.districts.includes(d.name);
+          return `
+            <button type="button" data-dist="${d.name}" class="viral-dist-btn px-2 py-1 rounded border text-left text-[11px] flex items-center justify-between transition ${
+              active
+                ? 'bg-emerald-900/60 border-emerald-400/80 text-emerald-100 font-bold'
+                : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+            }">
+              <span class="truncate">${d.name}</span>
+              <span class="text-[9px] font-mono ${active ? 'text-amber-300' : 'text-slate-600'}">${d.hub}</span>
+            </button>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.viral-dist-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const dist = e.currentTarget.getAttribute('data-dist');
+            const idx = viralState.districts.indexOf(dist);
+            if (idx >= 0) viralState.districts.splice(idx, 1);
+            else viralState.districts.push(dist);
+            saveViralState();
+            refreshAllViralViews();
+          });
+        });
+      }
+
+      // Render High-Resolution 1080x1350 Social Media Poster (Bangladesh Domestic Flight Map + VIP Boarding Pass)
+      function renderViralPosterCanvas() {
+        const canvas = document.getElementById('viralPosterCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width;
+        const H = canvas.height;
+        const st = computeViralStats();
+
+        const palettes = {
+          emerald: { bg1: '#042f2e', bg2: '#021716', card: '#064e3b', accent: '#fbbf24', mapFill: '#10b981', mapEmpty: '#0f2926', text: '#ffffff', sub: '#a7f3d0' },
+          gold:    { bg1: '#1c1917', bg2: '#090d16', card: '#292524', accent: '#f59e0b', mapFill: '#f59e0b', mapEmpty: '#1f2937', text: '#ffffff', sub: '#fde68a' },
+          sabre:   { bg1: '#071326', bg2: '#030712', card: '#0f294a', accent: '#38bdf8', mapFill: '#0284c7', mapEmpty: '#1e293b', text: '#ffffff', sub: '#bae6fd' },
+          biman:   { bg1: '#4c0519', bg2: '#022c22', card: '#064e3b', accent: '#f43f5e', mapFill: '#10b981', mapEmpty: '#1f2937', text: '#ffffff', sub: '#fecdd3' },
+          light:   { bg1: '#f8fafc', bg2: '#e2e8f0', card: '#ffffff', accent: '#0f294a', mapFill: '#059669', mapEmpty: '#cbd5e1', text: '#0f172a', sub: '#334155' }
+        };
+        const pal = palettes[viralState.theme] || palettes.emerald;
+
+        // 1. Background Gradient (60% Dominant Rule)
+        const grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, pal.bg1);
+        grad.addColorStop(1, pal.bg2);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Decorative Aviation Radar Circles
+        ctx.strokeStyle = viralState.theme === 'light' ? 'rgba(15, 23, 42, 0.07)' : 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 2;
+        [180, 310, 440].forEach(r => {
+          ctx.beginPath();
+          ctx.arc(W / 2, 530, r, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+
+        // 2. Top Header: Traveler Name & Rank Badge
+        const cleanName = (viralState.travelerName || 'TRAVELER').toUpperCase().trim();
+        ctx.fillStyle = pal.accent;
+        ctx.font = '900 24px "Fira Code", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('✈️ UNSEEN SKY BANGLADESH • DOMESTIC FLIGHT RECORD', 60, 72);
+
+        ctx.fillStyle = pal.text;
+        ctx.font = '900 46px "Inter", sans-serif';
+        ctx.fillText(`${cleanName}'S SKY BANGLADESH`, 60, 130);
+
+        ctx.fillStyle = pal.sub;
+        ctx.font = '700 24px "Hind Siliguri", "Inter", sans-serif';
+        ctx.fillText(`${st.rank.title}  •  ${st.skyPct}% Sky Explored`, 60, 170);
+
+        // Optional User Avatar / Badge on Top Right
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(W - 125, 120, 62, 0, Math.PI * 2);
+        ctx.fillStyle = pal.card;
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = pal.accent;
+        ctx.stroke();
+        if (viralPhotoImgElement) {
+          ctx.clip();
+          ctx.drawImage(viralPhotoImgElement, W - 187, 58, 124, 124);
+        } else {
+          ctx.fillStyle = pal.accent;
+          ctx.font = '900 48px "Inter", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('👨‍✈️', W - 125, 136);
+        }
+        ctx.restore();
+
+        // 3. Center Artboard: Bangladesh Map + 8 Airports + Flight Arcs (Scaled to Canvas)
+        ctx.save();
+        ctx.translate(145, 195);
+        const scale = 1.18;
+        ctx.scale(scale, scale);
+
+        BD_DIVISION_POLYGONS.forEach(div => {
+          const isVisited = viralState.airports.includes(div.hub);
+          const p = new Path2D(div.path);
+          ctx.fillStyle = isVisited ? pal.mapFill : pal.mapEmpty;
+          ctx.globalAlpha = isVisited ? 0.82 : 0.55;
+          ctx.fill(p);
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = isVisited ? pal.accent : 'rgba(148, 163, 184, 0.45)';
+          ctx.lineWidth = isVisited ? 3 : 1.5;
+          ctx.stroke(p);
+        });
+
+        // Draw Flight Route Arcs from DAC
+        const dac = BD_DOMESTIC_AIRPORTS[0];
+        BD_DOMESTIC_AIRPORTS.slice(1).forEach(ap => {
+          const active = viralState.airports.includes(ap.code) && viralState.airports.includes('DAC');
+          const midX = (dac.svgX + ap.svgX) / 2 + (ap.svgY > dac.svgY ? 22 : -22);
+          const midY = (dac.svgY + ap.svgY) / 2 - 18;
+          ctx.beginPath();
+          ctx.moveTo(dac.svgX, dac.svgY);
+          ctx.quadraticCurveTo(midX, midY, ap.svgX, ap.svgY);
+          ctx.strokeStyle = active ? pal.accent : 'rgba(148, 163, 184, 0.28)';
+          ctx.lineWidth = active ? 3.5 : 1.5;
+          ctx.setLineDash(active ? [8, 6] : [4, 6]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        });
+
+        // Draw 8 Airport Pins
+        BD_DOMESTIC_AIRPORTS.forEach(ap => {
+          const active = viralState.airports.includes(ap.code);
+          ctx.beginPath();
+          ctx.arc(ap.svgX, ap.svgY, active ? 13 : 9, 0, Math.PI * 2);
+          ctx.fillStyle = active ? pal.accent : '#1e293b';
+          ctx.fill();
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = '#ffffff';
+          ctx.stroke();
+
+          ctx.fillStyle = pal.text;
+          ctx.font = '900 15px "Fira Code", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${ap.code}`, ap.svgX, ap.svgY + 30);
+        });
+        ctx.restore();
+
+        // Right-side KPI Score Tower inside Map Area
+        const statsX = 760;
+        const kpiBoxes = [
+          { label: 'AIRPORTS FLOWN', val: `${st.apCount} / 8`, sub: 'Operational Hubs' },
+          { label: 'DISTRICTS VISITED', val: `${st.distCount} / 64`, sub: `${Math.round((st.distCount / 64) * 100)}% of Bangladesh` },
+          { label: 'AIRLINES FLOWN', val: viralState.airlines.join(' • ') || 'NONE', sub: `${st.alCount} BD Carriers` },
+          { label: 'DOMESTIC MILES', val: `${st.totalMiles} MI`, sub: 'Logged Air Distance' }
+        ];
+        kpiBoxes.forEach((box, i) => {
+          const by = 240 + i * 150;
+          ctx.fillStyle = viralState.theme === 'light' ? 'rgba(255,255,255,0.92)' : 'rgba(15, 23, 42, 0.82)';
+          ctx.strokeStyle = pal.accent;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.roundRect(statsX, by, 260, 125, 18);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = pal.accent;
+          ctx.font = '800 16px "Fira Code", monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText(box.label, statsX + 22, by + 36);
+
+          ctx.fillStyle = pal.text;
+          ctx.font = '900 34px "Inter", sans-serif';
+          ctx.fillText(box.val, statsX + 22, by + 80);
+
+          ctx.fillStyle = pal.sub;
+          ctx.font = '600 16px "Inter", sans-serif';
+          ctx.fillText(box.sub, statsX + 22, by + 106);
+        });
+
+        // 4. Bottom VIP Aviation Boarding Pass Card (y = 930 to 1245)
+        const passY = 935;
+        ctx.fillStyle = viralState.theme === 'light' ? '#0f172a' : '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(55, passY, W - 110, 305, 26);
+        ctx.fill();
+
+        // Gold/Emerald Top Ribbon on Boarding Pass
+        ctx.fillStyle = pal.accent;
+        ctx.beginPath();
+        ctx.roundRect(55, passY, W - 110, 58, [26, 26, 0, 0]);
+        ctx.fill();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '900 22px "Fira Code", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('🎫 OFFICIAL VIP SKY EXPLORER BOARDING PASS', 85, passY + 37);
+        ctx.textAlign = 'right';
+        ctx.fillText('SABRE GDS • PNR: SKY26B', W - 85, passY + 37);
+
+        const passTextMain = viralState.theme === 'light' ? '#ffffff' : '#0f172a';
+        const passTextSub = viralState.theme === 'light' ? '#94a3b8' : '#475569';
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = passTextSub;
+        ctx.font = '700 16px "Fira Code", monospace';
+        ctx.fillText('PASSENGER NAME', 85, passY + 98);
+        ctx.fillText('FEATURED ROUTE', 480, passY + 98);
+        ctx.fillText('SEAT & CABIN', 790, passY + 98);
+
+        ctx.fillStyle = passTextMain;
+        ctx.font = '900 28px "Inter", sans-serif';
+        ctx.fillText(cleanName.slice(0, 22), 85, passY + 134);
+        ctx.fillText(viralState.dreamRoute, 480, passY + 134);
+        ctx.fillText(viralState.seatClass.split('•')[0].trim(), 790, passY + 134);
+
+        ctx.fillStyle = passTextSub;
+        ctx.font = '700 16px "Fira Code", monospace';
+        ctx.fillText('FLOWN AIRPORTS IN BANGLADESH (IATA CODES)', 85, passY + 188);
+        ctx.fillText('STATUS', 790, passY + 188);
+
+        ctx.fillStyle = '#059669';
+        ctx.font = '900 26px "Fira Code", monospace';
+        ctx.fillText(viralState.airports.length ? viralState.airports.join(' • ') : 'NONE SELECTED YET', 85, passY + 225);
+        ctx.fillText('CONFIRMED HK1', 790, passY + 225);
+
+        // Barcode Strip at bottom of Boarding Pass
+        ctx.fillStyle = passTextMain;
+        for (let bx = 85; bx < W - 95; bx += 9) {
+          const bw = (bx % 27 === 0) ? 5 : ((bx % 18 === 0) ? 2 : 3.5);
+          ctx.fillRect(bx, passY + 248, bw, 36);
+        }
+
+        // 5. Viral Attribution Footer
+        ctx.fillStyle = pal.sub;
+        ctx.font = '700 20px "Inter", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Create your Free Bangladesh Flight Map & Practice Real Sabre GDS at MY AIR ACADEMY', W / 2, 1305);
+      }
+
+      let viralPhotoImgElement = null;
+      function refreshAllViralViews() {
+        renderHomeQuickAirportPills();
+        updateHomeViralSummaryWidgets();
+        renderViralSvgRadarMap();
+        renderViralAirportCards();
+        renderViralAirlinesGrid();
+        renderViralDistrictsList();
+        renderViralPosterCanvas();
+        if (viralState.mapMode === 'leaflet') {
+          initOrUpdateViralLeafletMap();
+        }
+      }
+
+      function openViralStudioModal() {
+        document.getElementById('viralFlightMapModal')?.classList.remove('hidden');
+        refreshAllViralViews();
+      }
+
+      // Hook up handlePortalNavigation for 'viral-map' and 'frameworks'
+      const origHandlePortalNav = handlePortalNavigation;
+      handlePortalNavigation = function(target) {
+        if (target === 'viral-map') {
+          openViralStudioModal();
+          return;
+        }
+        if (target === 'frameworks') {
+          document.getElementById('designFrameworksModal')?.classList.remove('hidden');
+          return;
+        }
+        origHandlePortalNav(target);
+      };
+
+      // Re-bind any newly added .dash-launch-card and .home-nav-launch buttons
+      document.querySelectorAll('.dash-launch-card, .home-nav-launch').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const t = e.currentTarget.getAttribute('data-target');
+          if (t === 'viral-map' || t === 'frameworks') {
+            handlePortalNavigation(t);
+          }
+        });
+      });
+
+      document.getElementById('btnTopOpenViralMap')?.addEventListener('click', openViralStudioModal);
+      document.getElementById('btnHeroOpenViralMap')?.addEventListener('click', openViralStudioModal);
+      document.getElementById('btnHeroCardOpenViralMap')?.addEventListener('click', openViralStudioModal);
+      document.getElementById('btnBannerOpenViralStudio')?.addEventListener('click', openViralStudioModal);
+      document.getElementById('btnCloseViralMapModal')?.addEventListener('click', () => {
+        document.getElementById('viralFlightMapModal')?.classList.add('hidden');
+      });
+
+      document.getElementById('btnViralResetAll')?.addEventListener('click', () => {
+        viralState.airports = [];
+        viralState.airlines = [];
+        viralState.districts = [];
+        saveViralState();
+        refreshAllViralViews();
+        showToast('সব বিমানবন্দর ও জেলা রিসেট করা হয়েছে (Reset Complete)');
+      });
+
+      document.getElementById('btnViralSelectAllAirports')?.addEventListener('click', () => {
+        viralState.airports = BD_DOMESTIC_AIRPORTS.map(a => a.code);
+        BD_DOMESTIC_AIRPORTS.forEach(a => {
+          if (!viralState.districts.includes(a.districts[0])) {
+            viralState.districts.push(a.districts[0]);
+          }
+        });
+        viralState.airlines = ['BG', 'BS', 'VQ', '2A'];
+        saveViralState();
+        refreshAllViralViews();
+        showToast('বাংলাদেশের ৮টি বিমানবন্দরই সিলেক্ট করা হয়েছে! (8/8 Flown)');
+      });
+
+      document.getElementById('btnViralAutoFillHubDistricts')?.addEventListener('click', () => {
+        BD_DOMESTIC_AIRPORTS.forEach(ap => {
+          if (viralState.airports.includes(ap.code)) {
+            ap.districts.forEach(d => {
+              if (!viralState.districts.includes(d)) viralState.districts.push(d);
+            });
+          }
+        });
+        saveViralState();
+        refreshAllViralViews();
+        showToast('আপনার ঘোরা বিমানবন্দরের সব জেলা যুক্ত হয়েছে!');
+      });
+
+      document.getElementById('btnViralSelectAll64')?.addEventListener('click', () => {
+        if (viralState.districts.length === 64) {
+          viralState.districts = [];
+        } else {
+          viralState.districts = ALL_64_DISTRICTS.map(d => d.name);
+        }
+        saveViralState();
+        refreshAllViralViews();
+      });
+
+      document.getElementById('viralDistrictSearchInput')?.addEventListener('input', renderViralDistrictsList);
+
+      document.getElementById('viralTravelerNameInput')?.addEventListener('input', (e) => {
+        viralState.travelerName = e.target.value || 'TRAVELER';
+        saveViralState();
+        renderViralPosterCanvas();
+      });
+
+      document.getElementById('viralDreamRouteSelect')?.addEventListener('change', (e) => {
+        viralState.dreamRoute = e.target.value;
+        saveViralState();
+        renderViralPosterCanvas();
+      });
+
+      document.getElementById('viralSeatClassSelect')?.addEventListener('change', (e) => {
+        viralState.seatClass = e.target.value;
+        saveViralState();
+        renderViralPosterCanvas();
+      });
+
+      document.querySelectorAll('.viral-theme-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.viral-theme-btn').forEach(b => b.classList.remove('ring-2', 'ring-white'));
+          e.currentTarget.classList.add('ring-2', 'ring-white');
+          viralState.theme = e.currentTarget.getAttribute('data-vtheme') || 'emerald';
+          saveViralState();
+          renderViralPosterCanvas();
+        });
+      });
+
+      document.getElementById('viralPhotoUploadInput')?.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            viralPhotoImgElement = img;
+            renderViralPosterCanvas();
+            showToast('আপনার ছবি বোর্ডিং পাসে যুক্ত হয়েছে!');
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('btnViralClearPhoto')?.addEventListener('click', () => {
+        viralPhotoImgElement = null;
+        const inp = document.getElementById('viralPhotoUploadInput');
+        if (inp) inp.value = '';
+        renderViralPosterCanvas();
+        showToast('ছবি সরানো হয়েছে');
+      });
+
+      document.getElementById('btnViralMapModeSvg')?.addEventListener('click', () => {
+        viralState.mapMode = 'svg';
+        document.getElementById('viralSvgMapContainer')?.classList.remove('hidden');
+        document.getElementById('viralLeafletMapContainer')?.classList.add('hidden');
+        document.getElementById('btnViralMapModeSvg').className = 'bg-emerald-600 text-white font-bold px-2.5 py-1 rounded transition';
+        document.getElementById('btnViralMapModeLeaflet').className = 'text-slate-400 hover:text-white font-bold px-2.5 py-1 rounded transition';
+      });
+
+      document.getElementById('btnViralMapModeLeaflet')?.addEventListener('click', () => {
+        viralState.mapMode = 'leaflet';
+        document.getElementById('viralSvgMapContainer')?.classList.add('hidden');
+        document.getElementById('viralLeafletMapContainer')?.classList.remove('hidden');
+        document.getElementById('btnViralMapModeLeaflet').className = 'bg-emerald-600 text-white font-bold px-2.5 py-1 rounded transition';
+        document.getElementById('btnViralMapModeSvg').className = 'text-slate-400 hover:text-white font-bold px-2.5 py-1 rounded transition';
+        setTimeout(() => {
+          initOrUpdateViralLeafletMap();
+          if (viralLeafletMap) viralLeafletMap.invalidateSize();
+        }, 120);
+      });
+
+      document.getElementById('btnDownloadViralPoster')?.addEventListener('click', () => {
+        const canvas = document.getElementById('viralPosterCanvas');
+        if (!canvas) return;
+        renderViralPosterCanvas();
+        const link = document.createElement('a');
+        const cleanSlug = (viralState.travelerName || 'traveler').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        link.download = `my-sky-bangladesh-${cleanSlug}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('🎉 আপনার HD Flight Map & Boarding Pass ডাউনলোড হয়েছে!');
+      });
+
+      document.getElementById('btnCopyViralShareText')?.addEventListener('click', () => {
+        const st = computeViralStats();
+        const shareText = `✈️ আকাশে আমার বাংলাদেশ (My Sky Bangladesh)!
+আমি বাংলাদেশের ৮টি সচল বিমানবন্দরের মধ্যে ${st.apCount}টি (${viralState.airports.join(', ') || 'None'}) এবং ৬৪ জেলার মধ্যে ${st.distCount}টি জেলা ভ্রমণ করেছি! (${st.skyPct}% Sky Explored • Rank: ${st.rank.en})
+নিজের ফ্রি ফ্লাইট ম্যাপ ও বোর্ডিং পাস বানান: MY AIR ACADEMY`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(shareText).catch(() => {});
+        }
+        showToast('📋 ভাইরাল ফেসবুক স্ট্যাটাস কপি হয়েছে!');
+      });
+
+      document.getElementById('btnBookDomesticInSabre')?.addEventListener('click', () => {
+        const routeRaw = viralState.dreamRoute || 'DAC ✈ CXB';
+        const parts = routeRaw.split('✈').map(s => s.trim().slice(0, 3));
+        const orig = parts[0] || 'DAC';
+        const dest = parts[1] || 'CXB';
+        document.getElementById('viralFlightMapModal')?.classList.add('hidden');
+        dashModal?.classList.add('hidden');
+        executeCrypticCommand(`115NOV${orig}${dest}`);
+        showToast(`Sabre Red 360-এ লাইভ ডোমেস্টিক ফ্লাইট লোড হয়েছে: 115NOV${orig}${dest}`);
+      });
+
+      // Progressive Disclosure Category Filter Pills on Home Portal (Hick's Law)
+      document.querySelectorAll('.module-cat-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const cat = e.currentTarget.getAttribute('data-modcat');
+          document.querySelectorAll('.module-cat-btn').forEach(b => {
+            b.className = 'module-cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1 rounded-full transition';
+          });
+          e.currentTarget.className = 'module-cat-btn bg-[#0f294a] text-white text-[11px] font-bold px-3 py-1 rounded-full transition';
+          document.querySelectorAll('.dash-launch-card').forEach(card => {
+            const cCat = card.getAttribute('data-cat');
+            if (cat === 'all' || cCat === cat) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Minimal Focus Mode Toggle (Solves Sir's Cognitive Overload Feedback)
+      document.getElementById('btnToggleMinimalHome')?.addEventListener('click', () => {
+        viralState.minimalHome = !viralState.minimalHome;
+        const label = document.getElementById('minimalModeLabel');
+        const faqSec = document.getElementById('homeFaqSection');
+        if (viralState.minimalHome) {
+          if (label) label.textContent = '✨ Minimal Mode: ON';
+          if (faqSec) faqSec.classList.add('hidden');
+          document.querySelector('.module-cat-btn[data-modcat="sim"]')?.click();
+          showToast('Minimal Focus Mode ON — পরিচ্ছন্ন ভিউ চালু হয়েছে');
+        } else {
+          if (label) label.textContent = '✨ Minimal Mode: OFF';
+          if (faqSec) faqSec.classList.remove('hidden');
+          document.querySelector('.module-cat-btn[data-modcat="all"]')?.click();
+          showToast('Full Pro Dashboard Mode ON');
+        }
+      });
+
+      // Bangla / English Language Toggle on Home Portal
+      document.getElementById('btnToggleLangBnEn')?.addEventListener('click', () => {
+        viralState.lang = viralState.lang === 'bn' ? 'en' : 'bn';
+        const dict = {
+          bn: {
+            top_viral_btn: 'ভ্রমণ ম্যাপ ও পাস',
+            top_sabre_btn: 'Sabre টার্মিনাল',
+            hero_viral_cta: 'নিজের ফ্লাইট ম্যাপ ও বোর্ডিং পাস বানান (ফ্রি)',
+            hero_widget_title: 'আকাশপথে কতটুকু বাংলাদেশ দেখেছেন?',
+            hero_widget_btn: 'ম্যাপ ও বোর্ডিং পাস তৈরি করুন →',
+            viral_sec_heading: 'ডোমেস্টিক ফ্লাইটে বাংলাদেশের কোন কোন জায়গায় ভ্রমণ করেছেন? ✈️',
+            modules_heading: '>_ আপনার প্রয়োজনীয় মডিউল বেছে নিন (60-30-10 Minimal UI)'
+          },
+          en: {
+            top_viral_btn: 'BD Flight Map & Pass',
+            top_sabre_btn: 'Open Sabre Terminal',
+            hero_viral_cta: 'Create My BD Flight Map & Boarding Pass (Free)',
+            hero_widget_title: 'How Much of Bangladesh Have You Flown?',
+            hero_widget_btn: 'Open Map & Pass Studio →',
+            viral_sec_heading: 'Which Domestic Airports & Districts of Bangladesh Have You Flown? ✈️',
+            modules_heading: '>_ Choose a Focused Workspace (Progressive Disclosure — 60-30-10 UI)'
+          }
+        };
+        const activeDict = dict[viralState.lang];
+        Object.keys(activeDict).forEach(k => {
+          const el = document.querySelector(`[data-i18n="${k}"]`);
+          if (el) el.textContent = activeDict[k];
+        });
+        showToast(viralState.lang === 'bn' ? 'বাংলা ভাষা চালু হয়েছে' : 'Switched to English');
+      });
+
+      // Frameworks Audit Modal & Rule of Thirds Grid Inspector
+      document.getElementById('btnOpenFrameworksModal')?.addEventListener('click', () => {
+        document.getElementById('designFrameworksModal')?.classList.remove('hidden');
+      });
+      document.getElementById('btnCloseFrameworksModal')?.addEventListener('click', () => {
+        document.getElementById('designFrameworksModal')?.classList.add('hidden');
+      });
+      document.getElementById('btnToggleHeroThirdsGrid')?.addEventListener('click', () => {
+        document.getElementById('designFrameworksModal')?.classList.add('hidden');
+        const heroBanner = document.querySelector('#academyDashboardModal .min-h-\[235px\]');
+        if (heroBanner) {
+          heroBanner.classList.toggle('thirds-grid-overlay');
+          showToast('Rule of Thirds Visual Grid Toggled on Hero Banner!');
+        }
+      });
+
+      // Initialize Viral Map & Home Widgets on load
+      refreshAllViralViews();
     });
   </script>
 </body>
