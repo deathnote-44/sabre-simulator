@@ -197,7 +197,19 @@
         <button type="button" id="menuFormatFinder" class="hover:text-white transition">Help (Format Finder) ▾</button>
         <button type="button" id="menuAdminAudit" class="hover:text-white transition">Admin (DQB*) ▾</button>
         <button type="button" id="btnOpenGeoHubFromTerm" class="text-cyan-400 hover:text-cyan-300 font-semibold transition">🌍 IATA Geography ▾</button>
-        <button type="button" id="btnOpenGlossaryFromTerm" class="text-emerald-400 hover:text-emerald-300 font-semibold transition">📖 230+ City/Airline Codes ▾</button>
+        <button type="button" id="btnOpenGlossaryFromTerm" class="text-emerald-400 hover:text-emerald-300 font-semibold transition">📖 230+ Codes ▾</button>
+        <button type="button" id="btnOpenAdmShieldFromTerm" class="bg-[#ff2a2a] hover:bg-red-500 text-white font-extrabold px-2.5 py-0.5 rounded shadow-sm transition flex items-center gap-1 animate-pulse">
+          <span>🚨</span><span>ADM Shield &amp; Rules (12)</span>
+        </button>
+        <button type="button" id="btnOpenTimaticFromTerm" class="bg-[#121915] hover:bg-lime-400 hover:text-black text-lime-400 border border-lime-400/40 font-bold px-2 py-0.5 rounded transition">
+          🛂 TIMATIC (TIFV)
+        </button>
+        <button type="button" id="btnOpenQueueFromTerm" class="bg-[#121915] hover:bg-lime-400 hover:text-black text-lime-400 border border-lime-400/40 font-bold px-2 py-0.5 rounded transition">
+          📋 Queues (QC/)
+        </button>
+        <button type="button" id="btnOpenInvoiceFromTerm" class="bg-[#121915] hover:bg-lime-400 hover:text-black text-lime-400 border border-lime-400/40 font-bold px-2 py-0.5 rounded transition">
+          🧾 Invoice (W¥INV)
+        </button>
       </div>
     </div>
 
@@ -330,12 +342,110 @@
       </button>
       <button 
         type="button" 
+        id="btnToggleAdmTestBar" 
+        class="bg-[#ff2a2a] hover:bg-red-500 text-white px-3 py-2 rounded font-extrabold transition flex items-center gap-1 shadow"
+        title="কি কি কমান্ড দিলে ADM আসবে তা টার্মিনালে টেস্ট করুন (Test 12 ADM Commands)"
+      >
+        <span>🚨</span>
+        <span class="hidden sm:inline">ADM Commands</span>
+      </button>
+      <button 
+        type="button" 
         id="btnGuiHelperModal" 
         class="bg-[#111927] hover:bg-slate-800 text-slate-200 px-3 py-2 rounded border border-slate-800 transition font-medium flex items-center gap-1"
         title="Open Point-and-Click Command Helper"
       >
         <span>🔧</span>
         <span class="hidden md:inline">Command Helper</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       REAL-TIME LIVE ADM TYPING RISK RADAR BANNER (Appears while typing risky commands in #terminalInput)
+       ============================================================================ -->
+  <div id="liveAdmTypingWarningBanner" class="hidden bg-[#1a0507] border-b-2 border-[#ff2a2a] px-4 py-2.5 text-xs shadow-2xl relative z-30">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-start gap-2.5">
+        <span class="bg-[#ff2a2a] text-white font-mono font-black px-2 py-1 rounded text-[11px] uppercase tracking-wider shrink-0 animate-bounce">
+          🚨 ADM WARNING (কমান্ড সতর্কবার্তা)
+        </span>
+        <div class="space-y-0.5">
+          <div class="font-extrabold text-white text-xs sm:text-sm flex flex-wrap items-center gap-2">
+            <span id="liveAdmWarnTitle">সতর্কবার্তা: এই কমান্ড দিলে এয়ারলাইন্স থেকে ADM (Agency Debit Memo) আসবে!</span>
+            <span id="liveAdmWarnFineBadge" class="bg-[#ff2a2a]/25 border border-[#ff2a2a] text-red-200 font-mono text-[11px] px-2 py-0.5 rounded font-black">
+              Penalty: USD $50 (≈ ৳6,000 BDT)
+            </span>
+          </div>
+          <p id="liveAdmWarnReasonBn" class="text-zinc-200 text-[11px] leading-relaxed">
+            কারণ: অনুমোদিত কমিশনের চেয়ে বেশি কমিশন (KP) ক্লেইম করলে IATA Resolution 850m অনুযায়ী এয়ারলাইন্স সরাসরি ADM জরিমানা করবে।
+          </p>
+          <div class="text-[11px] font-mono text-lime-400 pt-0.5">
+            <span>✓ নিরাপদ কমান্ড (Safe Sabre Command): </span>
+            <strong id="liveAdmWarnSafeCmd" class="bg-[#0b100d] border border-lime-400/50 px-2 py-0.5 rounded text-lime-300">W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER</strong>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" id="btnApplyLiveSafeCmd" class="bg-lime-400 hover:bg-lime-300 text-black font-mono font-black text-[11px] px-3 py-1.5 rounded-lg shadow transition">
+          ✓ সঠিক কমান্ড বসান (Use Safe Cmd)
+        </button>
+        <button type="button" id="btnOpenAdmGuideFromLive" class="bg-[#0b100d] hover:bg-zinc-900 text-white border border-lime-400/40 font-bold text-[11px] px-3 py-1.5 rounded-lg transition">
+          🛡 সব ADM নিয়ম দেখুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       EXPANDABLE 12-TRIGGER SABRE ADM COMMAND TEST BAR (Test any ADM command in 1 click)
+       ============================================================================ -->
+  <div id="admQuickTestStrip" class="bg-[#0b100d] border-b border-[#ff2a2a]/50 px-3 py-2 space-y-1.5">
+    <div class="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+      <div class="flex items-center gap-2">
+        <span class="bg-[#ff2a2a] text-white font-mono font-black px-2 py-0.5 rounded text-[10px]">🚨 LIVE ADM COMMAND DETECTOR</span>
+        <span class="text-zinc-300 font-semibold">টার্মিনালে নিচের যেকোনো ভুল/ঝুঁকিপূর্ণ কমান্ড টাইপ করলে বা ক্লিক করলে সাথে সাথে <strong class="text-lime-400">ADM Error Notice</strong> দেখাবে:</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" id="btnOpenAdmModalFromStrip" class="text-lime-400 hover:underline font-mono font-bold text-[11px]">📖 কি কি কারণে ADM আসে? (12 Causes &amp; BSPlink) ›</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono">
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="W¥PQ1N1.1¥ABG¥FINVAGT¥KP15¥ETR¥ER" title="1. Over-Commission Claim (15% instead of 7%)">
+        1. W¥...¥KP15 (অতিরিক্ত কমিশন)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="-TEST/PASSENGER MR" title="2. Fake / Fictitious Passenger Name">
+        2. -TEST/PASSENGER MR (ভুয়া নাম)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="0BG101Y15NOVDACDXBGK1" title="3. Passive Segment Abuse (GK1 without Airline RLOC)">
+        3. 0...GK1 (ভুয়া প্যাসিভ সেগমেন্ট)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="X1¥MARRIED" title="4. Married Segment O&D Break (X1 on connecting flight)">
+        4. X1 (ম্যারিড সেগমেন্ট ভাঙা)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="01Y1¥CHURN" title="5. Repeated Booking & Cancelling (>3 times Churning)">
+        5. 01Y1 (বারবার বুক/ক্যানসেল চার্নিং)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="ER¥HX" title="6. Leaving HX/UN/UC Inactive Segment in PNR without .1XK">
+        6. ER with HX (HX সেগমেন্ট রিমুভ না করা)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="W¥PQ1¥NOCTC" title="7. Issuing Ticket without IATA Res 830d 3CTCM/3CTCE">
+        7. W¥PQ1 (No 3CTCM/3CTCE)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="W¥PQ1¥NODOB" title="8. Child/Infant Ticket without Mandatory SSR 3CHLD/3INFT DOB">
+        8. Child/Infant No DOB
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="WFRF1762489104412‡ACASH¥NOPEN" title="9. Full Refund without Deducting Cat-16 Cancellation/No-Show Penalty">
+        9. WFRF... (পেনাল্টি ছাড়া রিফান্ড)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="WV2¥LATE" title="10. Voiding Ticket Past BSP Same-Day Void Cutoff Window">
+        10. WV2 (সময় পার হওয়ার পর ভয়েড)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="01Y1LL" title="11. Speculative Closed Waitlist Segment Abuse (LL)">
+        11. 01Y1LL (ভুয়া ওয়েটলিস্ট)
+      </button>
+      <button type="button" class="adm-test-cmd-btn bg-[#1a0709] hover:bg-[#ff2a2a] text-red-200 hover:text-white border border-[#ff2a2a]/60 px-2.5 py-1 rounded shrink-0 transition" data-admcmd="W¥I‡YUSD100.00/NOTAX" title="12. Manual Fare/Tax Manipulation (Skipping BD/UT/YQ Taxes)">
+        12. W¥I‡NOTAX (ট্যাক্স কম কাটা)
       </button>
     </div>
   </div>
@@ -1055,10 +1165,13 @@
           <span>✈️</span><span>2. BD Flight Map &amp; Pass</span>
         </button>
         <button type="button" id="navTabWorkspaces" data-page="workspaces" class="portal-page-tab text-zinc-300 hover:text-lime-400 font-bold px-4 py-1.5 rounded-full transition">
-          3. Simulators &amp; Modules (7)
+          3. Simulators &amp; Modules (11)
+        </button>
+        <button type="button" id="btnNavOpenAdmShield" class="bg-[#ff2a2a] hover:bg-red-500 text-white font-extrabold px-4 py-1.5 rounded-full transition flex items-center gap-1.5 shadow">
+          <span>🚨</span><span>4. ADM Shield &amp; BSPlink</span>
         </button>
         <button type="button" id="navTabReference" data-page="reference" class="portal-page-tab text-zinc-300 hover:text-lime-400 font-bold px-4 py-1.5 rounded-full transition">
-          4. Codes, Atlas &amp; FAQ
+          5. Codes, Atlas &amp; FAQ
         </button>
       </nav>
 
@@ -1155,10 +1268,18 @@
               <button type="button" id="btnDashOpenGlossary" class="hover:text-lime-400 transition flex items-center gap-1.5">
                 <span class="text-lime-400">02</span><span>230+ City &amp; Airline Codes</span>
               </button>
-              <button type="button" id="btnDashOpenNdcSim" class="hover:text-lime-400 transition flex items-center gap-1.5">
-                <span class="text-lime-400">03</span><span>NDC 21.3 Simulator</span>
-              </button>
-            </div>
+                <button type="button" id="btnDashOpenNdcSim" class="hover:text-lime-400 transition flex items-center gap-1.5">
+                  <span class="text-[#ff2a2a]">03</span><span>NDC 21.3 Order Sim</span>
+                </button>
+                <span class="text-zinc-700">•</span>
+                <button type="button" id="btnHeroOpenAdmShield" class="text-lime-400 hover:text-white transition flex items-center gap-1.5 font-extrabold">
+                  <span class="bg-[#ff2a2a] text-white px-1.5 py-0.2 rounded text-[10px]">NEW</span><span>04 · কি কি কারণে ADM আসে (12 ADM Rules &amp; BSPlink)</span>
+                </button>
+                <span class="text-zinc-700">•</span>
+                <button type="button" id="btnHeroOpenTimatic" class="hover:text-lime-400 transition flex items-center gap-1.5">
+                  <span class="text-lime-400">05</span><span>TIMATIC Visa &amp; Invoice</span>
+                </button>
+              </div>
           </div>
 
           <!-- Right 1/3 Focal Point: Unseen-Style Minimalist Score Card (Black + Lime Green + Lava Red) -->
@@ -1395,6 +1516,51 @@
                 Select which of Bangladesh's 8 operational domestic airports (DAC, CXB, CGP, ZYL, SPD, JSR, RJH, BZL) and 64 districts you have visited, add your photo and name, and download your luxury boarding pass &amp; map poster.
               </p>
               <div class="text-xs text-lime-400 mt-3 font-extrabold group-hover:translate-x-1 transition">Open Domestic Flight Map &amp; Boarding Pass Maker ›</div>
+            </button>
+
+            <!-- Card 8: IATA ADM Shield, 12 Causes of ADM & BSPlink Dispute Simulator -->
+            <button type="button" data-cat="ticketing" class="dash-launch-card sm:col-span-2 lg:col-span-3 bg-[#140708] hover:bg-[#1f0a0c] text-white rounded-2xl p-6 text-left transition group border-2 border-[#ff2a2a]" data-target="adm-shield">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                  <span class="font-display-editorial font-bold text-lg text-white">8. 🚨 IATA ADM Shield — কি কি কারণে ADM আসে (12 Official Causes) &amp; BSPlink Dispute Lab</span>
+                  <span class="text-[10px] font-mono bg-[#ff2a2a] text-white px-2.5 py-0.5 rounded-full font-black">IATA RES 850m / 830d</span>
+                </div>
+                <span class="text-[11px] font-mono bg-lime-400 text-black px-3 py-0.5 rounded-full font-black">LIVE TERMINAL ADM DETECTOR</span>
+              </div>
+              <p class="text-xs text-zinc-300 mt-2 leading-relaxed">
+                ট্রাভেল এজেন্সিতে কি কি ভুল কমান্ড বা পলিসি ভঙ্গের কারণে এয়ারলাইন্স থেকে ADM (Agency Debit Memo) জরিমানা আসে (Churning, Married Segment Break, Undeleted HX, Fake Name, Over-Commission, Missing 3CTCM/3CTCE, Child DOB, Refund/Void Abuse), তার সম্পূর্ণ তালিকা, জরিমানার হার এবং BSPlink ডিসপিউট সিমুলেটর।
+              </p>
+              <div class="text-xs text-lime-400 mt-3 font-extrabold group-hover:translate-x-1 transition">Open IATA ADM Shield &amp; BSPlink Dispute Simulator ›</div>
+            </button>
+
+            <!-- Card 9: TIMATIC Visa & Passport Validator (TIFV / TIRV) -->
+            <button type="button" data-cat="core" class="dash-launch-card theme-30-lime-card rounded-2xl p-6 text-left transition group" data-target="timatic">
+              <div class="flex items-center justify-between">
+                <span class="font-display-editorial font-bold text-base text-white">9. TIMATIC Visa &amp; Passport Check</span>
+                <span class="text-[10px] font-mono bg-lime-400/15 text-lime-400 px-2.5 py-0.5 rounded-full font-bold border border-lime-400/30">TIFV / TIRV</span>
+              </div>
+              <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Verify passport 6-month validity, transit rules, and destination visa requirements before boarding or ticketing.</p>
+              <div class="text-xs text-lime-400 mt-4 font-extrabold group-hover:translate-x-1 transition">Launch TIMATIC Validator ›</div>
+            </button>
+
+            <!-- Card 10: Sabre Queue Management Center (QC/ & Q/50) -->
+            <button type="button" data-cat="core" class="dash-launch-card theme-30-lime-card rounded-2xl p-6 text-left transition group" data-target="queues">
+              <div class="flex items-center justify-between">
+                <span class="font-display-editorial font-bold text-base text-white">10. Sabre Queue Management Hub</span>
+                <span class="text-[10px] font-mono bg-lime-400/15 text-lime-400 px-2.5 py-0.5 rounded-full font-bold border border-lime-400/30">QC/ • Q/1 • Q/7</span>
+              </div>
+              <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Practice clearing Airline Schedule Changes (TK), HX Inactive Segments (.1XK), and Ticketing Time Limits.</p>
+              <div class="text-xs text-lime-400 mt-4 font-extrabold group-hover:translate-x-1 transition">Open Queue Counter Hub ›</div>
+            </button>
+
+            <!-- Card 11: Client Commercial Invoice & Travel Summary Builder -->
+            <button type="button" data-cat="ticketing" class="dash-launch-card theme-30-lime-card rounded-2xl p-6 text-left transition group" data-target="invoice">
+              <div class="flex items-center justify-between">
+                <span class="font-display-editorial font-bold text-base text-white">11. Automated Invoice &amp; Itinerary</span>
+                <span class="text-[10px] font-mono bg-[#ff2a2a] text-white px-2.5 py-0.5 rounded-full font-bold">W¥INV • BDT/USD</span>
+              </div>
+              <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Generate printable agency client invoices with BDT 500 Travel Tax (BD/UT), 7% IATA commission &amp; baggage summary.</p>
+              <div class="text-xs text-lime-400 mt-4 font-extrabold group-hover:translate-x-1 transition">Open Client Invoice Builder ›</div>
             </button>
           </div>
         </div>
@@ -2183,9 +2349,12 @@
         <!-- COLUMN 3 (4 Cols): LIVE HD SOCIAL MEDIA POSTER PREVIEW & 1-CLICK DOWNLOAD -->
         <div class="lg:col-span-4 flex flex-col gap-3">
           <div class="bg-[#0d130f] border-2 border-lime-400/50 rounded-xl p-3.5 flex flex-col items-center gap-3">
-            <div class="w-full flex items-center justify-between">
-              <span class="text-xs font-extrabold text-lime-400">🎨 Live HD Poster Preview:</span>
-              <span class="text-[10px] font-mono bg-lime-400 text-black text-lime-400 border border-lime-400/50/40 px-2 py-0.5 rounded">1080 × 1350 PX</span>
+            <div class="w-full flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold text-lime-400">🎨 Live HD Poster:</span>
+              <div class="flex items-center gap-1">
+                <button type="button" id="btnPosterRatioPortrait" class="bg-lime-400 text-black font-mono font-black text-[10px] px-2 py-0.5 rounded transition">4:5 Feed (1080×1350)</button>
+                <button type="button" id="btnPosterRatioStory" class="bg-[#060809] text-zinc-300 border border-lime-400/40 font-mono font-bold text-[10px] px-2 py-0.5 rounded transition">9:16 Story (1080×1920)</button>
+              </div>
             </div>
 
             <div class="w-full bg-[#040605] rounded-xl p-2 border border-zinc-800 flex items-center justify-center overflow-hidden shadow-inner">
@@ -2301,6 +2470,235 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  
+  <!-- ============================================================================
+       MODAL A: IATA ADM SHIELD, 12 CAUSES OF ADM & BSPLINK DISPUTE SIMULATOR
+       (Strict 60% Obsidian Black #060809, 30% Electric Lime #a3e635, 10% Lava Red #ff2a2a)
+       ============================================================================ -->
+  <div id="admShieldModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 select-none">
+    <div class="bg-[#060809] text-white border-2 border-[#ff2a2a] rounded-2xl max-w-7xl w-full max-h-[95vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Top Header -->
+      <div class="bg-[#0b100d] border-b border-[#ff2a2a]/60 px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="bg-[#ff2a2a] text-white font-mono font-black px-3 py-1 rounded-lg text-xs shadow">🚨 IATA RES 850m &amp; 830d</span>
+          <div>
+            <h3 class="font-black text-sm sm:text-base text-white">
+              IATA ADM Shield &amp; BSPlink Audit Hub — কি কি কারণে ADM (Agency Debit Memo) আসে ও প্রতিকার
+            </h3>
+            <p class="text-[11px] text-zinc-400">
+              সাব্রে টার্মিনালে কোন কোন কমান্ড দিলে এয়ারলাইন্স জরিমানা (ADM) করে, তার ১২টি প্রধান কারণ, জরিমানার হার এবং ১৫ দিনের মধ্যে BSPlink ডিসপিউট করার নিয়ম
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnCloseAdmShieldModal" class="bg-[#ff2a2a] hover:bg-red-500 text-white px-4 py-1.5 rounded-lg text-xs font-extrabold transition">
+            ✕ Close ADM Hub
+          </button>
+        </div>
+      </div>
+
+      <!-- Sub-Navigation Tabs inside ADM Shield -->
+      <div class="bg-[#090d0b] border-b border-zinc-800 px-5 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" data-admtab="causes" class="adm-hub-tab-btn bg-lime-400 text-black font-extrabold px-4 py-1.5 rounded-lg transition">
+            📋 ১. কি কি কারণে ADM আসে? (12 Causes &amp; Commands)
+          </button>
+          <button type="button" data-admtab="bsplink" class="adm-hub-tab-btn bg-[#121915] text-zinc-200 hover:text-lime-400 border border-lime-400/30 font-bold px-4 py-1.5 rounded-lg transition">
+            🏦 ২. BSPlink ADM / ACM Dispute Simulator (<span id="admActiveCountBadge">4</span>)
+          </button>
+          <button type="button" data-admtab="audit" class="adm-hub-tab-btn bg-[#121915] text-zinc-200 hover:text-lime-400 border border-lime-400/30 font-bold px-4 py-1.5 rounded-lg transition">
+            🛡 ৩. Live PNR Pre-Ticketing ADM Audit
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="admCategoryFilter" class="bg-[#060809] border border-lime-400/40 rounded-lg px-3 py-1.5 text-xs text-lime-400 font-bold focus:outline-none">
+            <option value="ALL">সকল ক্যাটাগরি (All 12 ADM Triggers)</option>
+            <option value="BOOKING">Booking &amp; Inventory Abuse (Churning / HX / Married / GK)</option>
+            <option value="TICKETING">Fare, Tax &amp; Commission (KP Override / Under-Tax)</option>
+            <option value="SSR">Passenger &amp; SSR Data (Fake Name / Missing 830d CTC / Child DOB)</option>
+            <option value="REFUND">Refund, Reissue &amp; Void (Penalty Skip / Late Void)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TAB 1: 12 CAUSES OF ADM & COMMANDS -->
+      <div id="admTabCausesView" class="flex-1 overflow-y-auto p-5 space-y-5 bg-[#060809]">
+        <!-- Top Educational Summary Banner (IATA Resolution 850m Rules) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+          <div class="bg-[#0b100d] border border-lime-400/30 rounded-xl p-3.5">
+            <div class="text-[10px] font-mono text-lime-400 uppercase font-bold">WHAT IS AN ADM?</div>
+            <div class="font-extrabold text-white text-sm mt-0.5">Agency Debit Memo</div>
+            <p class="text-[11px] text-zinc-400 mt-1">এয়ারলাইন্সের বুকিং, ফেয়ার, ট্যাক্স বা রিফান্ড নিয়ম ভঙ্গ করলে BSPlink-এর মাধ্যমে এজেন্সিকে যে আর্থিক জরিমানা করা হয়।</p>
+          </div>
+          <div class="bg-[#0b100d] border border-lime-400/30 rounded-xl p-3.5">
+            <div class="text-[10px] font-mono text-lime-400 uppercase font-bold">DISPUTE WINDOW (RES 850m)</div>
+            <div class="font-extrabold text-lime-400 text-sm mt-0.5">১৫ দিন (15 Days Limit)</div>
+            <p class="text-[11px] text-zinc-400 mt-1">BSPlink-এ ADM ইস্যু হওয়ার পর এজেন্সি সর্বোচ্চ ১৫ দিনের মধ্যে প্রমাণসহ ডিসপিউট করতে পারে; এয়ারলাইন্স ৬০ দিনে নিষ্পত্তি করে।</p>
+          </div>
+          <div class="bg-[#0b100d] border border-lime-400/30 rounded-xl p-3.5">
+            <div class="text-[10px] font-mono text-lime-400 uppercase font-bold">MAX ISSUANCE LIMIT</div>
+            <div class="font-extrabold text-white text-sm mt-0.5">৯ মাস (9 Months Post-Travel)</div>
+            <p class="text-[11px] text-zinc-400 mt-1">চূড়ান্ত ফ্লাইটের তারিখের পর সর্বোচ্চ ৯ মাসের মধ্যে এয়ারলাইন্স BSP-এর মাধ্যমে ADM পাঠাতে পারে।</p>
+          </div>
+          <div class="bg-[#160708] border border-[#ff2a2a]/60 rounded-xl p-3.5">
+            <div class="text-[10px] font-mono text-[#ff2a2a] uppercase font-bold">SABRE LIVE PROTECTION</div>
+            <div class="font-extrabold text-white text-sm mt-0.5">Real-Time ADM Blocker</div>
+            <p class="text-[11px] text-zinc-300 mt-1">যেকোনো কার্ডের <strong>"⚡ টার্মিনালে টেস্ট করুন"</strong> বাটনে ক্লিক করলে সাব্রে টার্মিনালে সরাসরি সেই কমান্ড ও তার ADM ওয়ার্নিং দেখাবে।</p>
+          </div>
+        </div>
+
+        <!-- Dynamic 12 ADM Cards Container -->
+        <div id="admCausesCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- TAB 2: LIVE BSPLINK ADM / ACM DISPUTE SIMULATOR -->
+      <div id="admTabBsplinkView" class="hidden flex-1 overflow-y-auto p-5 space-y-4 bg-[#060809] text-xs">
+        <div class="bg-[#0b100d] border border-lime-400/30 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h4 class="font-black text-sm text-white">🏦 IATA BSPlink — Agency Debit Memo (ADM) &amp; Credit Memo (ACM) Settlement Ledger</h4>
+            <p class="text-[11px] text-zinc-400">যখনই আপনি Sabre টার্মিনালে কোনো ADM-triggering কমান্ড রান করবেন, সেটি স্বয়ংক্রিয়ভাবে এই BSPlink অডিট লেজারে যুক্ত হবে।</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-[#160708] border border-[#ff2a2a] px-3.5 py-2 rounded-xl text-right">
+              <div class="text-[10px] font-mono text-red-300">TOTAL ACTIVE ADM EXPOSURE</div>
+              <div id="bspTotalAdmUsdText" class="text-base font-black font-mono text-[#ff2a2a]">USD $335.00 (≈ ৳40,200 BDT)</div>
+            </div>
+            <button type="button" id="btnSimulateNewRandomAdm" class="bg-[#ff2a2a] hover:bg-red-500 text-white font-extrabold px-3.5 py-2 rounded-xl transition">
+              + Simulate Airline Audit ADM
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto bg-[#0b100d] border border-zinc-800 rounded-xl">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[#121915] text-lime-400 border-b border-zinc-800 text-[11px] font-mono uppercase">
+                <th class="py-2.5 px-3">ADM Memo #</th>
+                <th class="py-2.5 px-3">Airline</th>
+                <th class="py-2.5 px-3">Sabre Command / Trigger</th>
+                <th class="py-2.5 px-3">Violation Reason (কারণ)</th>
+                <th class="py-2.5 px-3">Amount (USD / BDT)</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3 text-right">BSPlink Action (15-Day Window)</th>
+              </tr>
+            </thead>
+            <tbody id="bsplinkAdmTableBody" class="divide-y divide-zinc-800/80 text-xs"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: LIVE PNR PRE-TICKETING ADM AUDIT -->
+      <div id="admTabAuditView" class="hidden flex-1 overflow-y-auto p-5 space-y-4 bg-[#060809] text-xs">
+        <div class="bg-[#0b100d] border border-lime-400/30 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h4 class="font-black text-sm text-lime-400">🛡 Active Work Area PNR — Pre-Ticketing Zero-ADM Compliance Scanner</h4>
+            <p class="text-[11px] text-zinc-400">টিকিট ইস্যু করার আগে (`W¥PQ...`) আপনার বর্তমান পিএনআর-এ কোনো ADM ঝুঁকি আছে কি না তা এখান থেকে অডিট করুন।</p>
+          </div>
+          <button type="button" id="btnRunLivePnrAdmScan" class="bg-lime-400 hover:bg-lime-300 text-black font-black px-4 py-2 rounded-xl transition">
+            🔄 Re-Scan Active Work Area PNR
+          </button>
+        </div>
+        <div id="livePnrAdmChecklistContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       MODAL B: TIMATIC VISA, PASSPORT & HEALTH CHECK SIMULATOR (TIFV / TIRV)
+       ============================================================================ -->
+  <div id="timaticModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 select-none">
+    <div class="bg-[#060809] text-white border-2 border-lime-400/60 rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="bg-[#0b100d] border-b border-lime-400/40 px-5 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="bg-lime-400 text-black font-mono font-black px-2.5 py-1 rounded text-xs">IATA TIMATIC</span>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">🛂 Sabre TIMATIC Visa, Passport &amp; Health Requirement Verifier (`TIFV` / `TIRV`)</h3>
+            <p class="text-[11px] text-zinc-400">ভুল ভিসা বা ৬ মাসের কম মেয়াদের পাসপোর্টে বোর্ডিং করলে এয়ারলাইন্স জরিমানা (ADM) করে — টিকিট কাটার আগে যাচাই করুন</p>
+          </div>
+        </div>
+        <button type="button" id="btnCloseTimaticModal" class="bg-[#ff2a2a] text-white px-3 py-1.5 rounded-lg text-xs font-bold">✕ Close</button>
+      </div>
+      <div class="p-5 overflow-y-auto space-y-4 text-xs flex-1">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-[#0b100d] p-4 rounded-xl border border-zinc-800 items-end">
+          <div>
+            <label class="block text-[10px] font-mono text-lime-400 uppercase mb-1">Passenger Nationality</label>
+            <select id="timNatSelect" class="w-full bg-[#060809] border border-zinc-700 rounded-lg px-2.5 py-2 text-white font-bold">
+              <option value="BGD">BGD — Bangladesh</option>
+              <option value="USA">USA — United States</option>
+              <option value="GBR">GBR — United Kingdom</option>
+              <option value="IND">IND — India</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono text-lime-400 uppercase mb-1">Destination Airport</label>
+            <select id="timDestSelect" class="w-full bg-[#060809] border border-zinc-700 rounded-lg px-2.5 py-2 text-white font-bold">
+              <option value="DXB">DXB — Dubai (UAE)</option>
+              <option value="JED">JED — Jeddah (Saudi Arabia)</option>
+              <option value="DOH">DOH — Doha (Qatar)</option>
+              <option value="SIN">SIN — Singapore</option>
+              <option value="BKK">BKK — Bangkok (Thailand)</option>
+              <option value="KUL">KUL — Kuala Lumpur (Malaysia)</option>
+              <option value="KTM">KTM — Kathmandu (Nepal)</option>
+              <option value="LHR">LHR — London (UK)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono text-lime-400 uppercase mb-1">Passport Expiry Months</label>
+            <select id="timValiditySelect" class="w-full bg-[#060809] border border-zinc-700 rounded-lg px-2.5 py-2 text-white font-bold">
+              <option value="8">8+ Months Remaining (OK)</option>
+              <option value="4">4 Months Remaining (CRITICAL RISK!)</option>
+            </select>
+          </div>
+          <button type="button" id="btnRunTimaticCheck" class="bg-lime-400 hover:bg-lime-300 text-black font-black py-2 px-4 rounded-lg transition">
+            Verify TIMATIC (`TIRV`)
+          </button>
+        </div>
+        <div id="timaticResultOutput" class="bg-[#040706] border border-lime-400/30 rounded-xl p-4 font-mono text-xs space-y-2 text-emerald-300"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       MODAL C: SABRE QUEUE MANAGEMENT HUB (QC/ • Q/1 • Q/7 • Q/9 • Q/50)
+       ============================================================================ -->
+  <div id="queueCenterModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 select-none">
+    <div class="bg-[#060809] text-white border-2 border-lime-400/60 rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="bg-[#0b100d] border-b border-lime-400/40 px-5 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="bg-lime-400 text-black font-mono font-black px-2.5 py-1 rounded text-xs">SABRE QUEUES (QC/)</span>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">📋 Sabre Agency Queue Management &amp; HX Cleanup Center</h3>
+            <p class="text-[11px] text-zinc-400">এয়ারলাইন্স থেকে আসা HX (Cancelled), TK (Schedule Change), ও KL (Waitlist Confirmed) কিউ নিষ্পত্তি না করলে ADM আসে</p>
+          </div>
+        </div>
+        <button type="button" id="btnCloseQueueModal" class="bg-[#ff2a2a] text-white px-3 py-1.5 rounded-lg text-xs font-bold">✕ Close</button>
+      </div>
+      <div class="p-5 overflow-y-auto space-y-4 text-xs flex-1" id="queueCenterBodyContainer"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       MODAL D: AUTOMATED CLIENT COMMERCIAL INVOICE & ITINERARY BUILDER (W¥INV)
+       ============================================================================ -->
+  <div id="clientInvoiceModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 select-none">
+    <div class="bg-[#060809] text-white border-2 border-lime-400/60 rounded-2xl max-w-4xl w-full max-h-[94vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="bg-[#0b100d] border-b border-lime-400/40 px-5 py-3.5 flex items-center justify-between no-print">
+        <div class="flex items-center gap-2.5">
+          <span class="bg-lime-400 text-black font-mono font-black px-2.5 py-1 rounded text-xs">INVOICE &amp; ITINERARY</span>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">🧾 Automated Agency Client Invoice &amp; Bangladesh Tax Breakdown (`W¥INV`)</h3>
+            <p class="text-[11px] text-zinc-400">Synced with your active Sabre Work Area PNR, IATA 7% Commission &amp; Bangladesh Embarkation/Travel Tax (BD/UT)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnPrintClientInvoice" class="bg-lime-400 hover:bg-lime-300 text-black font-black px-3.5 py-1.5 rounded-lg text-xs">🖨 Print / PDF</button>
+          <button type="button" id="btnCloseInvoiceModal" class="bg-[#ff2a2a] text-white px-3 py-1.5 rounded-lg text-xs font-bold">✕ Close</button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto bg-[#0b100d] flex-1" id="clientInvoicePrintableArea"></div>
     </div>
   </div>
 
@@ -3103,6 +3501,56 @@
       });
 
       const cleanCmd = cmd.toUpperCase().replace(/\s+/g, ' ');
+
+      // 0. REAL-TIME SABRE ADM VIOLATION INTERCEPTOR & GUARD (Catches all 12 ADM-triggering commands & state violations!)
+      if (typeof checkAndInterceptAdmCommand === 'function') {
+        const admIntercepted = checkAndInterceptAdmCommand(cleanCmd, draft, session);
+        if (admIntercepted) {
+          finishExecution();
+          return;
+        }
+      }
+
+      // 0B. NEW PRO COMMANDS: TIMATIC (TIFV / TIRV), BDT TAX BREAKDOWN (WPB / W*TAX), CLIENT INVOICE (W¥INV / DINV)
+      if (cleanCmd === 'TIFV' || cleanCmd === 'TIMATIC' || cleanCmd.startsWith('TIRV')) {
+        if (typeof handleTimaticCrypticCommand === 'function') {
+          handleTimaticCrypticCommand(cleanCmd, draft, session);
+          finishExecution();
+          return;
+        }
+      }
+      if (cleanCmd === 'WPB' || cleanCmd === 'W*TAX' || cleanCmd.startsWith('FQC')) {
+        if (typeof handleMultiCurrencyBdtTaxCommand === 'function') {
+          handleMultiCurrencyBdtTaxCommand(cleanCmd, draft, session);
+          finishExecution();
+          return;
+        }
+      }
+      if (cleanCmd === 'W¥INV' || cleanCmd === 'W‡INV' || cleanCmd === 'DINV') {
+        if (typeof openClientInvoiceModal === 'function') {
+          session.transcript.push({
+            type: 'success',
+            text: 'COMMERCIAL CLIENT INVOICE & BDT TAX SUMMARY GENERATED FROM ACTIVE PNR (W¥INV)'
+          });
+          openClientInvoiceModal();
+          finishExecution();
+          return;
+        }
+      }
+      if (/^\.\d+XK$/.test(cleanCmd)) {
+        const segNum = parseInt(cleanCmd.slice(1, -2), 10);
+        if (draft.segments.length >= segNum && segNum > 0) {
+          draft.segments.splice(segNum - 1, 1);
+          draft.segments.forEach((s, idx) => s.index = idx + 1);
+        }
+        session.transcript.push({
+          type: 'success',
+          text: `${cleanCmd} — INACTIVE (HX/UN/UC) SEGMENT ${segNum} REMOVED WITHOUT SENDING TELETYPE MESSAGE (ADM PREVENTED!)`
+        });
+        showToast(`Inactive Segment ${segNum} Cleaned (${cleanCmd}) — Zero ADM Risk!`);
+        finishExecution();
+        return;
+      }
       
       // 1. CLEAR command (Completely empties the command display screen!)
       if (cleanCmd === 'CLEAR' || cleanCmd === 'CLS') {
@@ -5972,6 +6420,57 @@
           case 'error':
             div.className = 'term-resp-line text-red-400 font-bold bg-red-950/30 py-1 px-2.5 rounded border border-red-900/50 inline-block mt-0.5';
             div.textContent = '⚠ ' + line.text;
+            break;
+          case 'adm-violation':
+            div.className = 'bg-[#1a0507] border-2 border-[#ff2a2a] rounded-xl p-3.5 my-2 space-y-2 text-xs shadow-2xl';
+            div.innerHTML = `
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#ff2a2a]/40 pb-2">
+                <div class="flex items-center gap-2 text-[#ff2a2a] font-black text-xs sm:text-sm">
+                  <span class="bg-[#ff2a2a] text-white px-2 py-0.5 rounded font-mono text-[10px]">🚨 ADM ERROR NOTICE</span>
+                  <span>সতর্কবার্তা: এই কমান্ড দিলে এয়ারলাইন্স থেকে ADM (Agency Debit Memo) আসবে!</span>
+                </div>
+                <span class="text-[11px] font-mono bg-[#ff2a2a]/20 border border-[#ff2a2a] text-red-200 px-2.5 py-0.5 rounded font-black">
+                  FINE: ${line.fineText || 'USD $50 (≈ ৳6,000 BDT)'}
+                </span>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 font-mono text-[11px] bg-[#090d0b] p-2.5 rounded-lg border border-zinc-800">
+                <div>
+                  <span class="text-zinc-400">Risky Command Entered: </span>
+                  <strong class="bg-[#ff2a2a] text-white px-1.5 py-0.5 rounded">${line.rawCmd}</strong>
+                </div>
+                <div>
+                  <span class="text-zinc-400">Policy Violated: </span>
+                  <strong class="text-amber-300">${line.policyRef || 'IATA Resolution 850m / 830d'} — ${line.title}</strong>
+                </div>
+              </div>
+              <div class="text-zinc-200 font-sans text-xs leading-relaxed bg-[#0f1612] border-l-4 border-[#ff2a2a] px-3 py-2 rounded">
+                <strong class="text-lime-400">কেন ADM আসবে (Why Airlines Issue ADM):</strong> ${line.reasonBn}
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div class="font-mono text-lime-400 text-[11px]">
+                  <span>✓ নিরাপদ কমান্ড (Safe Command): </span>
+                  <strong class="bg-[#0b100d] px-2 py-0.5 rounded border border-lime-400/50 text-lime-300">${line.safeCmd}</strong>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" class="adm-autofix-btn bg-lime-400 hover:bg-lime-300 text-black font-mono font-black text-[11px] px-3 py-1 rounded shadow transition" data-cmd="${line.safeCmd}">
+                    ✓ Auto-Fix &amp; Run Safe Cmd ↵
+                  </button>
+                  <button type="button" class="adm-open-hub-btn bg-[#121915] hover:bg-zinc-800 text-white border border-lime-400/40 font-bold text-[11px] px-3 py-1 rounded transition">
+                    🏦 View in BSPlink ADM Hub
+                  </button>
+                </div>
+              </div>
+            `;
+            const admFixBtn = div.querySelector('.adm-autofix-btn');
+            if (admFixBtn) {
+              admFixBtn.addEventListener('click', () => executeCrypticCommand(line.safeCmd));
+            }
+            const admHubBtn = div.querySelector('.adm-open-hub-btn');
+            if (admHubBtn) {
+              admHubBtn.addEventListener('click', () => {
+                if (typeof openAdmShieldModal === 'function') openAdmShieldModal('bsplink');
+              });
+            }
             break;
           case 'smart-error':
             div.className = 'bg-red-950/40 border border-red-700/70 rounded-lg p-3 my-1.5 space-y-1.5 text-xs';
@@ -9767,6 +10266,983 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
           showToast('Rule of Thirds Visual Grid Toggled on Hero Banner!');
         }
       });
+
+
+      /* ======================================================================
+         IATA ADM SHIELD, 12 OFFICIAL ADM TRIGGERS, LIVE TERMINAL ADM RADAR,
+         BSPLINK DISPUTE SIMULATOR, TIMATIC, QUEUE HUB & INVOICE BUILDER
+         ====================================================================== */
+
+      const OFFICIAL_12_ADM_CAUSES = [
+        {
+          id: 'ADM-01',
+          cat: 'TICKETING',
+          title: '1. Unauthorized Commission Override (অতিরিক্ত কমিশন ক্লেইম)',
+          policyRef: 'IATA Resolution 850m & Airline Fare Audit',
+          fineUsd: 65,
+          fineText: 'USD $65 (≈ ৳7,800 BDT) + Over-Claimed Diff',
+          badCmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP15¥ETR¥ER',
+          safeCmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
+          reasonBn: 'বাংলাদেশে IATA অনুমোদিত স্ট্যান্ডার্ড কমিশন সাধারণত ৭% (অথবা নেট ফেয়ারে ০% KP0)। যদি টিকিট ইস্যুর সময় কমান্ডে `¥KP9`, `¥KP12` বা `¥KP15` দিয়ে অতিরিক্ত কমিশন কাটা হয়, তবে এয়ারলাইন্সের রেভিনিউ অডিট সিস্টেম সাথে সাথে অতিরিক্ত কমিশন + $50–$65 ADM Admin Fee জরিমানা করে।',
+          preventionTip: 'সবসময় `W¥PQ1N1.1¥A[CXR]¥FINVAGT¥KP7¥ETR¥ER` (অথবা প্রযোজ্য ক্ষেত্রে `KP0`) ব্যবহার করুন।'
+        },
+        {
+          id: 'ADM-02',
+          cat: 'SSR',
+          title: '2. Fictitious / Fake Passenger Name (ভুয়া বা টেস্ট নামে সিট হোল্ড করা)',
+          policyRef: 'IATA Resolution 830a & GDS Inventory Abuse Policy',
+          fineUsd: 75,
+          fineText: 'USD $75 (≈ ৳9,000 BDT) per Passenger',
+          badCmd: '-TEST/PASSENGER MR',
+          safeCmd: '-TAWHA/MOKTADA AS SADAR MR',
+          reasonBn: 'অনেক সময় ট্রেইনি বা এজেন্টরা সিট ব্লক করে রাখার জন্য `-TEST/PAX MR`, `-DUMMY/NAME MR`, `-FAKE/USER MR`, বা `-ABC/XYZ MR` দিয়ে লাইভ ফ্লাইটে বুকিং করে। এয়ারলাইন্স ইনভেন্টরি অডিটে এটি ধরা পড়লে সিট বাতিলসহ প্রতি যাত্রীর জন্য $50–$100 ADM জরিমানা আসে।',
+          preventionTip: 'কখনোই লাইভ জিডিএস-এ ভুয়া নাম দেবেন না; পাসপোর্ট অনুযায়ী আসল নাম (`-SURNAME/GIVEN NAME TITLE`) লিখুন।'
+        },
+        {
+          id: 'ADM-03',
+          cat: 'BOOKING',
+          title: '3. Passive Segment Abuse — GK / BK / YK (ভুয়া প্যাসিভ সেগমেন্ট তৈরি)',
+          policyRef: 'Sabre GDS & Airline Passive Booking Policy',
+          fineUsd: 45,
+          fineText: 'USD $45 (≈ ৳5,400 BDT) per Segment',
+          badCmd: '0BG101Y15NOVDACDXBGK1',
+          safeCmd: '01Y1',
+          reasonBn: 'অরিজিনাল এয়ারলাইন্স বুকিং বা ম্যাচিং প্যাসেঞ্জার নাম ছাড়া শুধুমাত্র আইটিনারারি প্রিন্ট বা ভিসা আবেদনের জন্য `0...GK1` বা `0...BK1` প্যাসিভ সেগমেন্ট তৈরি করলে এয়ারলাইন্স জিডিএস ফি ও প্যাসিভ সেগমেন্ট এবিউজের জন্য ADM ইস্যু করে।',
+          preventionTip: 'সবসময় লাইভ এভেইল্যাবিলিটি (`115NOVDACDXB`) থেকে `01Y1` দিয়ে কনফার্মড (`HK1`) সিট সেল করুন।'
+        },
+        {
+          id: 'ADM-04',
+          cat: 'BOOKING',
+          title: '4. Married Segment O&D Violation (ম্যারিড কানেক্টিং সেগমেন্ট ভেঙে ক্যানসেল করা)',
+          policyRef: 'Airline Origin & Destination (O&D) Married Segment Control',
+          fineUsd: 250,
+          fineText: 'USD $250 (≈ ৳30,000 BDT) + Highest RBD Fare Diff',
+          badCmd: 'X1¥MARRIED',
+          safeCmd: 'XI',
+          reasonBn: 'কানেক্টিং ফ্লাইটে (যেমন DAC➔DOH➔LHR) এয়ারলাইন্স দুটি ফ্লাইটকে একসাথে কম দামে দেয় (Married Segments)। চুরি করে পুরো রুট বুক করার পর শুধু একটি সেগমেন্ট (`X1` বা `X2`) ক্যানসেল করে অন্যটি রেখে দিলে এয়ারলাইন্স $200–$400 + সর্বোচ্চ ক্লাসের ভাড়া ADM করে।',
+          preventionTip: 'ম্যারিড কানেকশন পরিবর্তন করতে হলে পুরো রুট একসাথে ক্যানসেল (`XI`) করে নতুন এভেইল্যাবিলিটি থেকে বুক করুন।'
+        },
+        {
+          id: 'ADM-05',
+          cat: 'BOOKING',
+          title: '5. Churning — Repeated Book & Cancel (বারবার একই ফ্লাইট বুক ও ক্যানসেল করা)',
+          policyRef: 'IATA Resolution 850m & Airline Churning Policy (Max 3x)',
+          fineUsd: 50,
+          fineText: 'USD $50 (≈ ৳6,000 BDT) per Segment',
+          badCmd: '01Y1¥CHURN',
+          safeCmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
+          reasonBn: 'টিকেটিং টাইম লিমিট (TTL) বাড়ানোর উদ্দেশ্যে একই যাত্রীর জন্য একই ফ্লাইট বারবার ক্যানসেল (`XI`) ও রিবুক (`01Y1`) করাকে Churning বলে। ৩ থেকে ৪ বারের বেশি এমন করলে প্রতি সেগমেন্টে $15–$50 ADM জরিমানা আসে।',
+          preventionTip: 'বারবার রিবুক না করে টাইম লিমিটের মধ্যেই টিকিট ইস্যু করুন অথবা ফ্লাইট না লাগলে বুকিং ক্যানসেল করে দিন।'
+        },
+        {
+          id: 'ADM-06',
+          cat: 'BOOKING',
+          title: '6. Undeleted HX / UN / UC / NO Inactive Segments (ইনঅ্যাক্টিভ সেগমেন্ট রিমুভ না করা)',
+          policyRef: 'Sabre Queue Q/7 & Airline GDS Scan Fee Policy',
+          fineUsd: 35,
+          fineText: 'USD $35 (≈ ৳4,200 BDT) per Segment',
+          badCmd: 'ER¥HX',
+          safeCmd: '.1XK',
+          reasonBn: 'টাইম লিমিট পার হলে বা সিডিউল চেঞ্জ হলে এয়ারলাইন্স সেগমেন্টটি `HX` (Cancelled) বা `UN` করে দেয়। ফ্লাইট ছাড়ার ২৪ ঘণ্টার আগে `.1XK` দিয়ে এই ইনঅ্যাক্টিভ সেগমেন্ট পিএনআর থেকে মুছে না ফেললে এয়ারলাইন্স জিডিএস চার্জের জন্য ADM পাঠায়।',
+          preventionTip: '`HX`, `UN`, `UC`, বা `NO` স্ট্যাটাস দেখলেই সাথে সাথে `.1XK` (অথবা সব ক্যানসেল করতে `XI`) কমান্ড দিয়ে `ER` করুন।'
+        },
+        {
+          id: 'ADM-07',
+          cat: 'SSR',
+          title: '7. Missing Passenger Contact — IATA Res 830d (যাত্রীর আসল মোবাইল/ইমেইল না দেওয়া)',
+          policyRef: 'IATA Resolution 830d Mandatory APIS Contact Rule',
+          fineUsd: 40,
+          fineText: 'USD $40 (≈ ৳4,800 BDT) per PNR',
+          badCmd: 'W¥PQ1¥NOCTC',
+          safeCmd: '3CTCM/01980284967-1.1',
+          reasonBn: 'IATA Resolution 830d অনুযায়ী প্রতিটি পিএনআর-এ যাত্রীর মোবাইল (`3CTCM/...`) এবং ইমেইল (`3CTCE/...`) দেওয়া বাধ্যতামূলক যাতে ফ্লাইট ডিলে বা ক্যানসেল হলে এয়ারলাইন্স যাত্রীকে জানাতে পারে। এটি ছাড়া টিকিট ইস্যু করলে ADM আসে।',
+          preventionTip: 'টিকিট ইস্যুর আগে অবশ্যই `3DOCS`, `3CTCM/01980284967-1.1` এবং `3CTCE/EMAIL//GMAIL.COM-1.1` এন্ট্রি দিন।'
+        },
+        {
+          id: 'ADM-08',
+          cat: 'SSR',
+          title: '8. Child / Infant Fare Without SSR DOB (বয়স ও জন্মতারিখ ছাড়া চাইল্ড/ইনফ্যান্ট টিকিট)',
+          policyRef: 'Airline Revenue Integrity — Child (CNN) & Infant (INF) Audit',
+          fineUsd: 120,
+          fineText: 'USD $120 (≈ ৳14,400 BDT) + Adult Fare Difference',
+          badCmd: 'W¥PQ1¥NODOB',
+          safeCmd: '3CHLD/12AUG18-1.1',
+          reasonBn: 'চাইল্ড (২–১১ বছর) বা ইনফ্যান্ট (<২ বছর) ডিসকাউন্ট ফেয়ারে টিকিট ইস্যু করার সময় যদি `3CHLD/DDMMMYY-1.1` বা `3INFT/...` দিয়ে জন্মতারিখ (DOB) যুক্ত না করা হয়, তবে এয়ারলাইন্স অ্যাডাল্ট ফেয়ারের পার্থক্যসহ ADM জরিমানা করে।',
+          preventionTip: 'চাইল্ড যাত্রীর ক্ষেত্রে `-NAME MISS*C08` এবং `3CHLD/12AUG18-2.1` ও ইনফ্যান্টের ক্ষেত্রে `3INFT/...` অবশ্যই দিন।'
+        },
+        {
+          id: 'ADM-09',
+          cat: 'REFUND',
+          title: '9. Refund / Reissue Penalty Short-Collection (পেনাল্টি বা নো-শো ফি না কেটে রিফান্ড)',
+          policyRef: 'IATA Resolution 850m & Cat-16 / Cat-31 Fare Rule Audit',
+          fineUsd: 110,
+          fineText: 'USD $110 (≈ ৳13,200 BDT) + Uncollected Penalty',
+          badCmd: 'WFRF1762489104412‡ACASH¥NOPEN',
+          safeCmd: 'WFRF1762489104412‡ACASH',
+          reasonBn: 'টিকিট রিফান্ড বা রিইস্যু করার সময় ফেয়ার রুল (`RD1*16`) চেক না করে ক্যানসেলেশন ফি, নো-শো পেনাল্টি বা ব্যবহৃত YQ/YR ট্যাক্স না কেটে ফুল রিফান্ড করলে এয়ারলাইন্স পুরো ঘাটতি টাকা + অ্যাডমিন ফি ADM করে।',
+          preventionTip: 'রিফান্ডের আগে `RD1*16` দিয়ে পেনাল্টি দেখুন এবং অটোমেটেড QREX (`WFRF...`) বা রিফান্ড ক্যালকুলেটর ব্যবহার করুন।'
+        },
+        {
+          id: 'ADM-10',
+          cat: 'REFUND',
+          title: '10. Late Ticket Void Violation (BSP ভয়েড টাইম পার হওয়ার পর ভয়েড করা)',
+          policyRef: 'IATA BSP Same-Day Void Window Rule',
+          fineUsd: 85,
+          fineText: 'USD $85 (≈ ৳10,200 BDT) + Cancellation Fee',
+          badCmd: 'WV2¥LATE',
+          safeCmd: 'WV2',
+          reasonBn: 'বাংলাদেশে বিএসপি নিয়ম অনুযায়ী টিকিট ইস্যুর দিন রাত ২৩:৫৯-এর পর অথবা ফ্লাইট ছাড়ার ২৪ ঘণ্টার কম সময় থাকলে টিকিট ভয়েড (`WV2`) করা নিষিদ্ধ। অসময়ে জোরপূর্বক ভয়েড বা সেগমেন্ট অ্যাক্টিভ রেখে ভয়েড করলে ADM নিশ্চিত।',
+          preventionTip: 'টিকিট ভয়েড করতে হলে ইস্যুর দিনই রাত ১১:৫৯-এর আগে `WETR*2` চেক করে `WV2` দিন এবং সিট ক্যানসেল (`XI`) করুন।'
+        },
+        {
+          id: 'ADM-11',
+          cat: 'BOOKING',
+          title: '11. Speculative Closed Waitlist Abuse — LL Status (অপ্রয়োজনীয় ওয়েটলিস্ট সেগমেন্ট)',
+          policyRef: 'Airline Inventory Integrity & Waitlist Policy',
+          fineUsd: 30,
+          fineText: 'USD $30 (≈ ৳3,600 BDT) per Segment',
+          badCmd: '01Y1LL',
+          safeCmd: '01Y1',
+          reasonBn: 'ক্লোজড ক্লাসে বা অপ্রয়োজনীয়ভাবে একাধিক ফ্লাইটে ওয়েটলিস্ট (`01Y1LL`) সেগমেন্ট হোল্ড করে ফ্লাইটের আগ পর্যন্ত ক্যানসেল না করলে এয়ারলাইন্স ইনভেন্টরি অপচয়ের কারণে ADM ইস্যু করে।',
+          preventionTip: 'ওয়েটলিস্ট (`LL`) কনফার্ম (`KL`) না হলে ফ্লাইটের অন্তত ৪৮ ঘণ্টা আগে `.1XK` বা `X1` দিয়ে মুছে ফেলুন।'
+        },
+        {
+          id: 'ADM-12',
+          cat: 'TICKETING',
+          title: '12. Manual Fare / Tax Manipulation — Skipping BD / UT / YQ Tax (ট্যাক্স বা ফেয়ার কম দেখানো)',
+          policyRef: 'Bangladesh Civil Aviation & Airline Tax Audit (BD / UT / OW / E5 / YQ)',
+          fineUsd: 140,
+          fineText: 'USD $140 (≈ ৳16,800 BDT) + Tax Shortfall',
+          badCmd: 'W¥I‡YUSD100.00/NOTAX',
+          safeCmd: 'WP',
+          reasonBn: 'অটো-প্রাইসিং (`WP` / `PQ`) পরিবর্তন করে ম্যানুয়ালি ফেয়ার মাস্ক এডিট করে বাংলাদেশ ভ্রমণ কর (`UT`), এমবার্কেশন ফি (`BD` BDT 500), বা ফুয়েল সারচার্জ (`YQ`) বাদ দিয়ে টিকিট কাটলে সাথে সাথে ADM আসবে।',
+          preventionTip: 'কখনোই ম্যানুয়ালি ট্যাক্স ডিলিট করবেন না; সিস্টেম জেনারেটেড অটো প্রাইসিং (`WP` ➔ `PQ`) দিয়ে টিকিট কাটুন।'
+        }
+      ];
+
+      // Initial BSPlink ADM / ACM Ledger Records
+      let admAuditRecords = [
+        {
+          memoNo: 'ADM-6099410281',
+          airline: 'BG — Biman Bangladesh (997)',
+          cmdTriggered: 'W¥PQ1¥ABG¥KP15¥FINVAGT',
+          reason: 'Unauthorized 15% Commission Claimed (Standard IATA is 7%)',
+          usd: 65,
+          status: 'OPEN (15d Dispute Window)',
+          cat: 'TICKETING'
+        },
+        {
+          memoNo: 'ADM-6017648219',
+          airline: 'EK — Emirates (176)',
+          cmdTriggered: 'X1 (Married Segment DAC-DXB-LHR)',
+          reason: 'Married Segment O&D Break Violation — Cancelled Sector 1 Only',
+          usd: 250,
+          status: 'OPEN (15d Dispute Window)',
+          cat: 'BOOKING'
+        },
+        {
+          memoNo: 'ADM-6015799310',
+          airline: 'QR — Qatar Airways (157)',
+          cmdTriggered: 'ER with Undeleted HX1 Segment',
+          reason: 'Undeleted Inactive HX Segment Left in PNR Within 24h of Departure',
+          usd: 35,
+          status: 'DISPUTED IN BSPLINK',
+          cat: 'BOOKING'
+        },
+        {
+          memoNo: 'ACM-7061822904',
+          airline: 'SQ — Singapore Airlines (618)',
+          cmdTriggered: 'BSPlink Dispute Approved (Res 850m)',
+          reason: 'ACM Credit Issued After Valid Schedule Change Waiver Proof',
+          usd: -50,
+          status: 'CREDITED (ACM)',
+          cat: 'REFUND'
+        }
+      ];
+
+      // Track churning count per route in session
+      let routeChurnCounter = {};
+
+      /**
+       * Evaluates any raw command string (either while typing or on execution)
+       * and returns the matching ADM risk object if the command will trigger an ADM!
+       */
+      function detectAdmRiskForCommand(rawCmd, draft, session) {
+        if (!rawCmd || !rawCmd.trim()) return null;
+        const c = rawCmd.trim().toUpperCase().replace(/\s+/g, ' ');
+
+        // 1. Over-Commission in Ticketing Command (e.g., W¥...¥KP9, KP10, KP12, KP15, etc. > 7%)
+        const kpMatch = c.match(/[‡¥]KP(\d+)/);
+        if (kpMatch) {
+          const kpVal = parseInt(kpMatch[1], 10);
+          if (kpVal > 7) {
+            return {
+              ...OFFICIAL_12_ADM_CAUSES[0],
+              rawCmd: c,
+              safeCmd: c.replace(/[‡¥]KP\d+/, '¥KP7')
+            };
+          }
+        }
+
+        // 2. Fake / Fictitious Passenger Name (-TEST/..., -DUMMY/..., -FAKE/..., -ABC/..., -SAMPLE/..., -XXXX/...)
+        if (c.startsWith('-') && /^\-(TEST|DUMMY|FAKE|ABC|XYZ|SAMPLE|USER|ADMIN|DEMO|UNKNOWN|PASSENGER|PAX|ASDF|QWERTY)\b/.test(c)) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[1],
+            rawCmd: c
+          };
+        }
+
+        // 3. Passive Segment Abuse (0...GK1, 0...BK1, 0...YK1, 0...HK1 manual passive sell)
+        if (/^0[A-Z0-9]{2}\d+[A-Z]\d{1,2}[A-Z]{3}[A-Z]{6}(GK|BK|YK)\d*$/.test(c) || (c.startsWith('0') && /(GK1|BK1|YK1)$/.test(c))) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[2],
+            rawCmd: c
+          };
+        }
+
+        // 4. Married Segment Break (Explicit X1¥MARRIED or X1/X2 when draft has connecting flights)
+        if (c === 'X1¥MARRIED' || c === 'X2¥MARRIED' || ((c === 'X1' || c === 'X2') && draft && draft.segments && draft.segments.length >= 2 && draft.segments[0].dest === draft.segments[1].orig)) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[3],
+            rawCmd: c
+          };
+        }
+
+        // 5. Churning (01Y1¥CHURN or selling same flight > 3 times)
+        if (c.includes('¥CHURN') || ( /^0\d+[A-Z]\d+/.test(c) && (routeChurnCounter[c] || 0) >= 3 )) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[4],
+            rawCmd: c
+          };
+        }
+
+        // 6. Leaving Undeleted HX / UN / UC Inactive Segment in PNR on ER / ET or explicit ER¥HX
+        if (c === 'ER¥HX' || ((c === 'ER' || c === 'ET' || c.startsWith('W¥PQ') || c.startsWith('W‡PQ')) && draft && draft.segments && draft.segments.some(s => ['HX', 'UN', 'UC', 'NO', 'WK'].includes(s.status)))) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[5],
+            rawCmd: c
+          };
+        }
+
+        // 7. Ticketing without IATA Resolution 830d Passenger Contact (3CTCM / 3CTCE)
+        if (c === 'W¥PQ1¥NOCTC' || ((c.startsWith('W¥PQ') || c.startsWith('W‡PQ')) && !c.includes('KP15') && draft && (!draft.ssr || !draft.ssr.some(s => s.includes('CTCM') || s.includes('CTCE'))))) {
+          // Only warn if user explicitly tests W¥PQ1¥NOCTC
+          if (c === 'W¥PQ1¥NOCTC') {
+            return {
+              ...OFFICIAL_12_ADM_CAUSES[6],
+              rawCmd: c
+            };
+          }
+        }
+
+        // 8. Child / Infant Ticketing without Mandatory SSR 3CHLD / 3INFT DOB
+        if (c === 'W¥PQ1¥NODOB' || ((c.startsWith('W¥PQ') || c.startsWith('W‡PQ')) && draft && draft.names && draft.names.some(n => n.includes('*C') || n.startsWith('I/')) && (!draft.ssr || !draft.ssr.some(s => s.includes('CHLD') || s.includes('INFT'))))) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[7],
+            rawCmd: c
+          };
+        }
+
+        // 9. Full Refund without Penalty Deduction (WFRF...¥NOPEN)
+        if (c.includes('¥NOPEN') || /^WFRF\d+.*NOPEN/.test(c)) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[8],
+            rawCmd: c
+          };
+        }
+
+        // 10. Late Ticket Void Violation (WV2¥LATE)
+        if (c === 'WV2¥LATE' || c === 'WV1¥LATE' || c === 'WETRV¥LATE') {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[9],
+            rawCmd: c
+          };
+        }
+
+        // 11. Speculative Closed Waitlist Abuse (01Y1LL / 0...LL)
+        if (/^0\d+[A-Z]\d+LL$/.test(c) || (c.startsWith('0') && c.endsWith('LL'))) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[10],
+            rawCmd: c
+          };
+        }
+
+        // 12. Manual Fare / Tax Manipulation (W¥I... or NOTAX)
+        if (c.startsWith('W¥I') || c.startsWith('W‡I') || c.includes('NOTAX')) {
+          return {
+            ...OFFICIAL_12_ADM_CAUSES[11],
+            rawCmd: c
+          };
+        }
+
+        return null;
+      }
+
+      // Live Typing Banner Updater
+      let currentLiveSafeCmd = 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER';
+      function updateLiveAdmTypingBanner(rawVal) {
+        const banner = document.getElementById('liveAdmTypingWarningBanner');
+        if (!banner) return;
+        const session = areaSessions[currentArea];
+        const draft = session ? session.draft : null;
+        const risk = detectAdmRiskForCommand(rawVal, draft, session);
+
+        if (!risk) {
+          banner.classList.add('hidden');
+          return;
+        }
+
+        currentLiveSafeCmd = risk.safeCmd;
+        document.getElementById('liveAdmWarnTitle').textContent = `সতর্কবার্তা: এই কমান্ড দিলে ADM আসবে! (${risk.title})`;
+        document.getElementById('liveAdmWarnFineBadge').textContent = `Penalty: ${risk.fineText}`;
+        document.getElementById('liveAdmWarnReasonBn').textContent = `${risk.reasonBn}`;
+        document.getElementById('liveAdmWarnSafeCmd').textContent = risk.safeCmd;
+        banner.classList.remove('hidden');
+      }
+
+      // Terminal Execution ADM Interceptor
+      function checkAndInterceptAdmCommand(cleanCmd, draft, session) {
+        // Track churning when selling segments
+        if (/^0\d+[A-Z]\d+$/.test(cleanCmd)) {
+          routeChurnCounter[cleanCmd] = (routeChurnCounter[cleanCmd] || 0) + 1;
+        }
+
+        const risk = detectAdmRiskForCommand(cleanCmd, draft, session);
+        if (!risk) return false;
+
+        // Hide live typing banner since we are now outputting the full ADM Error Notice to the terminal
+        document.getElementById('liveAdmTypingWarningBanner')?.classList.add('hidden');
+
+        // Push high-visibility ADM Error Notice block to Sabre terminal transcript
+        session.transcript.push({
+          type: 'adm-violation',
+          rawCmd: cleanCmd,
+          title: risk.title,
+          policyRef: risk.policyRef,
+          fineText: risk.fineText,
+          reasonBn: risk.reasonBn,
+          safeCmd: risk.safeCmd
+        });
+
+        // Log in BSPlink ADM Audit Ledger
+        const memoId = 'ADM-60' + Math.floor(10000000 + Math.random() * 89999999);
+        admAuditRecords.unshift({
+          memoNo: memoId,
+          airline: 'IATA BSP / Airline Revenue Audit',
+          cmdTriggered: cleanCmd,
+          reason: risk.title,
+          usd: risk.fineUsd || 50,
+          status: 'OPEN (15d Dispute Window)',
+          cat: risk.cat
+        });
+        if (typeof renderBsplinkAdmTable === 'function') renderBsplinkAdmTable();
+
+        showToast(`🚨 ADM WARNING: "${cleanCmd}" কমান্ড দিলে ${risk.fineText} ADM জরিমানা আসবে!`);
+        return true;
+      }
+
+      // Render 12 Official ADM Causes Cards inside #admShieldModal
+      function renderAdmCausesCards(filterCat = 'ALL') {
+        const container = document.getElementById('admCausesCardsGrid');
+        if (!container) return;
+        const list = filterCat === 'ALL'
+          ? OFFICIAL_12_ADM_CAUSES
+          : OFFICIAL_12_ADM_CAUSES.filter(item => item.cat === filterCat);
+
+        container.innerHTML = list.map(item => `
+          <div class="bg-[#0b100d] border border-zinc-800 hover:border-[#ff2a2a] rounded-2xl p-4 flex flex-col justify-between space-y-3 transition shadow-lg">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[10px] font-mono font-black bg-[#ff2a2a]/20 text-[#ff2a2a] border border-[#ff2a2a]/40 px-2 py-0.5 rounded">${item.id} • ${item.cat}</span>
+                <span class="text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded">${item.fineText}</span>
+              </div>
+              <h4 class="font-extrabold text-white text-xs sm:text-sm leading-snug">${item.title}</h4>
+              <div class="text-[10px] font-mono text-zinc-400">${item.policyRef}</div>
+              <p class="text-[11px] text-zinc-300 leading-relaxed">${item.reasonBn}</p>
+            </div>
+
+            <div class="space-y-2 pt-2 border-t border-zinc-800/80 text-[11px] font-mono">
+              <div class="bg-[#160608] border border-[#ff2a2a]/40 px-2.5 py-1.5 rounded flex items-center justify-between">
+                <span class="text-red-300 text-[10px]">❌ ADM Command:</span>
+                <code class="text-white font-bold">${item.badCmd}</code>
+              </div>
+              <div class="bg-[#09140e] border border-lime-400/30 px-2.5 py-1.5 rounded flex items-center justify-between">
+                <span class="text-lime-400 text-[10px]">✓ Safe Command:</span>
+                <code class="text-lime-300 font-bold">${item.safeCmd}</code>
+              </div>
+              <p class="font-sans text-[11px] text-lime-400/90">💡 <strong>প্রতিকার:</strong> ${item.preventionTip}</p>
+              <div class="grid grid-cols-2 gap-2 pt-1 font-sans">
+                <button type="button" class="test-adm-card-btn bg-[#ff2a2a] hover:bg-red-500 text-white font-extrabold text-[11px] py-1.5 px-2.5 rounded-lg transition" data-admcmd="${item.badCmd}">
+                  ⚡ টার্মিনালে টেস্ট করুন
+                </button>
+                <button type="button" class="run-safe-card-btn bg-lime-400 hover:bg-lime-300 text-black font-extrabold text-[11px] py-1.5 px-2.5 rounded-lg transition" data-safecmd="${item.safeCmd}">
+                  ✓ সঠিক কমান্ড রান করুন
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        container.querySelectorAll('.test-adm-card-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const cmd = e.currentTarget.getAttribute('data-admcmd');
+            document.getElementById('admShieldModal')?.classList.add('hidden');
+            document.getElementById('academyDashboardModal')?.classList.add('hidden');
+            const termInp = document.getElementById('terminalInput');
+            if (termInp) {
+              termInp.value = cmd;
+              updateLiveAdmTypingBanner(cmd);
+              executeCrypticCommand(cmd);
+              termInp.focus();
+            }
+          });
+        });
+
+        container.querySelectorAll('.run-safe-card-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const cmd = e.currentTarget.getAttribute('data-safecmd');
+            document.getElementById('admShieldModal')?.classList.add('hidden');
+            document.getElementById('academyDashboardModal')?.classList.add('hidden');
+            executeCrypticCommand(cmd);
+          });
+        });
+      }
+
+      // Render BSPlink ADM / ACM Ledger Table
+      function renderBsplinkAdmTable() {
+        const tbody = document.getElementById('bsplinkAdmTableBody');
+        const badge = document.getElementById('admActiveCountBadge');
+        const totalEl = document.getElementById('bspTotalAdmUsdText');
+        if (!tbody) return;
+
+        const openAdms = admAuditRecords.filter(r => r.status.startsWith('OPEN'));
+        if (badge) badge.textContent = openAdms.length;
+
+        const netUsd = openAdms.reduce((acc, r) => acc + r.usd, 0);
+        const netBdt = netUsd * 120;
+        if (totalEl) {
+          totalEl.textContent = `USD $${netUsd.toFixed(2)} (≈ ৳${netBdt.toLocaleString()} BDT)`;
+        }
+
+        tbody.innerHTML = admAuditRecords.map((rec, idx) => {
+          const bdtVal = Math.abs(rec.usd) * 120;
+          const isOpen = rec.status.startsWith('OPEN');
+          const isCredit = rec.usd < 0 || rec.status.includes('ACM');
+          return `
+            <tr class="hover:bg-[#111915] transition">
+              <td class="py-2.5 px-3 font-mono font-bold ${isCredit ? 'text-lime-400' : 'text-white'}">${rec.memoNo}</td>
+              <td class="py-2.5 px-3 text-zinc-300 font-semibold">${rec.airline}</td>
+              <td class="py-2.5 px-3 font-mono text-amber-300">${rec.cmdTriggered}</td>
+              <td class="py-2.5 px-3 text-zinc-200">${rec.reason}</td>
+              <td class="py-2.5 px-3 font-mono font-bold ${isCredit ? 'text-lime-400' : 'text-[#ff2a2a]'}">
+                ${isCredit ? '-' : '+'}$${Math.abs(rec.usd)} (৳${bdtVal.toLocaleString()})
+              </td>
+              <td class="py-2.5 px-3">
+                <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold ${isCredit ? 'bg-lime-400/20 text-lime-300 border border-lime-400/40' : (isOpen ? 'bg-[#ff2a2a]/20 text-red-300 border border-[#ff2a2a]/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40')}">
+                  ${rec.status}
+                </span>
+              </td>
+              <td class="py-2.5 px-3 text-right space-x-1">
+                ${isOpen ? `
+                  <button type="button" class="bsp-dispute-btn bg-lime-400 hover:bg-lime-300 text-black font-extrabold px-2.5 py-1 rounded text-[11px] transition" data-idx="${idx}">
+                    ⚖️ Dispute (Res 850m)
+                  </button>
+                ` : `<span class="text-[11px] font-mono text-zinc-500">✓ Processed</span>`}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        tbody.querySelectorAll('.bsp-dispute-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const i = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+            if (admAuditRecords[i]) {
+              admAuditRecords[i].status = 'DISPUTE APPROVED ➔ ACM ISSUED';
+              admAuditRecords[i].usd = 0;
+              renderBsplinkAdmTable();
+              showToast(`✓ BSPlink Dispute Submitted under IATA Res 850m! ADM Waived.`);
+            }
+          });
+        });
+      }
+
+      // Render Pre-Ticketing Active PNR ADM Scanner
+      function renderLivePnrAdmChecklist() {
+        const container = document.getElementById('livePnrAdmChecklistContainer');
+        if (!container) return;
+        const draft = areaSessions[currentArea]?.draft || { segments: [], names: [], phones: [], ssr: [] };
+
+        const hasSegs = draft.segments && draft.segments.length > 0;
+        const hasInactiveHx = draft.segments && draft.segments.some(s => ['HX', 'UN', 'UC', 'NO'].includes(s.status));
+        const hasRealName = draft.names && draft.names.length > 0 && !draft.names.some(n => /^(TEST|DUMMY|FAKE|ABC)/.test(n));
+        const has830dContact = draft.ssr && draft.ssr.some(s => s.includes('CTCM')) && draft.ssr.some(s => s.includes('CTCE'));
+        const hasDocs = draft.ssr && draft.ssr.some(s => s.includes('DOCS'));
+        const hasPq = Boolean(draft.priceQuote);
+
+        const checks = [
+          {
+            label: '1. Zero Inactive (HX / UN / UC) Segments in PNR',
+            ok: !hasInactiveHx,
+            detail: hasInactiveHx ? 'CRITICAL: Inactive HX/UN segment found! Run .1XK immediately to avoid $35 ADM.' : '✓ All segments are active (HK) or clean.'
+          },
+          {
+            label: '2. Authentic Passenger Name (No TEST / DUMMY Names)',
+            ok: hasRealName,
+            detail: hasRealName ? `✓ Verified passenger name(s): ${draft.names.join(', ')}` : '⚠ Add real passport passenger name (-SURNAME/GIVEN MR).'
+          },
+          {
+            label: '3. IATA Resolution 830d Contact (3CTCM & 3CTCE)',
+            ok: has830dContact,
+            detail: has830dContact ? '✓ Both 3CTCM mobile and 3CTCE email are present.' : '⚠ Missing 3CTCM or 3CTCE! Required under IATA Res 830d before ticketing.'
+          },
+          {
+            label: '4. Mandatory APIS Passport Data (3DOCS)',
+            ok: hasDocs,
+            detail: hasDocs ? '✓ 3DOCS passport information verified.' : '⚠ Missing 3DOCS APIS passport entry.'
+          },
+          {
+            label: '5. Automated System Price Quote Stored (WP ➔ PQ)',
+            ok: hasPq,
+            detail: hasPq ? '✓ Automated Price Quote (PQ1) stored — safe from manual tax/fare ADM.' : '⚠ Run WP and PQ to store guaranteed system fare.'
+          },
+          {
+            label: '6. Standard 7% IATA Commission Compliance (KP7)',
+            ok: true,
+            detail: '✓ Sabre ADM Guard is actively blocking unauthorized >7% KP overrides.'
+          }
+        ];
+
+        container.innerHTML = checks.map(c => `
+          <div class="bg-[#0b100d] border ${c.ok ? 'border-lime-400/40' : 'border-[#ff2a2a]'} rounded-xl p-3.5 flex items-start gap-3">
+            <span class="px-2 py-0.5 rounded font-mono font-black text-xs ${c.ok ? 'bg-lime-400 text-black' : 'bg-[#ff2a2a] text-white'}">${c.ok ? 'PASS' : 'RISK'}</span>
+            <div>
+              <div class="font-bold text-white text-xs">${c.label}</div>
+              <div class="text-[11px] ${c.ok ? 'text-zinc-400' : 'text-red-300'} mt-0.5">${c.detail}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function openAdmShieldModal(tab = 'causes') {
+        const modal = document.getElementById('admShieldModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        renderAdmCausesCards(document.getElementById('admCategoryFilter')?.value || 'ALL');
+        renderBsplinkAdmTable();
+        renderLivePnrAdmChecklist();
+
+        const views = {
+          causes: document.getElementById('admTabCausesView'),
+          bsplink: document.getElementById('admTabBsplinkView'),
+          audit: document.getElementById('admTabAuditView')
+        };
+        Object.values(views).forEach(v => v?.classList.add('hidden'));
+        (views[tab] || views.causes)?.classList.remove('hidden');
+
+        document.querySelectorAll('.adm-hub-tab-btn').forEach(btn => {
+          if (btn.getAttribute('data-admtab') === tab) {
+            btn.className = 'adm-hub-tab-btn bg-lime-400 text-black font-extrabold px-4 py-1.5 rounded-lg transition';
+          } else {
+            btn.className = 'adm-hub-tab-btn bg-[#121915] text-zinc-200 hover:text-lime-400 border border-lime-400/30 font-bold px-4 py-1.5 rounded-lg transition';
+          }
+        });
+      }
+
+      // TIMATIC Visa & Passport Handler
+      const TIMATIC_RULES_DB = {
+        DXB: { country: 'United Arab Emirates (DXB)', visa: 'E-Visa / Tourist Visa required prior to departure for BGD passport holders.', minPass: 'Minimum 6 months passport validity from arrival date.', returnTkt: 'Confirmed return/onward ticket mandatory.', health: 'No mandatory vaccination; health insurance recommended.' },
+        JED: { country: 'Saudi Arabia (JED / RUH)', visa: 'Valid Umrah, Work, or Tourist Visa required. Check Nusuk / MOFA portal.', minPass: 'Minimum 6 months validity with 2 blank pages.', returnTkt: 'Mandatory return ticket for Umrah/Visit visa.', health: 'Meningitis ACWY135 vaccine certificate required for Umrah pilgrims.' },
+        DOH: { country: 'Qatar (DOH)', visa: 'Hayya A1 Tourist Visa or Pre-approved Work/Family Visa required for BGD nationals.', minPass: 'Minimum 6 months validity mandatory.', returnTkt: 'Confirmed return ticket & hotel booking via Discover Qatar.', health: 'Standard travel insurance.' },
+        SIN: { country: 'Singapore (SIN)', visa: 'Pre-approved Singapore E-Visa required + SG Arrival Card (SGAC) within 3 days before arrival.', minPass: 'Minimum 6 months validity strictly enforced.', returnTkt: 'Return ticket & sufficient funds proof mandatory.', health: 'Yellow fever cert only if arriving from endemic zone.' },
+        BKK: { country: 'Thailand (BKK)', visa: 'Thai E-Visa required prior to travel for BGD ordinary passports.', minPass: 'Minimum 6 months validity from entry date.', returnTkt: 'Confirmed return ticket & THB 20,000 cash equivalent.', health: 'No restrictions.' },
+        KUL: { country: 'Malaysia (KUL)', visa: 'Malaysia eVISA required + Malaysia Digital Arrival Card (MDAC) within 3 days prior to arrival.', minPass: 'Minimum 6 months validity mandatory.', returnTkt: 'Confirmed return ticket & hotel/sponsor proof.', health: 'No restrictions.' },
+        KTM: { country: 'Nepal (KTM)', visa: 'Visa on Arrival (VOA) available at Kathmandu Tribhuvan Airport for BGD nationals (Gratis first visit in calendar year).', minPass: 'Minimum 6 months validity mandatory.', returnTkt: 'Return ticket & hotel address required.', health: 'No restrictions.' },
+        LHR: { country: 'United Kingdom (LHR)', visa: 'UK Standard Visitor / Student / Work Visa vignette or eVisa required.', minPass: 'Valid for entire duration of stay in the UK.', returnTkt: 'Proof of accommodation & return itinerary.', health: 'No restrictions.' }
+      };
+
+      function renderTimaticValidator() {
+        const nat = document.getElementById('timNatSelect')?.value || 'BGD';
+        const dest = document.getElementById('timDestSelect')?.value || 'DXB';
+        const valMonths = parseInt(document.getElementById('timValiditySelect')?.value || '8', 10);
+        const out = document.getElementById('timaticResultOutput');
+        if (!out) return;
+        const info = TIMATIC_RULES_DB[dest] || TIMATIC_RULES_DB.DXB;
+        const isExpiredRisk = valMonths < 6;
+
+        out.innerHTML = `
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+            <span class="text-lime-400 font-bold">SABRE TIMATIC RESPONSE — TIRV/NA-${nat}/DE-${dest}</span>
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] ${isExpiredRisk ? 'bg-[#ff2a2a] text-white' : 'bg-lime-400 text-black'}">
+              ${isExpiredRisk ? '🚨 BOARDING DENIED / ADM RISK (<6 MONTHS)' : '✓ DOCUMENT VALIDITY OK'}
+            </span>
+          </div>
+          <div><strong>DESTINATION:</strong> ${info.country}</div>
+          <div><strong>PASSPORT RULE:</strong> ${info.minPass}</div>
+          <div><strong>VISA REQUIREMENT (${nat}):</strong> ${info.visa}</div>
+          <div><strong>RETURN / ONWARD TICKET:</strong> ${info.returnTkt}</div>
+          <div><strong>HEALTH / VACCINATION:</strong> ${info.health}</div>
+          ${isExpiredRisk ? `<div class="bg-[#ff2a2a]/20 border border-[#ff2a2a] text-red-200 p-2 rounded mt-2">🚨 <strong>ADM &amp; INAD PENALTY WARNING:</strong> পাসপোর্টের মেয়াদ ৬ মাসের কম থাকলে যাত্রীকে গন্তব্য এয়ারপোর্ট থেকে ডিপোর্ট (INAD) করা হবে এবং এজেন্সিকে USD $1,500–$3,000 জরিমানা করা হবে!</div>` : ''}
+        `;
+      }
+
+      function handleTimaticCrypticCommand(cleanCmd, draft, session) {
+        const destMatch = cleanCmd.match(/DE\-([A-Z]{3})/);
+        const dest = destMatch ? destMatch[1] : (draft.segments[0]?.dest || 'DXB');
+        const info = TIMATIC_RULES_DB[dest] || TIMATIC_RULES_DB.DXB;
+        session.transcript.push({
+          type: 'output-header',
+          text: `* SABRE TIMATIC VISA & PASSPORT VERIFICATION (${cleanCmd} ➔ ${info.country}):`
+        });
+        session.transcript.push({
+          type: 'output-line',
+          text: `PASSPORT : ${info.minPass}
+VISA     : ${info.visa}
+TICKET   : ${info.returnTkt}
+HEALTH   : ${info.health}`
+        });
+        session.transcript.push({
+          type: 'success',
+          text: `TIMATIC VERIFIED FOR ${dest} — ENSURE 3DOCS PASSPORT EXPIRY > 6 MONTHS TO PREVENT INAD ADM`
+        });
+      }
+
+      // Multi-Currency Fare & Bangladesh Tax Breakdown Handler (WPB / W*TAX / FQC)
+      function handleMultiCurrencyBdtTaxCommand(cleanCmd, draft, session) {
+        const baseUsd = 380;
+        const roe = 120.50;
+        const baseBdt = Math.round(baseUsd * roe);
+        const bdTax = 500;      // Bangladesh Embarkation Fee
+        const utTax = 4000;     // Bangladesh Govt Travel Tax
+        const e5Tax = 1205;     // Airport Development Fee
+        const owTax = 1205;     // Passenger Security Fee
+        const yqTax = 8500;     // Airline Fuel Surcharge
+        const totalTax = bdTax + utTax + e5Tax + owTax + yqTax;
+        const grandTotal = baseBdt + totalTax;
+
+        session.transcript.push({
+          type: 'output-header',
+          text: `* MULTI-CURRENCY & BANGLADESH AVIATION TAX BREAKDOWN (${cleanCmd}):`
+        });
+        session.transcript.push({
+          type: 'output-line',
+          text: `BASE FARE  : USD ${baseUsd}.00  (IATA ROE: 1 USD = ${roe.toFixed(2)} BDT) ➔ BDT ${baseBdt.toLocaleString()}
+` +
+                `TAX BREAKDOWN (MANDATORY BANGLADESH & CARRIER TAXES):
+` +
+                `  • BD (Embarkation Fee)          : BDT ${bdTax}
+` +
+                `  • UT (BD Govt Travel Tax)       : BDT ${utTax}
+` +
+                `  • E5 (Airport Development Fee)  : BDT ${e5Tax}
+` +
+                `  • OW (Passenger Security Fee)   : BDT ${owTax}
+` +
+                `  • YQ (Carrier Fuel Surcharge)   : BDT ${yqTax}
+` +
+                `TOTAL TAX  : BDT ${totalTax.toLocaleString()}
+` +
+                `GRAND TOTAL: BDT ${grandTotal.toLocaleString()} (7% IATA Comm on Base = BDT ${Math.round(baseBdt * 0.07).toLocaleString()})`
+        });
+        session.transcript.push({
+          type: 'success',
+          text: `TAX BREAKDOWN VERIFIED — NEVER OMIT BD/UT/E5/OW TAXES TO AVOID REVENUE AUDIT ADM`
+        });
+      }
+
+      // Sabre Queue Management Center Modal
+      const DEMO_SABRE_QUEUES = [
+        { qNum: 'Q/7', name: 'HX Inactive Segment Queue (CRITICAL ADM RISK)', pnr: 'K9M2LP', pax: 'RAHMAN/TARIQ MR', seg: '1 BG 147 Y 15NOV DACDXB HX1', actionCmd: '.1XK', desc: 'Airline cancelled unpaid segment (HX1). Must remove via .1XK within 24h or face $35 ADM!' },
+        { qNum: 'Q/1', name: 'Schedule Change Queue (TK / WK)', pnr: 'W4P8ZN', pax: 'TAWHA/MOKTADA MR', seg: '1 QR 639 Y 20NOV DACDOH TK1 0310 0620', actionCmd: 'EWR', desc: 'Flight departure time shifted by 25 mins. Run EWR to accept new schedule and update to HK1.' },
+        { qNum: 'Q/9', name: 'Ticketing Time Limit Queue (7TAW/)', pnr: 'H7V3QX', pax: 'AHMED/TANVIR MR', seg: '1 EK 583 Y 25NOV DACDXB HK1', actionCmd: 'W¥PQ1N1.1¥AEK¥FINVAGT¥KP7¥ETR¥ER', desc: 'ADTK Ticketing Time Limit expires in 2 hours. Issue ticket now or cancel itinerary (XI).' },
+        { qNum: 'Q/50', name: 'Waitlist Confirmation Queue (KL1)', pnr: 'M3T9BC', pax: 'ISLAM/ SADIYA MS', seg: '1 SQ 447 Y 10DEC DACSIN KL1', actionCmd: 'EWR', desc: 'Waitlisted seat confirmed by airline (KL1). Confirm to HK1 via EWR.' }
+      ];
+
+      function renderQueueCenterModal() {
+        const container = document.getElementById('queueCenterBodyContainer');
+        if (!container) return;
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${DEMO_SABRE_QUEUES.map(q => `
+              <div class="bg-[#0b100d] border ${q.qNum === 'Q/7' ? 'border-[#ff2a2a]' : 'border-lime-400/30'} rounded-xl p-4 space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-black text-xs px-2.5 py-0.5 rounded ${q.qNum === 'Q/7' ? 'bg-[#ff2a2a] text-white' : 'bg-lime-400 text-black'}">${q.qNum}</span>
+                  <span class="font-mono text-zinc-400">PNR: <strong class="text-white">${q.pnr}</strong></span>
+                </div>
+                <div class="font-extrabold text-white text-sm">${q.name}</div>
+                <div class="font-mono text-[11px] bg-[#060809] p-2 rounded border border-zinc-800 text-amber-300">
+                  PAX: ${q.pax}<br>${q.seg}
+                </div>
+                <p class="text-[11px] text-zinc-300">${q.desc}</p>
+                <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
+                  <code class="text-lime-400 font-mono font-bold">Cmd: ${q.actionCmd}</code>
+                  <button type="button" class="queue-action-btn bg-lime-400 hover:bg-lime-300 text-black font-extrabold px-3 py-1.5 rounded-lg text-[11px] transition" data-qcmd="${q.actionCmd}">
+                    ⚡ Execute ${q.actionCmd} in Sabre
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        container.querySelectorAll('.queue-action-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const cmd = e.currentTarget.getAttribute('data-qcmd');
+            document.getElementById('queueCenterModal')?.classList.add('hidden');
+            document.getElementById('academyDashboardModal')?.classList.add('hidden');
+            executeCrypticCommand(cmd);
+          });
+        });
+      }
+
+      // Automated Client Commercial Invoice & Itinerary Builder
+      function openClientInvoiceModal() {
+        const modal = document.getElementById('clientInvoiceModal');
+        const area = document.getElementById('clientInvoicePrintableArea');
+        if (!modal || !area) return;
+
+        const draft = areaSessions[currentArea]?.draft || {};
+        const paxName = (draft.names && draft.names[0]) || 'TAWHA/MOKTADA AS SADAR MR';
+        const loc = draft.locator || 'K8T9WP';
+        const tktNo = draft.ticketNumber || '997-2489105521';
+        const seg = (draft.segments && draft.segments[0]) || { carrier: 'BG', flight: '147', bookingClass: 'Y', date: '20NOV', orig: 'DAC', dest: 'DXB', dep: '18:30', arr: '22:15' };
+
+        const baseFare = draft.priceQuote?.baseFare || 45790;
+        const bdTax = 500;
+        const utTax = 4000;
+        const otherTax = 9800;
+        const totalTax = bdTax + utTax + otherTax;
+        const grossTotal = baseFare + totalTax;
+        const comm7Pct = Math.round(baseFare * 0.07);
+        const netBspRemit = grossTotal - comm7Pct;
+
+        area.innerHTML = `
+          <div class="bg-white text-slate-900 rounded-xl p-6 max-w-3xl mx-auto shadow-2xl space-y-5 font-sans">
+            <div class="flex flex-wrap items-start justify-between border-b-2 border-slate-900 pb-4 gap-4">
+              <div>
+                <div class="text-xl font-black tracking-tight text-slate-950">MY AIR ACADEMY TRAVEL &amp; GDS CORP.</div>
+                <div class="text-xs text-slate-600">IATA Accredited BSP Agent • PCC: TWH8 (Dhaka, Bangladesh)</div>
+                <div class="text-xs text-slate-600 font-mono">Phone: +880 1980-284967 • Email: moktada200644@gmail.com</div>
+              </div>
+              <div class="text-right font-mono text-xs">
+                <div class="bg-slate-900 text-white font-black px-3 py-1 rounded inline-block">COMMERCIAL INVOICE</div>
+                <div class="mt-1">INVOICE #: <strong>INV-2026-8841</strong></div>
+                <div>SABRE PNR: <strong class="text-red-600">${loc}</strong></div>
+                <div>E-TICKET : <strong>${tktNo}</strong></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-xs">
+              <div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase">Passenger Name (As Per Passport)</div>
+                <div class="font-mono font-bold text-sm text-slate-900 mt-0.5">${paxName}</div>
+              </div>
+              <div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase">Confirmed Flight Segment</div>
+                <div class="font-mono font-bold text-sm text-slate-900 mt-0.5">${seg.carrier}${seg.flight} (${seg.bookingClass}) • ${seg.date} • ${seg.orig} ✈ ${seg.dest} (${seg.dep}–${seg.arr})</div>
+              </div>
+            </div>
+
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-900 text-white uppercase text-[11px]">
+                  <th class="py-2 px-3">Description</th>
+                  <th class="py-2 px-3">Tax / Fare Code</th>
+                  <th class="py-2 px-3 text-right">Amount (BDT)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 font-mono">
+                <tr>
+                  <td class="py-2 px-3 font-sans font-semibold">Published Airfare (Base Fare)</td>
+                  <td class="py-2 px-3">BASE (RBD ${seg.bookingClass})</td>
+                  <td class="py-2 px-3 text-right font-bold">৳${baseFare.toLocaleString()}</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-sans">Bangladesh Embarkation Fee</td>
+                  <td class="py-2 px-3">BD TAX</td>
+                  <td class="py-2 px-3 text-right">৳${bdTax.toLocaleString()}</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-sans">Bangladesh Govt. Travel Tax</td>
+                  <td class="py-2 px-3">UT TAX</td>
+                  <td class="py-2 px-3 text-right">৳${utTax.toLocaleString()}</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-sans">Airport Dev., Security &amp; Carrier Surcharge</td>
+                  <td class="py-2 px-3">E5 + OW + YQ</td>
+                  <td class="py-2 px-3 text-right">৳${otherTax.toLocaleString()}</td>
+                </tr>
+                <tr class="bg-slate-100 font-black text-sm">
+                  <td class="py-2.5 px-3 font-sans" colspan="2">GROSS CUSTOMER PAYABLE TOTAL</td>
+                  <td class="py-2.5 px-3 text-right text-emerald-700">৳${grossTotal.toLocaleString()} BDT</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex flex-wrap items-center justify-between text-xs font-mono">
+              <span>🏦 <strong>IATA BSP Agency Settlement Breakdown:</strong></span>
+              <span>7% Comm (KP7): <strong>৳${comm7Pct.toLocaleString()}</strong> • Net BSP Remittance: <strong>৳${netBspRemit.toLocaleString()} BDT</strong></span>
+            </div>
+          </div>
+        `;
+        modal.classList.remove('hidden');
+      }
+
+      // Wire up all Event Listeners for ADM Shield, TIMATIC, Queues, Invoice & Poster Story Ratio
+      document.getElementById('terminalInput')?.addEventListener('input', (e) => {
+        updateLiveAdmTypingBanner(e.target.value);
+      });
+
+      document.getElementById('btnApplyLiveSafeCmd')?.addEventListener('click', () => {
+        const termInp = document.getElementById('terminalInput');
+        if (termInp && currentLiveSafeCmd) {
+          termInp.value = currentLiveSafeCmd;
+          updateLiveAdmTypingBanner(currentLiveSafeCmd);
+          termInp.focus();
+        }
+      });
+
+      document.getElementById('btnOpenAdmGuideFromLive')?.addEventListener('click', () => openAdmShieldModal('causes'));
+      document.getElementById('btnOpenAdmShieldFromTerm')?.addEventListener('click', () => openAdmShieldModal('causes'));
+      document.getElementById('btnOpenAdmModalFromStrip')?.addEventListener('click', () => openAdmShieldModal('causes'));
+      document.getElementById('btnNavOpenAdmShield')?.addEventListener('click', () => openAdmShieldModal('causes'));
+      document.getElementById('btnHeroOpenAdmShield')?.addEventListener('click', () => openAdmShieldModal('causes'));
+
+      document.getElementById('btnCloseAdmShieldModal')?.addEventListener('click', () => {
+        document.getElementById('admShieldModal')?.classList.add('hidden');
+      });
+
+      document.getElementById('btnToggleAdmTestBar')?.addEventListener('click', () => {
+        document.getElementById('admQuickTestStrip')?.classList.toggle('hidden');
+      });
+
+      document.querySelectorAll('.adm-test-cmd-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const cmd = e.currentTarget.getAttribute('data-admcmd');
+          const termInp = document.getElementById('terminalInput');
+          if (termInp) {
+            termInp.value = cmd;
+            updateLiveAdmTypingBanner(cmd);
+          }
+          executeCrypticCommand(cmd);
+        });
+      });
+
+      document.querySelectorAll('.adm-hub-tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          openAdmShieldModal(e.currentTarget.getAttribute('data-admtab'));
+        });
+      });
+
+      document.getElementById('admCategoryFilter')?.addEventListener('change', (e) => {
+        renderAdmCausesCards(e.target.value);
+      });
+
+      document.getElementById('btnSimulateNewRandomAdm')?.addEventListener('click', () => {
+        const pick = OFFICIAL_12_ADM_CAUSES[Math.floor(Math.random() * OFFICIAL_12_ADM_CAUSES.length)];
+        admAuditRecords.unshift({
+          memoNo: 'ADM-60' + Math.floor(10000000 + Math.random() * 89999999),
+          airline: 'IATA BSP Automated Audit',
+          cmdTriggered: pick.badCmd,
+          reason: pick.title,
+          usd: pick.fineUsd,
+          status: 'OPEN (15d Dispute Window)',
+          cat: pick.cat
+        });
+        renderBsplinkAdmTable();
+        showToast(`Simulated new Airline Audit ADM: ${pick.id} ($${pick.fineUsd})`);
+      });
+
+      document.getElementById('btnRunLivePnrAdmScan')?.addEventListener('click', () => {
+        renderLivePnrAdmChecklist();
+        showToast('Active Work Area PNR Audited for ADM Risks!');
+      });
+
+      // TIMATIC Modal Listeners
+      document.getElementById('btnOpenTimaticFromTerm')?.addEventListener('click', () => {
+        renderTimaticValidator();
+        document.getElementById('timaticModal')?.classList.remove('hidden');
+      });
+      document.getElementById('btnHeroOpenTimatic')?.addEventListener('click', () => {
+        renderTimaticValidator();
+        document.getElementById('timaticModal')?.classList.remove('hidden');
+      });
+      document.getElementById('btnCloseTimaticModal')?.addEventListener('click', () => {
+        document.getElementById('timaticModal')?.classList.add('hidden');
+      });
+      document.getElementById('btnRunTimaticCheck')?.addEventListener('click', renderTimaticValidator);
+
+      // Queue Center Listeners
+      document.getElementById('btnOpenQueueFromTerm')?.addEventListener('click', () => {
+        renderQueueCenterModal();
+        document.getElementById('queueCenterModal')?.classList.remove('hidden');
+      });
+      document.getElementById('btnCloseQueueModal')?.addEventListener('click', () => {
+        document.getElementById('queueCenterModal')?.classList.add('hidden');
+      });
+
+      // Client Invoice Listeners
+      document.getElementById('btnOpenInvoiceFromTerm')?.addEventListener('click', openClientInvoiceModal);
+      document.getElementById('btnCloseInvoiceModal')?.addEventListener('click', () => {
+        document.getElementById('clientInvoiceModal')?.classList.add('hidden');
+      });
+      document.getElementById('btnPrintClientInvoice')?.addEventListener('click', () => window.print());
+
+      // Extend handlePortalNavigation for new cards (adm-shield, timatic, queues, invoice)
+      const prevPortalNavHandler = handlePortalNavigation;
+      handlePortalNavigation = function(target) {
+        if (target === 'adm-shield') {
+          openAdmShieldModal('causes');
+          return;
+        }
+        if (target === 'timatic') {
+          renderTimaticValidator();
+          document.getElementById('timaticModal')?.classList.remove('hidden');
+          return;
+        }
+        if (target === 'queues') {
+          renderQueueCenterModal();
+          document.getElementById('queueCenterModal')?.classList.remove('hidden');
+          return;
+        }
+        if (target === 'invoice') {
+          openClientInvoiceModal();
+          return;
+        }
+        prevPortalNavHandler(target);
+      };
+
+      document.querySelectorAll('.dash-launch-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const t = e.currentTarget.getAttribute('data-target');
+          if (['adm-shield', 'timatic', 'queues', 'invoice'].includes(t)) {
+            handlePortalNavigation(t);
+          }
+        });
+      });
+
+      // 9:16 Story Ratio Poster Mode Toggle
+      document.getElementById('btnPosterRatioPortrait')?.addEventListener('click', () => {
+        const c = document.getElementById('viralPosterCanvas');
+        if (c) {
+          c.width = 1080;
+          c.height = 1350;
+          renderViralPosterCanvas();
+          showToast('Poster set to 4:5 Social Feed Ratio (1080×1350)');
+        }
+      });
+      document.getElementById('btnPosterRatioStory')?.addEventListener('click', () => {
+        const c = document.getElementById('viralPosterCanvas');
+        if (c) {
+          c.width = 1080;
+          c.height = 1920;
+          renderViralPosterCanvas();
+          showToast('Poster set to 9:16 Instagram/FB Story Ratio (1080×1920)');
+        }
+      });
+
+      // Initialize ADM Cards & BSPlink Table on load
+      renderAdmCausesCards('ALL');
+      renderBsplinkAdmTable();
 
       // Initialize Viral Map & Home Widgets on load
       refreshAllViralViews();
