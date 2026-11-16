@@ -85,6 +85,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bg-\[\#1e293b\] { background-color: #1e293b; }
 .bg-\[\#A3E635\] { background-color: #A3E635; }
 .bg-\[\#EF4444\] { background-color: #EF4444; }
+.bg-\[\#F59E0B\] { background-color: #F59E0B; }
 .bg-\[\#ccfbf1\]\/40 { background-color: rgba(204, 251, 241, 0.4); }
 .bg-\[\#e2e8f0\] { background-color: #e2e8f0; }
 .bg-\[\#f1f5f9\] { background-color: #f1f5f9; }
@@ -181,6 +182,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .border-\[\#475569\] { border-color: #475569; }
 .border-\[\#94a3b8\] { border-color: #94a3b8; }
 .border-\[\#A3E635\] { border-color: #A3E635; }
+.border-\[\#A3E635\]\/50 { border-color: rgba(163, 230, 53, 0.5); }
 .border-\[\#EF4444\] { border-color: #EF4444; }
 .border-\[\#b48811\] { border-color: #b48811; }
 .border-\[\#c59b27\] { border-color: #c59b27; }
@@ -288,12 +290,15 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .font-serif { font-family: Georgia, Cambria, 'Times New Roman', Times, serif; }
 .gap-1 { gap: 0.25rem; }
 .gap-1\.5 { gap: 0.375rem; }
+.gap-10 { gap: 2.5rem; }
 .gap-2 { gap: 0.5rem; }
 .gap-2\.5 { gap: 0.625rem; }
 .gap-3 { gap: 0.75rem; }
+.gap-3\.5 { gap: 0.875rem; }
 .gap-4 { gap: 1.0rem; }
 .gap-5 { gap: 1.25rem; }
 .gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2.0rem; }
 .grid { display: grid; }
 .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -307,6 +312,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .h-13 { height: 3.25rem; }
 .h-14 { height: 3.5rem; }
 .h-2 { height: 0.5rem; }
+.h-2\.5 { height: 0.625rem; }
 .h-20 { height: 5.0rem; }
 .h-3 { height: 0.75rem; }
 .h-4 { height: 1.0rem; }
@@ -385,13 +391,13 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .inline-flex { display: inline-flex; }
 .inset-0 { top: 0px; right: 0px; bottom: 0px; left: 0px; }
 .italic { font-style: italic; }
+.items-baseline { align-items: baseline; }
 .items-center { align-items: center; }
 .items-end { align-items: flex-end; }
 .items-start { align-items: flex-start; }
 .justify-between { justify-content: space-between; }
 .justify-center { justify-content: center; }
 .justify-end { justify-content: flex-end; }
-.leading-\[1\.12\] { line-height: 1.12; }
 .leading-none { line-height: 1; }
 .leading-relaxed { line-height: 1.625; }
 .leading-snug { line-height: 1.375; }
@@ -416,9 +422,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .max-w-6xl { max-width: 72rem; }
 .max-w-7xl { max-width: 80rem; }
 .max-w-\[330px\] { max-width: 330px; }
-.max-w-\[540px\] { max-width: 540px; }
-.max-w-\[600px\] { max-width: 600px; }
-.max-w-\[700px\] { max-width: 700px; }
 .max-w-lg { max-width: 32rem; }
 .max-w-md { max-width: 28rem; }
 .max-w-xl { max-width: 36rem; }
@@ -429,6 +432,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .mb-4 { margin-bottom: 1.0rem; }
 .min-h-0 { min-height: 0px; }
 .min-h-\[250px\] { min-height: 250px; }
+.min-h-\[260px\] { min-height: 260px; }
 .min-h-\[510px\] { min-height: 510px; }
 .min-h-\[52px\] { min-height: 52px; }
 .min-h-\[56px\] { min-height: 56px; }
@@ -437,11 +441,13 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .ml-0\.5 { margin-left: 0.125rem; }
 .ml-1 { margin-left: 0.25rem; }
 .ml-2 { margin-left: 0.5rem; }
+.ml-3 { margin-left: 0.75rem; }
 .mr-1\.5 { margin-right: 0.375rem; }
 .mt-0\.5 { margin-top: 0.125rem; }
 .mt-1 { margin-top: 0.25rem; }
 .mt-1\.5 { margin-top: 0.375rem; }
 .mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; }
 .mt-4 { margin-top: 1.0rem; }
 .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
 .mx-auto { margin-left: auto; margin-right: auto; }
@@ -469,6 +475,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .pb-2 { padding-bottom: 0.5rem; }
 .pb-3 { padding-bottom: 0.75rem; }
 .pb-4 { padding-bottom: 1.0rem; }
+.pb-5 { padding-bottom: 1.25rem; }
 .pb-6 { padding-bottom: 1.5rem; }
 .pl-12 { padding-left: 3.0rem; }
 .pl-2\.5 { padding-left: 0.625rem; }
@@ -483,7 +490,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .pt-2 { padding-top: 0.5rem; }
 .pt-3 { padding-top: 0.75rem; }
 .pt-4 { padding-top: 1.0rem; }
-.pt-8 { padding-top: 2.0rem; }
+.pt-6 { padding-top: 1.5rem; }
 .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
 .px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
 .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
@@ -505,7 +512,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
 .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; }
 .py-4 { padding-top: 1.0rem; padding-bottom: 1.0rem; }
-.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.py-7 { padding-top: 1.75rem; padding-bottom: 1.75rem; }
 .relative { position: relative; }
 .right-0 { right: 0px; }
 .right-2 { right: 0.5rem; }
@@ -555,6 +562,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .text-\[\#9CA3AF\] { color: #9CA3AF; }
 .text-\[\#9a7418\] { color: #9a7418; }
 .text-\[\#A3E635\] { color: #A3E635; }
+.text-\[\#D1D5DB\] { color: #D1D5DB; }
 .text-\[\#EF4444\] { color: #EF4444; }
 .text-\[\#F3F4F6\] { color: #F3F4F6; }
 .text-\[\#c59b27\] { color: #c59b27; }
@@ -562,8 +570,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .text-\[10px\] { font-size: 10px; }
 .text-\[11px\] { font-size: 11px; }
 .text-\[14px\] { font-size: 14px; }
-.text-\[16px\] { font-size: 16px; }
-.text-\[34px\] { font-size: 34px; }
 .text-\[7px\] { font-size: 7px; }
 .text-\[9px\] { font-size: 9px; }
 .text-amber-200\/80 { color: rgba(253, 230, 138, 0.8); }
@@ -638,7 +644,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .top-1\.5 { top: 0.375rem; }
 .top-2 { top: 0.5rem; }
 .tracking-\[0\.25em\] { letter-spacing: 0.25em; }
-.tracking-\[0\.2em\] { letter-spacing: 0.2em; }
 .tracking-tight { letter-spacing: -0.025em; }
 .tracking-tighter { letter-spacing: -0.05em; }
 .tracking-wide { letter-spacing: 0.025em; }
@@ -655,6 +660,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .w-12 { width: 3.0rem; }
 .w-14 { width: 3.5rem; }
 .w-2 { width: 0.5rem; }
+.w-2\.5 { width: 0.625rem; }
 .w-20 { width: 5.0rem; }
 .w-3 { width: 0.75rem; }
 .w-32 { width: 8.0rem; }
@@ -680,7 +686,9 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 @media (min-width: 640px) {
   .sm\:flex { display: flex; }
   .sm\:flex-row { flex-direction: row; }
-  .sm\:gap-2 { gap: 0.5rem; }
+  .sm\:gap-2\.5 { gap: 0.625rem; }
+  .sm\:gap-6 { gap: 1.5rem; }
+  .sm\:gap-8 { gap: 2.0rem; }
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -689,22 +697,21 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .sm\:inline { display: inline; }
   .sm\:inline-block { display: inline-block; }
   .sm\:items-center { align-items: center; }
+  .sm\:items-end { align-items: flex-end; }
   .sm\:p-4 { padding: 1.0rem; }
   .sm\:p-5 { padding: 1.25rem; }
+  .sm\:p-6 { padding: 1.5rem; }
   .sm\:p-8 { padding: 2.0rem; }
   .sm\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
   .sm\:px-8 { padding-left: 2.0rem; padding-right: 2.0rem; }
-  .sm\:py-24 { padding-top: 6.0rem; padding-bottom: 6.0rem; }
+  .sm\:py-20 { padding-top: 5.0rem; padding-bottom: 5.0rem; }
   .sm\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
   .sm\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
   .sm\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-  .sm\:text-\[18px\] { font-size: 18px; }
-  .sm\:text-\[52px\] { font-size: 52px; }
   .sm\:text-base { font-size: 1rem; line-height: 1.5rem; }
   .sm\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
   .sm\:text-sm { font-size: 0.875rem; line-height: 1.25rem; }
   .sm\:w-64 { width: 16.0rem; }
-  .sm\:w-auto { width: auto; }
 }
 @media (min-width: 768px) {
   .md\:col-span-2 { grid-column: span 2 / span 2; }
@@ -712,8 +719,10 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .md\:inline { display: inline; }
   .md\:inline-block { display: inline-block; }
   .md\:items-center { align-items: center; }
+  .md\:items-end { align-items: flex-end; }
 }
 @media (min-width: 1024px) {
   .lg\:border-l { border-left-width: 1px; }
@@ -721,9 +730,12 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .lg\:col-span-3 { grid-column: span 3 / span 3; }
   .lg\:col-span-4 { grid-column: span 4 / span 4; }
   .lg\:col-span-5 { grid-column: span 5 / span 5; }
+  .lg\:col-span-6 { grid-column: span 6 / span 6; }
+  .lg\:col-span-7 { grid-column: span 7 / span 7; }
   .lg\:flex { display: flex; }
   .lg\:flex-col { flex-direction: column; }
   .lg\:flex-row { flex-direction: row; }
+  .lg\:gap-8 { gap: 2.0rem; }
   .lg\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -734,6 +746,8 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .lg\:w-36 { width: 9.0rem; }
   .lg\:w-80 { width: 20.0rem; }
 }
+
+
 
 
 
@@ -906,6 +920,173 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       stroke-dasharray: 6 6;
       animation: dash-flow 1.2s linear infinite;
     }
+
+    /* ======================================================================
+       SABBIRHOSSIEN.COM-INSPIRED DESIGN SYSTEM, ANIMATIONS & TYPOGRAPHY SCALE
+       ====================================================================== */
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+
+    .sh-serif-accent {
+      font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: #A3E635;
+      letter-spacing: 0.01em;
+      padding-right: 0.08em;
+    }
+
+    /* Architectural Square-Grid Textured Surface (Inspired by sabbirhossien.com mockup containers) */
+    .sh-grid-surface {
+      background-color: #0B0F14;
+      background-image:
+        linear-gradient(to right, rgba(163, 230, 53, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(163, 230, 53, 0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .sh-mockup-stage-green {
+      background: radial-gradient(circle at 80% 20%, rgba(163, 230, 53, 0.16), transparent 60%),
+                  linear-gradient(180deg, #0d1914 0%, #09100d 100%);
+      background-image:
+        radial-gradient(circle at 80% 20%, rgba(163, 230, 53, 0.16), transparent 60%),
+        linear-gradient(to right, rgba(163, 230, 53, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(163, 230, 53, 0.06) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
+    }
+
+    .sh-mockup-stage-slate {
+      background: radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.13), transparent 60%),
+                  linear-gradient(180deg, #0f1724 0%, #090d16 100%);
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.13), transparent 60%),
+        linear-gradient(to right, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
+    }
+
+    /* Staggered Slide-Up & Clip Reveal Animations */
+    @keyframes shRevealUp {
+      0% {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shFloatCard {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes shCursorBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .sh-reveal-1 { animation: shRevealUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+    .sh-reveal-2 { animation: shRevealUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+    .sh-reveal-3 { animation: shRevealUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
+    .sh-reveal-4 { animation: shRevealUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both; }
+
+    .sh-floating-badge {
+      animation: shFloatCard 4.5s ease-in-out infinite;
+    }
+
+    .sh-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 14px;
+      background-color: #A3E635;
+      vertical-align: middle;
+      margin-left: 3px;
+      animation: shCursorBlink 1s infinite;
+    }
+
+    /* Project / Workspace Showcase Card with Interactive ↗ Corner Action */
+    .sh-showcase-card {
+      background-color: #121821;
+      border: 1px solid #26303D;
+      border-radius: 0.875rem;
+      overflow: hidden;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+    .sh-showcase-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(163, 230, 53, 0.65);
+      box-shadow: 0 22px 48px -12px rgba(0, 0, 0, 0.7), 0 0 28px rgba(163, 230, 53, 0.08);
+    }
+    .sh-arrow-box {
+      width: 2.25rem;
+      height: 2.25rem;
+      border: 1px solid #26303D;
+      background-color: #0B0F14;
+      color: #F3F4F6;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: all 0.22s ease;
+      flex-shrink: 0;
+    }
+    .sh-showcase-card:hover .sh-arrow-box,
+    .sh-index-row:hover .sh-arrow-box {
+      background-color: #A3E635;
+      border-color: #A3E635;
+      color: #0B0F14;
+      transform: translate(2px, -2px);
+    }
+
+    /* Numbered 01-08 Curriculum Row (Inspired by sabbirhossien.com 01-08 feature list) */
+    .sh-index-row {
+      border-bottom: 1px solid #26303D;
+      transition: background-color 0.2s ease, padding-left 0.2s ease;
+    }
+    .sh-index-row:hover {
+      background-color: rgba(163, 230, 53, 0.04);
+      padding-left: 0.5rem;
+    }
+
+    /* Harmonized Home & Portal Typography Scale (Fixes all broken/undersized font sizes) */
+    .sh-hero-display {
+      font-size: clamp(2.25rem, 4.2vw + 1rem, 3.65rem);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+    }
+    .sh-section-heading {
+      font-size: clamp(1.65rem, 2.5vw + 0.5rem, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      font-weight: 700;
+    }
+    .sh-lead-copy {
+      font-size: clamp(1.05rem, 0.6vw + 0.9rem, 1.22rem);
+      line-height: 1.65;
+    }
+    .sh-card-title {
+      font-size: 1.2rem;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+    .sh-body-copy {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .sh-eyebrow {
+      font-size: 0.8125rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1835,7 +2016,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       </a>
 
       <!-- Main Navigation: Home | Features | Learn | Exams | Open Terminal (only highlighted button) -->
-      <nav aria-label="Main Navigation" class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+      <nav aria-label="Main Navigation" class="flex items-center gap-1.5 sm:gap-2.5 text-sm sm:text-base">
         <a href="#/" data-navroute="/" class="site-nav-link px-3 py-1.5 rounded-md font-medium text-[#F3F4F6] hover:text-[#A3E635] transition">Home</a>
         <a href="#/features" data-navroute="/features" class="site-nav-link px-3 py-1.5 rounded-md font-medium text-[#9CA3AF] hover:text-[#F3F4F6] transition">Features</a>
         <a href="#/learn" data-navroute="/learn" class="site-nav-link px-3 py-1.5 rounded-md font-medium text-[#9CA3AF] hover:text-[#F3F4F6] transition">Learn</a>
@@ -1859,41 +2040,456 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
     <div class="flex-1 flex flex-col">
 
       <!-- ====================================================================
-           ROUTE 1: HOMEPAGE (/) — STRICTLY MINIMAL (Hero + Disclaimer Only)
+           ROUTE 1: HOMEPAGE (/) — SABBIRHOSSIEN.COM-INSPIRED VISUAL & INTERACTIVE DESIGN
            ==================================================================== -->
-      <main id="portalPageHome" class="flex-1 flex flex-col items-center justify-center px-5 sm:px-8 py-16 sm:py-24">
-        <div class="w-full max-w-[700px] mx-auto text-center space-y-6">
-          <div class="text-xs font-mono uppercase tracking-[0.2em] text-[#A3E635] font-semibold">
-            MY AIR ACADEMY
+      <main id="portalPageHome" class="flex-1 flex flex-col">
+
+        <!-- SECTION 1: 2-COLUMN ARCHITECTURAL HERO + LIVE DUAL-VIEWPORT SABRE MOCKUP -->
+        <section class="sh-grid-surface border-b border-[#26303D] px-5 sm:px-8 py-12 sm:py-20">
+          <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+
+            <!-- Left Column (7 cols): Editorial Display Typography, CTAs & 3-Metric Strip -->
+            <div class="lg:col-span-7 space-y-6 text-left">
+              <div class="sh-reveal-1 inline-flex items-center gap-2.5 bg-[#121821] border border-[#26303D] px-3.5 py-1.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-[#A3E635] badge-pulse"></span>
+                <span class="sh-eyebrow font-mono text-[#A3E635]">SABRE RED 360 &amp; IATA NDC 21.3 SIMULATOR</span>
+              </div>
+
+              <h1 class="sh-reveal-2 sh-hero-display text-[#F3F4F6]">
+                Build real agency confidence.<br>
+                One <span class="sh-serif-accent">command</span> at a time.
+              </h1>
+
+              <p class="sh-reveal-2 sh-lead-copy text-[#D1D5DB] max-w-2xl">
+                Practice authentic Sabre GDS availability (<code class="font-mono text-[#A3E635] text-sm">125DECDACBKK</code>), PNR creation, multi-passenger pricing (<code class="font-mono text-[#A3E635] text-sm">WPABG</code>), automated refunds (<code class="font-mono text-[#A3E635] text-sm">WFRA</code>), and QREX exchanges (<code class="font-mono text-[#A3E635] text-sm">WFRF</code>) in a zero-cost, browser-based workspace.
+              </p>
+
+              <!-- Primary & Secondary CTAs (Harmonized 15px-16px Font Size) -->
+              <div class="sh-reveal-3 pt-1 flex flex-wrap items-center gap-3.5">
+                <a href="#/terminal" id="btnDashOpenTerminal" class="bg-[#A3E635] hover:opacity-95 text-[#0B0F14] font-bold text-base px-6 py-3.5 rounded-lg transition inline-flex items-center gap-2 shadow-lg">
+                  <span>Open Practice Terminal</span>
+                  <span>→</span>
+                </a>
+                <a href="#/learn" id="btnHeroStartGuidedLesson" class="bg-[#121821] hover:bg-[#1e293b] text-[#F3F4F6] border border-[#26303D] font-semibold text-base px-5 py-3.5 rounded-lg transition inline-flex items-center gap-2">
+                  <span>Start 8 Guided Lessons</span>
+                  <span>↗</span>
+                </a>
+                <a href="#/features" class="text-base font-medium text-[#9CA3AF] hover:text-[#A3E635] underline underline-offset-4 px-2 py-2 transition">
+                  Explore All Workspaces
+                </a>
+              </div>
+
+              <!-- SabbirHossien-Style 3-Column Metric Bar -->
+              <div class="sh-reveal-4 pt-6 border-t border-[#26303D] grid grid-cols-3 gap-4 sm:gap-8 max-w-xl">
+                <div>
+                  <div class="text-2xl sm:text-3xl font-extrabold font-mono text-[#F3F4F6]">60<span class="text-[#A3E635]">+</span></div>
+                  <div class="text-sm text-[#9CA3AF] mt-0.5">Live Sabre Commands</div>
+                </div>
+                <div>
+                  <div class="text-2xl sm:text-3xl font-extrabold font-mono text-[#F3F4F6]">8 <span class="text-[#A3E635] text-lg font-sans font-semibold">Steps</span></div>
+                  <div class="text-sm text-[#9CA3AF] mt-0.5">Guided Ticketing Path</div>
+                </div>
+                <div>
+                  <div class="text-2xl sm:text-3xl font-extrabold font-mono text-[#F3F4F6]">100<span class="text-[#A3E635]">%</span></div>
+                  <div class="text-sm text-[#9CA3AF] mt-0.5">Free • No Login Wall</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column (5 cols): Dual-Viewport Interactive Sabre Red 360 Terminal Mockup -->
+            <div class="lg:col-span-5 sh-reveal-3">
+              <div class="sh-mockup-stage-green border border-[#26303D] rounded-2xl p-4 sm:p-5 relative shadow-2xl">
+                <!-- Top Window Frame (Desktop Viewport) -->
+                <div class="bg-[#0B0F14] border border-[#26303D] rounded-xl overflow-hidden shadow-xl">
+                  <div class="bg-[#121821] border-b border-[#26303D] px-3.5 py-2.5 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#A3E635]"></span>
+                    </div>
+                    <span class="font-mono text-xs text-[#9CA3AF] bg-[#0B0F14] border border-[#26303D] px-2.5 py-0.5 rounded">Agency Workspace (CERT) • PCC: TWH8</span>
+                    <button type="button" id="btnReplayHeroDemo" class="text-xs font-mono text-[#A3E635] hover:underline" title="Replay live terminal sequence">
+                      Run again ↻
+                    </button>
+                  </div>
+
+                  <!-- Live Auto-Typing Sabre Terminal Preview Body -->
+                  <div class="p-4 font-mono text-xs sm:text-sm space-y-2.5 min-h-[250px] text-[#F3F4F6]">
+                    <div class="flex items-center justify-between text-xs text-[#9CA3AF] border-b border-[#26303D] pb-1.5">
+                      <span>AREA A • PNR: <strong class="text-[#A3E635]">RPHEBS</strong></span>
+                      <span>AGENT: 9999TAWHA</span>
+                    </div>
+                    <div id="heroLiveTypingCmd" class="text-[#A3E635] font-bold">
+                      &gt; WFRA9974883803284«<span class="sh-cursor"></span>
+                    </div>
+                    <pre id="heroLiveTypingOutput" class="text-xs leading-relaxed text-[#D1D5DB] whitespace-pre-wrap font-mono">                  REFUND PRICE RESPONSE
+NAME HOSSAIN/ABRAR MSTR     TOTAL REFUND BDT 77232
+TKT 9974883803284
+  1 BG 388 Y 25DEC DACBKK   YBD6M/CH25   OK
+  2 BG 389 Y 30DEC BKKDAC   YBD6M/CH25   OK
+FARE 70538  •  TAX 13253  •  CANCEL FEE -6559
+COMM TO REFUND 7 PCT      •  FOP CASH</pre>
+                  </div>
+
+                  <!-- Quick Demo Command Switcher Pills inside Mockup -->
+                  <div class="bg-[#121821] border-t border-[#26303D] px-3 py-2 flex flex-wrap items-center justify-between gap-1.5">
+                    <div class="flex flex-wrap items-center gap-1">
+                      <button type="button" data-herodemo="avail" class="hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs">125DECDACBKK</button>
+                      <button type="button" data-herodemo="wp" class="hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs">WPABG</button>
+                      <button type="button" data-herodemo="wetr" class="hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs">WETR*2</button>
+                      <button type="button" data-herodemo="wfra" class="hero-demo-pill bg-[#A3E635] text-[#0B0F14] font-bold px-2 py-1 rounded font-mono text-xs">WFRA</button>
+                    </div>
+                    <a href="#/terminal" class="text-xs font-mono font-semibold text-[#A3E635] hover:underline">Launch ↗</a>
+                  </div>
+                </div>
+
+                <!-- Floating Secondary Card (Dual-Viewport E-Ticket / IATA 7% Badge) -->
+                <div class="sh-floating-badge mt-3 bg-[#121821] border border-[#A3E635]/50 rounded-xl p-3.5 flex items-center justify-between gap-3 shadow-lg">
+                  <div class="space-y-0.5">
+                    <div class="text-xs font-mono text-[#A3E635] uppercase font-semibold">Live Sabre Red 360 Output</div>
+                    <div class="text-sm font-bold text-[#F3F4F6]">Authentic Masks: Screen 10, 30, 31, 32 &amp; 40</div>
+                  </div>
+                  <a href="#/terminal" class="sh-arrow-box" title="Open Live Terminal">↗</a>
+                </div>
+              </div>
+            </div>
+
           </div>
+        </section>
 
-          <h1 class="text-[34px] sm:text-[52px] font-bold tracking-tight text-[#F3F4F6] leading-[1.12]">
-            Build confidence.<br>One command at a time.
-          </h1>
+        <!-- SECTION 2: SABBIRHOSSIEN-STYLE "FOUR MOMENTS, IN THIS ORDER" INTERACTIVE WORKFLOW SHOWCASE -->
+        <section class="bg-[#0B0F14] border-b border-[#26303D] px-5 sm:px-8 py-16">
+          <div class="max-w-6xl mx-auto space-y-10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#26303D] pb-6">
+              <div class="space-y-2">
+                <div class="sh-eyebrow font-mono text-[#A3E635]">How it works</div>
+                <h2 class="sh-section-heading text-[#F3F4F6]">
+                  Four real agency stages, <span class="sh-serif-accent">in this order.</span>
+                </h2>
+              </div>
+              <p class="sh-body-copy text-[#9CA3AF] max-w-md">
+                Click any stage below to preview the exact Sabre Red 360 command sequence before running it live in the terminal.
+              </p>
+            </div>
 
-          <p class="text-[16px] sm:text-[18px] text-[#9CA3AF] leading-relaxed max-w-[600px] mx-auto">
-            Practice Sabre GDS booking, pricing and ticketing in a focused training simulator.
-          </p>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <!-- Left 6 Cols: 4 Interactive Step Cards (01 to 04) -->
+              <div class="lg:col-span-6 space-y-3" id="homeFourStepsList">
+                <button type="button" data-stepidx="0" class="home-step-selector w-full text-left bg-[#121821] border-2 border-[#A3E635] rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
+                  <span class="font-mono text-lg font-extrabold text-[#A3E635] shrink-0">01</span>
+                  <div class="space-y-1">
+                    <div class="text-lg font-bold text-[#F3F4F6]">Availability &amp; Direct Connect Sell</div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Search live schedules (<code class="font-mono text-[#F3F4F6]">125DECDACBKK</code>), expand graphical equipment &amp; meal drawers, and sell confirmed or waitlisted seats (<code class="font-mono text-[#F3F4F6]">03Y3</code>).
+                    </p>
+                  </div>
+                </button>
 
-          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#/terminal" id="btnDashOpenTerminal" class="w-full sm:w-auto bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-semibold text-sm sm:text-base px-6 py-3 rounded-lg transition text-center">
-              Open Practice Terminal
-            </a>
-            <a href="#/features" class="text-sm sm:text-base font-medium text-[#F3F4F6] hover:text-[#A3E635] underline underline-offset-4 px-3 py-2 transition">
-              Explore Features
-            </a>
+                <button type="button" data-stepidx="1" class="home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
+                  <span class="font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0">02</span>
+                  <div class="space-y-1">
+                    <div class="text-lg font-bold text-[#F3F4F6]">PNR Mandatory Elements &amp; APIS (Res 830d)</div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Enter Adult, Child (<code class="font-mono text-[#F3F4F6]">*C10</code>), and Infant (<code class="font-mono text-[#F3F4F6]">I/</code>) names, agency phone, time limit, and mandatory <code class="font-mono text-[#F3F4F6]">3DOCS</code>, <code class="font-mono text-[#F3F4F6]">3CTCM</code>, and <code class="font-mono text-[#F3F4F6]">3CTCE</code>.
+                    </p>
+                  </div>
+                </button>
+
+                <button type="button" data-stepidx="2" class="home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
+                  <span class="font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0">03</span>
+                  <div class="space-y-1">
+                    <div class="text-lg font-bold text-[#F3F4F6]">Graphical Pricing (`WPABG`) &amp; E-Ticket (`WETR*2`)</div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Price multi-passenger itineraries with full Bangladesh tax breakdowns (<code class="font-mono text-[#F3F4F6]">BD</code>, <code class="font-mono text-[#F3F4F6]">UT</code>, <code class="font-mono text-[#F3F4F6]">OW</code>, <code class="font-mono text-[#F3F4F6]">E5</code>, <code class="font-mono text-[#F3F4F6]">TS</code>), store <code class="font-mono text-[#F3F4F6]">PQ</code>, and issue 13-digit E-Tickets.
+                    </p>
+                  </div>
+                </button>
+
+                <button type="button" data-stepidx="3" class="home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
+                  <span class="font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0">04</span>
+                  <div class="space-y-1">
+                    <div class="text-lg font-bold text-[#F3F4F6]">Automated Refund (`WFRA`) &amp; QREX Exchange (`WFRF`)</div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Quote and process Cat-33 automated refunds (<code class="font-mono text-[#F3F4F6]">WFRA.../REF</code>) or step through QREX Screens 10, 30, 31, 32, and 40 for ticket reissuance.
+                    </p>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Right 6 Cols: Interactive Stage Preview Window (01 / 04 to 04 / 04) -->
+              <div class="lg:col-span-6 sh-mockup-stage-slate border border-[#26303D] rounded-2xl p-5 sm:p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-[#26303D] pb-3">
+                  <span id="homeStageCounterLabel" class="font-mono text-sm font-bold text-[#A3E635]">01 / 04 — Availability &amp; Direct Connect Sell</span>
+                  <span class="text-xs font-mono text-[#9CA3AF] bg-[#0B0F14] border border-[#26303D] px-2.5 py-1 rounded">Live Preview</span>
+                </div>
+
+                <div class="bg-[#0B0F14] border border-[#26303D] rounded-xl p-4 font-mono text-xs sm:text-sm space-y-3 min-h-[260px]">
+                  <div id="homeStageCmdBadge" class="text-[#A3E635] font-bold text-sm">&gt; 125DECDACBKK«</div>
+                  <pre id="homeStageTerminalPre" class="text-xs leading-relaxed text-[#D1D5DB] whitespace-pre-wrap overflow-x-auto">25DEC FRI DAC/Z¥6 BKK/¥1
+1 TG   322 C9 D9 J9 Y9 B9 M9 DAC BKK 13:40 17:10 333 0 2H 30MIN
+2 PG  4823 C9 D9 Y9 M9 K9 N9 DAC BKK 13:40 17:10 333 0 2H 30MIN
+3 BG   388 J9 C4 DC Y9 A9 N9 DAC BKK 11:15 15:00 738 0 2H 45MIN
+  From: DAC 25DEC at 11:15 - TERMINAL 2  To: BKK 25DEC at 15:00
+  Equipment: BOEING 737-800  Air Miles: 970  E-ticket: Yes
+  [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]</pre>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                  <span id="homeStageHintText" class="text-sm text-[#9CA3AF]">Click "Run in Terminal" to execute this workflow live.</span>
+                  <button type="button" id="btnRunHomeStageInTerminal" data-cmd="125DECDACBKK" class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold text-sm px-4 py-2 rounded-lg transition">
+                    Run in Terminal →
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div class="pt-1">
-            <a href="#/learn" id="btnHeroStartGuidedLesson" class="text-xs sm:text-sm text-[#9CA3AF] hover:text-[#A3E635] transition">
-              New here? Start a guided lesson.
-            </a>
+        <!-- SECTION 3: SABBIRHOSSIEN-STYLE DUAL-VIEWPORT WORKSPACE SHOWCASE CARDS (2x2 BENTO GRID) -->
+        <section class="sh-grid-surface border-b border-[#26303D] px-5 sm:px-8 py-16">
+          <div class="max-w-6xl mx-auto space-y-10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#26303D] pb-6">
+              <div class="space-y-2">
+                <div class="sh-eyebrow font-mono text-[#A3E635]">Core Workspaces</div>
+                <h2 class="sh-section-heading text-[#F3F4F6]">
+                  Four specialized studios. <span class="sh-serif-accent">Built for mastery.</span>
+                </h2>
+              </div>
+              <a href="#/features" class="text-base font-semibold text-[#A3E635] hover:underline inline-flex items-center gap-1.5">
+                <span>See all 15+ tools</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Card 1: Sabre Red 360 Terminal -->
+              <a href="#/terminal" class="sh-showcase-card flex flex-col justify-between group">
+                <div class="sh-mockup-stage-green p-5 border-b border-[#26303D]">
+                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
+                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
+                      <span>SABRE 1S HOST • AREAS A–F</span>
+                      <span class="text-[#A3E635]">● LIVE</span>
+                    </div>
+                    <div class="text-[#A3E635] font-bold">&gt; WFRF9974883803282¥ABG¥N1.1«</div>
+                    <div class="text-[#D1D5DB]">WF WFRR EXCHANGE SUMMARY — SCREEN 30 / 31 / 40</div>
+                    <div class="text-emerald-400">MASK PROCESSING COMPLETE - ETR EXCHANGE PROCESSED</div>
+                  </div>
+                </div>
+                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                  <div class="space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                      <h3 class="sh-card-title text-[#F3F4F6]">Sabre Red 360 Cryptic &amp; Graphical Terminal</h3>
+                      <span class="sh-arrow-box">↗</span>
+                    </div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Full 6-area (`A–F`) command workspace with expandable availability drawers, graphical `WP` fare quote cards, QREX refund/reissue masks, and strict PNR state validation.
+                    </p>
+                  </div>
+                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
+                    6 Work Areas · Graphical WP &amp; QREX Masks · 7% IATA Commission
+                  </div>
+                </div>
+              </a>
+
+              <!-- Card 2: 8-Step Guided Learning Lab -->
+              <a href="#/learn" class="sh-showcase-card flex flex-col justify-between group">
+                <div class="sh-mockup-stage-slate p-5 border-b border-[#26303D]">
+                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
+                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
+                      <span>GUIDED CURRICULUM • 8 LESSONS</span>
+                      <span class="text-[#A3E635]">STEP-BY-STEP</span>
+                    </div>
+                    <div class="text-[#F3F4F6] font-bold">Lesson 1 ➔ Lesson 8: Availability to Automated Refund</div>
+                    <div class="text-[#9CA3AF]">120NOVDACDXB¥BG ➔ 01Y1 ➔ 3DOCS ➔ W¥PQ1 ➔ WFRA/REF</div>
+                    <div class="text-[#A3E635]">✓ Resulting-State Inspector verifies every step</div>
+                  </div>
+                </div>
+                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                  <div class="space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                      <h3 class="sh-card-title text-[#F3F4F6]">8-Lesson Guided Ticketing Curriculum</h3>
+                      <span class="sh-arrow-box">↗</span>
+                    </div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Learn every stage of agency ticketing in sequence—with live state verification that checks your active PNR before unlocking the next milestone.
+                    </p>
+                  </div>
+                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
+                    8 Structured Lessons · Live State Check · Beginner Friendly
+                  </div>
+                </div>
+              </a>
+
+              <!-- Card 3: 15-Minute Practical Exam & Certificate -->
+              <a href="#/exams" class="sh-showcase-card flex flex-col justify-between group">
+                <div class="sh-mockup-stage-slate p-5 border-b border-[#26303D]">
+                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
+                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
+                      <span>ISOLATED EXAM SESSION • 15:00 TIMER</span>
+                      <span class="text-[#A3E635]">PASS: 80%</span>
+                    </div>
+                    <div class="text-[#F3F4F6] font-bold">5 Practical Checkpoints + 15-Question Tariff Quiz</div>
+                    <div class="text-[#9CA3AF]">Unlocks Printable Training Completion Certificate</div>
+                    <div class="text-[#A3E635]">★ Credential ID &amp; Breakdown Logged in Browser</div>
+                  </div>
+                </div>
+                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                  <div class="space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                      <h3 class="sh-card-title text-[#F3F4F6]">Exam Centre &amp; Completion Certificate</h3>
+                      <span class="sh-arrow-box">↗</span>
+                    </div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Test your speed in a timed 15-minute practical Sabre session without command hints, or take the written MCQ assessment to unlock your certificate.
+                    </p>
+                  </div>
+                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
+                    15-Min Timed Terminal · MCQ Assessment · Printable Certificate
+                  </div>
+                </div>
+              </a>
+
+              <!-- Card 4: Bangladesh 64-District Domestic Flight Map & Boarding Pass Studio -->
+              <a href="#/travel-map" class="sh-showcase-card flex flex-col justify-between group">
+                <div class="sh-mockup-stage-green p-5 border-b border-[#26303D]">
+                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
+                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
+                      <span>8 DOMESTIC AIRPORTS • 64 DISTRICTS</span>
+                      <span class="text-[#A3E635]">1080×1350 POSTER</span>
+                    </div>
+                    <div class="text-[#F3F4F6] font-bold">DAC • CXB • CGP • ZYL • JSR • RJH • SPD • BZL</div>
+                    <div class="text-[#9CA3AF]">Interactive Radar Map + Downloadable Boarding Pass</div>
+                    <div class="text-[#A3E635]">✓ Inspired by Bangladesh's viral travel map movement</div>
+                  </div>
+                </div>
+                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                  <div class="space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                      <h3 class="sh-card-title text-[#F3F4F6]">Bangladesh Flight Map &amp; Boarding Pass Studio</h3>
+                      <span class="sh-arrow-box">↗</span>
+                    </div>
+                    <p class="sh-body-copy text-[#9CA3AF]">
+                      Mark the domestic airports and 64 districts you have visited, track your Sky Explorer rank, and export a high-resolution boarding pass poster.
+                    </p>
+                  </div>
+                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
+                    8 Domestic Hubs · 64 Districts · Instant PNG Poster Download
+                  </div>
+                </div>
+              </a>
+            </div>
           </div>
+        </section>
 
-          <p class="pt-8 text-xs text-[#9CA3AF] border-t border-[#26303D] max-w-[540px] mx-auto leading-relaxed">
-            Independent training simulator. No real bookings or tickets are issued. Not affiliated with Sabre.
-          </p>
-        </div>
+        <!-- SECTION 4: SABBIRHOSSIEN-STYLE NUMBERED INDEX (01 TO 08) & DISCLAIMER -->
+        <section class="bg-[#0B0F14] px-5 sm:px-8 py-16">
+          <div class="max-w-6xl mx-auto space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#26303D] pb-5">
+              <div>
+                <div class="sh-eyebrow font-mono text-[#A3E635]">Quick Directory</div>
+                <h2 class="sh-section-heading text-[#F3F4F6] mt-1">
+                  Eight modules, <span class="sh-serif-accent">ready to launch.</span>
+                </h2>
+              </div>
+              <span class="text-sm font-mono text-[#9CA3AF]">01 — 08</span>
+            </div>
+
+            <div class="border-t border-[#26303D] divide-y divide-[#26303D]">
+              <a href="#/terminal" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">01</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">Sabre Red 360 Terminal</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Full 6-area cryptic &amp; graphical PNR, pricing, ticketing, refund &amp; exchange workspace.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/learn" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">02</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">8 Guided Ticketing Lessons</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Interactive step-by-step training with live PNR state verification.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/exams" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">03</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">15-Minute Practical Exam &amp; MCQ Quiz</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Timed practical assessment and tariff quiz to unlock your completion certificate.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/reference" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">04</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">IATA Geography Atlas (TC1, TC2, TC3 &amp; 10 GI)</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Interactive world tariff conference maps and global routing indicators.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/reference" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">05</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">230+ World City, Airline &amp; Currency Directory</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Instant encoder/decoder for IATA 3-letter airport codes and airline prefixes.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/reference" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">06</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">IATA Resolution 850m ADM Shield &amp; BSPlink Audit</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">12 airline debit memo triggers, churn blocker, and 15-day dispute simulator.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/travel-map" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">07</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">Bangladesh Domestic Flight Map &amp; Poster Studio</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Track 8 domestic airports and 64 districts with downloadable boarding pass art.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+
+              <a href="#/about" class="sh-index-row py-4 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-4 sm:gap-6">
+                  <span class="font-mono text-sm font-bold text-[#A3E635]">08</span>
+                  <div>
+                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">About MY AIR ACADEMY &amp; Simulation Governance</span>
+                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Curriculum scope, Bangladesh BSP tax assumptions, and independent training disclaimer.</span>
+                  </div>
+                </div>
+                <span class="sh-arrow-box">↗</span>
+              </a>
+            </div>
+
+            <p class="pt-6 text-sm text-[#9CA3AF] text-center max-w-2xl mx-auto leading-relaxed">
+              Independent training simulator. No real bookings or tickets are issued. Not affiliated with Sabre Corporation.
+            </p>
+          </div>
+        </section>
+
       </main>
 
       <!-- ====================================================================
@@ -2210,7 +2806,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
     </div>
 
     <!-- NORMAL-FLOW SIMPLE FOOTER (Never fixed over content) -->
-    <footer class="bg-[#0B0F14] border-t border-[#26303D] px-5 sm:px-8 py-6 text-xs text-[#9CA3AF] shrink-0">
+    <footer class="bg-[#0B0F14] border-t border-[#26303D] px-5 sm:px-8 py-7 text-sm text-[#9CA3AF] shrink-0">
       <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-2">
           <span class="font-semibold text-[#F3F4F6]">MY AIR ACADEMY</span>
@@ -12612,8 +13208,8 @@ HEALTH   : ${info.health}`
         container.innerHTML = FEATURES_PAGE_GROUPS.map(group => `
           <div class="space-y-4">
             <div class="space-y-1">
-              <h2 class="text-lg font-bold text-[#F3F4F6]">${group.groupTitle}</h2>
-              <p class="text-xs text-[#9CA3AF]">${group.groupDesc}</p>
+              <h2 class="text-xl sm:text-2xl font-bold text-[#F3F4F6]">${group.groupTitle}</h2>
+              <p class="text-sm text-[#9CA3AF]">${group.groupDesc}</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               ${group.items.map(item => `
@@ -12624,8 +13220,8 @@ HEALTH   : ${info.health}`
                         ${item.icon}
                       </svg>
                     </div>
-                    <h3 class="text-sm font-semibold text-[#F3F4F6]">${item.title}</h3>
-                    <p class="text-xs text-[#9CA3AF] leading-relaxed">${item.desc}</p>
+                    <h3 class="text-base sm:text-lg font-bold text-[#F3F4F6]">${item.title}</h3>
+                    <p class="text-sm text-[#9CA3AF] leading-relaxed">${item.desc}</p>
                   </div>
                   <div>
                     ${item.route ? `
@@ -13562,6 +14158,166 @@ HEALTH   : ${info.health}`
       });
       document.getElementById('btnCloseSabreWpSubModal2')?.addEventListener('click', () => {
         document.getElementById('sabreWpSubModal')?.classList.add('hidden');
+      });
+
+
+      // Homepage Interactive Hero Demo & 4-Stage ("Four moments, in this order") Showcase
+      const HERO_DEMO_SCENES = {
+        avail: {
+          cmd: '125DECDACBKK',
+          output: `25DEC FRI DAC/Z¥6 BKK/¥1
+1 TG  322 C9 D9 J9 Y9 B9 M9 DAC BKK 13:40 17:10 333 0 2H 30MIN
+2 PG 4823 C9 D9 Y9 M9 K9 N9 DAC BKK 13:40 17:10 333 0 2H 30MIN
+3 BG  388 J9 C4 DC Y9 A9 N9 DAC BKK 11:15 15:00 738 0 2H 45MIN
+  From: DAC 25DEC 11:15 - TERM 2  To: BKK 15:00  Eq: BOEING 737-800
+  [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]`
+        },
+        wp: {
+          cmd: 'WPABG',
+          output: `25DEC DEPARTURE DATE-----LAST DAY TO PURCHASE 26NOV/2359
+       BASE FARE      EQUIV AMOUNT  TAXES/FEES/CHARGES    TOTAL
+ 2-      USD760.00        BDT94050       BDT15253XT       BDT109303ADT
+ 1-      USD570.00        BDT70538       BDT13253XT        BDT83791C10
+ 1-      USD190.00        BDT23513        BDT3294XT        BDT26807INF
+          2280.00          282151          47053            329204TTL`
+        },
+        wetr: {
+          cmd: 'WETR*2',
+          output: `ELECTRONIC TICKET RECORD                        CRS CODE:7766
+TKT:9974883803282       ISSUED:12NOV26  PCC:TWH8  IATA:99999992
+NAME:HOSSAIN/RAHAT MR                           PNR:RPHEBS
+CPN A/L FLT  CLS DATE  BRDOFF TIME  ST F/B            STAT
+1   BG  388   Y  25DEC DACBKK 1115  OK YBD6M          OPEN (BAG:30K)
+2   BG  389   Y  30DEC BKKDAC 1615  OK YBD6M          OPEN (BAG:30K)`
+        },
+        wfra: {
+          cmd: 'WFRA9974883803284',
+          output: `                  REFUND PRICE RESPONSE
+NAME HOSSAIN/ABRAR MSTR     TOTAL REFUND BDT 77232
+TKT 9974883803284
+  1 BG 388 Y 25DEC DACBKK   YBD6M/CH25   OK
+  2 BG 389 Y 30DEC BKKDAC   YBD6M/CH25   OK
+FARE 70538  •  TAX 13253  •  CANCEL FEE -6559
+COMM TO REFUND 7 PCT      •  FOP CASH`
+        }
+      };
+
+      const HOME_FOUR_STAGES = [
+        {
+          label: '01 / 04 — Availability & Direct Connect Sell',
+          cmd: '125DECDACBKK',
+          pre: `25DEC FRI DAC/Z¥6 BKK/¥1
+1 TG   322 C9 D9 J9 Y9 B9 M9 DAC BKK 13:40 17:10 333 0 2H 30MIN
+2 PG  4823 C9 D9 Y9 M9 K9 N9 DAC BKK 13:40 17:10 333 0 2H 30MIN
+3 BG   388 J9 C4 DC Y9 A9 N9 DAC BKK 11:15 15:00 738 0 2H 45MIN
+  From: DAC 25DEC at 11:15 - TERMINAL 2  To: BKK 25DEC at 15:00
+  Equipment: BOEING 737-800  Air Miles: 970  E-ticket: Yes
+  [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]`,
+          hint: 'Searches live Dhaka–Bangkok schedules and opens the expandable sell drawer.'
+        },
+        {
+          label: '02 / 04 — PNR Mandatory Elements & APIS (Res 830d)',
+          cmd: '*A',
+          pre: `RPHEBS
+ 1.1HOSSAIN/RAHAT MR   2.1HOSSAIN/JANNAT MRS
+ 3.1HOSSAIN/ABRAR MSTR*C10   4.I/1HOSSAIN/KABITA MISS*I05
+ 1 BG 388Y 25DEC 5 DACBKK HK3 1115 1500 /DCBG*RPHEBS /E
+ 2 BG 389Y 30DEC 3 BKKDAC HK3 1615 1800 /DCBG*RPHEBS /E
+GENERAL FACTS
+ 1.SSR CHLD BG HK1/01NOV16
+ 2.SSR INFT BG KK1 DACBKK0388Y25DEC/HOSSAIN/KABITA MISS/01DEC25
+ 3.SSR DOCS BG HK1/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/HOSSAIN/RAHAT`,
+          hint: 'Builds a complete family PNR with Adult, Child (*C10), Infant (I/), and APIS SSRs.'
+        },
+        {
+          label: '03 / 04 — Graphical Pricing (WPABG) & E-Ticket (WETR*2)',
+          cmd: 'WPABG',
+          pre: `25DEC DEPARTURE DATE-----LAST DAY TO PURCHASE 26NOV/2359
+       BASE FARE      EQUIV AMOUNT  TAXES/FEES/CHARGES    TOTAL
+ 2-      USD760.00        BDT94050       BDT15253XT       BDT109303ADT
+ 1-      USD570.00        BDT70538       BDT13253XT        BDT83791C10
+ 1-      USD190.00        BDT23513        BDT3294XT        BDT26807INF
+          2280.00          282151          47053            329204TTL
+[TAXES/FEES VIEW ALL] [BAGGAGE 30KG] [SEAT MAP] [AIR EXTRAS] [193 kg CO2]`,
+          hint: 'Prices all passenger types with interactive Sabre Red 360 sub-modals and PQ storage.'
+        },
+        {
+          label: '04 / 04 — Automated Refund (WFRA) & QREX Exchange (WFRF)',
+          cmd: 'WFRA9974883803284',
+          pre: `                  REFUND PRICE RESPONSE
+NAME HOSSAIN/ABRAR MSTR            TOTAL REFUND BDT        77232
+TKT 9974883803284
+  1  BG 388  Y 25DEC DACBKK     YBD6M/CH25     OK
+  2  BG 389  Y 30DEC BKKDAC     YBD6M/CH25     OK
+FARE 70538  •  TAX 13253  •  CANCEL FEE -6559  •  TTL REFUND 77232
+----------------------------------------------------------------
+WFRA9974883803284/REF« ➔ ETR REFUND TRANSACTION PROCESSED`,
+          hint: 'Calculates ATPCO Cat-33 automated refund quotes and processes ETR settlement.'
+        }
+      ];
+
+      let currentHeroDemoKey = 'wfra';
+      function setHeroDemoScene(key) {
+        const scene = HERO_DEMO_SCENES[key] || HERO_DEMO_SCENES.wfra;
+        currentHeroDemoKey = key;
+        const cmdEl = document.getElementById('heroLiveTypingCmd');
+        const outEl = document.getElementById('heroLiveTypingOutput');
+        if (cmdEl) cmdEl.innerHTML = `&gt; ${scene.cmd}«<span class="sh-cursor"></span>`;
+        if (outEl) outEl.textContent = scene.output;
+        document.querySelectorAll('.hero-demo-pill').forEach(btn => {
+          const isMatch = btn.getAttribute('data-herodemo') === key;
+          btn.className = isMatch
+            ? 'hero-demo-pill bg-[#A3E635] text-[#0B0F14] font-bold px-2 py-1 rounded font-mono text-xs'
+            : 'hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs';
+        });
+      }
+
+      document.querySelectorAll('.hero-demo-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setHeroDemoScene(btn.getAttribute('data-herodemo'));
+        });
+      });
+
+      document.getElementById('btnReplayHeroDemo')?.addEventListener('click', () => {
+        const order = ['avail', 'wp', 'wetr', 'wfra'];
+        const nextIdx = (order.indexOf(currentHeroDemoKey) + 1) % order.length;
+        setHeroDemoScene(order[nextIdx]);
+      });
+
+      document.querySelectorAll('.home-step-selector').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-stepidx') || '0', 10);
+          const st = HOME_FOUR_STAGES[idx] || HOME_FOUR_STAGES[0];
+          document.querySelectorAll('.home-step-selector').forEach((b, i) => {
+            b.className = i === idx
+              ? 'home-step-selector w-full text-left bg-[#121821] border-2 border-[#A3E635] rounded-xl p-4 sm:p-5 transition flex items-start gap-4'
+              : 'home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4';
+            const numSpan = b.querySelector('span');
+            if (numSpan) {
+              numSpan.className = i === idx
+                ? 'font-mono text-lg font-extrabold text-[#A3E635] shrink-0'
+                : 'font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0';
+            }
+          });
+          const lblEl = document.getElementById('homeStageCounterLabel');
+          const cmdEl = document.getElementById('homeStageCmdBadge');
+          const preEl = document.getElementById('homeStageTerminalPre');
+          const hintEl = document.getElementById('homeStageHintText');
+          const runBtn = document.getElementById('btnRunHomeStageInTerminal');
+          if (lblEl) lblEl.textContent = st.label;
+          if (cmdEl) cmdEl.textContent = `> ${st.cmd}«`;
+          if (preEl) preEl.textContent = st.pre;
+          if (hintEl) hintEl.textContent = st.hint;
+          if (runBtn) runBtn.setAttribute('data-cmd', st.cmd);
+        });
+      });
+
+      document.getElementById('btnRunHomeStageInTerminal')?.addEventListener('click', (e) => {
+        const cmdToRun = e.currentTarget.getAttribute('data-cmd') || '125DECDACBKK';
+        navigateToRoute('/terminal');
+        setTimeout(() => {
+          executeCrypticCommand(cmdToRun);
+        }, 60);
       });
 
       // Initialize Views & Route on Load (If an exam was In progress before refresh, resume its exact deadline!)
