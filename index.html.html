@@ -48,6 +48,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bg-\[\#060b14\] { background-color: #060b14; }
 .bg-\[\#060c18\] { background-color: #060c18; }
 .bg-\[\#07081c\] { background-color: #07081c; }
+.bg-\[\#070A0E\] { background-color: #070A0E; }
 .bg-\[\#070a08\] { background-color: #070a08; }
 .bg-\[\#070b13\] { background-color: #070b13; }
 .bg-\[\#070b14\] { background-color: #070b14; }
@@ -78,14 +79,15 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bg-\[\#0f294a\] { background-color: #0f294a; }
 .bg-\[\#0f766e\] { background-color: #0f766e; }
 .bg-\[\#121821\] { background-color: #121821; }
+.bg-\[\#121821\]\/90 { background-color: rgba(18, 24, 33, 0.9); }
 .bg-\[\#121915\] { background-color: #121915; }
 .bg-\[\#160608\] { background-color: #160608; }
 .bg-\[\#160708\] { background-color: #160708; }
 .bg-\[\#1a0507\] { background-color: #1a0507; }
 .bg-\[\#1e293b\] { background-color: #1e293b; }
 .bg-\[\#A3E635\] { background-color: #A3E635; }
+.bg-\[\#A3E635\]\/10 { background-color: rgba(163, 230, 53, 0.1); }
 .bg-\[\#EF4444\] { background-color: #EF4444; }
-.bg-\[\#F59E0B\] { background-color: #F59E0B; }
 .bg-\[\#ccfbf1\]\/40 { background-color: rgba(204, 251, 241, 0.4); }
 .bg-\[\#e2e8f0\] { background-color: #e2e8f0; }
 .bg-\[\#f1f5f9\] { background-color: #f1f5f9; }
@@ -122,6 +124,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bg-emerald-50\/60 { background-color: rgba(236, 253, 245, 0.6); }
 .bg-emerald-50\/70 { background-color: rgba(236, 253, 245, 0.7); }
 .bg-emerald-500 { background-color: #10b981; }
+.bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.1); }
 .bg-emerald-600 { background-color: #059669; }
 .bg-emerald-800\/80 { background-color: rgba(6, 95, 70, 0.8); }
 .bg-emerald-900 { background-color: #064e3b; }
@@ -172,6 +175,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bg-white\/95 { background-color: rgba(255, 255, 255, 0.95); }
 .bg-zinc-900 { background-color: #18181b; }
 .block { display: block; }
+.blur-3xl { filter: blur(64px); }
 .border { border-width: 1px; }
 .border-2 { border-width: 2px; }
 .border-4 { border-width: 4px; }
@@ -179,11 +183,11 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .border-\[\#0c2340\] { border-color: #0c2340; }
 .border-\[\#0c2340\]\/20 { border-color: rgba(12, 35, 64, 0.2); }
 .border-\[\#26303D\] { border-color: #26303D; }
+.border-\[\#26303D\]\/80 { border-color: rgba(38, 48, 61, 0.8); }
 .border-\[\#475569\] { border-color: #475569; }
 .border-\[\#94a3b8\] { border-color: #94a3b8; }
 .border-\[\#A3E635\] { border-color: #A3E635; }
 .border-\[\#A3E635\]\/40 { border-color: rgba(163, 230, 53, 0.4); }
-.border-\[\#A3E635\]\/50 { border-color: rgba(163, 230, 53, 0.5); }
 .border-\[\#EF4444\] { border-color: #EF4444; }
 .border-\[\#b48811\] { border-color: #b48811; }
 .border-\[\#c59b27\] { border-color: #c59b27; }
@@ -264,7 +268,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bottom-2\.5 { bottom: 0.625rem; }
 .bottom-4 { bottom: 1.0rem; }
 .break-all { word-break: break-all; }
-.cursor-crosshair { cursor: crosshair; }
 .cursor-pointer { cursor: pointer; }
 .disabled\:opacity-40:disabled { opacity: 0.4; }
 .divide-\[\#26303D\] > :not([hidden]) ~ :not([hidden]) { border-color: #26303D; }
@@ -292,15 +295,12 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .font-serif { font-family: Georgia, Cambria, 'Times New Roman', Times, serif; }
 .gap-1 { gap: 0.25rem; }
 .gap-1\.5 { gap: 0.375rem; }
-.gap-10 { gap: 2.5rem; }
 .gap-2 { gap: 0.5rem; }
 .gap-2\.5 { gap: 0.625rem; }
 .gap-3 { gap: 0.75rem; }
-.gap-3\.5 { gap: 0.875rem; }
 .gap-4 { gap: 1.0rem; }
 .gap-5 { gap: 1.25rem; }
 .gap-6 { gap: 1.5rem; }
-.gap-8 { gap: 2.0rem; }
 .grid { display: grid; }
 .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -308,14 +308,12 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .group-hover\:text-lime-300 { color: #bef264; }
 .h-0\.5 { height: 0.125rem; }
-.h-1 { height: 0.25rem; }
 .h-1\.5 { height: 0.375rem; }
 .h-10 { height: 2.5rem; }
 .h-12 { height: 3.0rem; }
 .h-13 { height: 3.25rem; }
 .h-14 { height: 3.5rem; }
 .h-2 { height: 0.5rem; }
-.h-2\.5 { height: 0.625rem; }
 .h-20 { height: 5.0rem; }
 .h-3 { height: 0.75rem; }
 .h-4 { height: 1.0rem; }
@@ -325,6 +323,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .h-7 { height: 1.75rem; }
 .h-8 { height: 2.0rem; }
 .h-9 { height: 2.25rem; }
+.h-96 { height: 24.0rem; }
 .h-\[360px\] { height: 360px; }
 .h-auto { height: auto; }
 .h-full { height: 100%; }
@@ -372,7 +371,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .hover\:bg-zinc-800:hover { background-color: #27272a; }
 .hover\:border-\[\#0f766e\]:hover { border-color: #0f766e; }
 .hover\:border-\[\#A3E635\]:hover { border-color: #A3E635; }
-.hover\:border-\[\#A3E635\]\/60:hover { border-color: rgba(163, 230, 53, 0.6); }
 .hover\:border-\[\#EF4444\]:hover { border-color: #EF4444; }
 .hover\:border-\[\#ff2a2a\]:hover { border-color: #ff2a2a; }
 .hover\:border-cyan-600\/60:hover { border-color: rgba(8, 145, 178, 0.6); }
@@ -395,7 +393,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .inline-flex { display: inline-flex; }
 .inset-0 { top: 0px; right: 0px; bottom: 0px; left: 0px; }
 .italic { font-style: italic; }
-.items-baseline { align-items: baseline; }
 .items-center { align-items: center; }
 .items-end { align-items: flex-end; }
 .items-start { align-items: flex-start; }
@@ -426,6 +423,9 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .max-w-6xl { max-width: 72rem; }
 .max-w-7xl { max-width: 80rem; }
 .max-w-\[330px\] { max-width: 330px; }
+.max-w-\[560px\] { max-width: 560px; }
+.max-w-\[600px\] { max-width: 600px; }
+.max-w-\[720px\] { max-width: 720px; }
 .max-w-lg { max-width: 32rem; }
 .max-w-md { max-width: 28rem; }
 .max-w-xl { max-width: 36rem; }
@@ -436,7 +436,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .mb-4 { margin-bottom: 1.0rem; }
 .min-h-0 { min-height: 0px; }
 .min-h-\[250px\] { min-height: 250px; }
-.min-h-\[260px\] { min-height: 260px; }
 .min-h-\[510px\] { min-height: 510px; }
 .min-h-\[52px\] { min-height: 52px; }
 .min-h-\[56px\] { min-height: 56px; }
@@ -445,14 +444,12 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .ml-0\.5 { margin-left: 0.125rem; }
 .ml-1 { margin-left: 0.25rem; }
 .ml-2 { margin-left: 0.5rem; }
-.ml-3 { margin-left: 0.75rem; }
 .mr-1 { margin-right: 0.25rem; }
 .mr-1\.5 { margin-right: 0.375rem; }
 .mt-0\.5 { margin-top: 0.125rem; }
 .mt-1 { margin-top: 0.25rem; }
 .mt-1\.5 { margin-top: 0.375rem; }
 .mt-2 { margin-top: 0.5rem; }
-.mt-3 { margin-top: 0.75rem; }
 .mt-4 { margin-top: 1.0rem; }
 .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
 .mx-auto { margin-left: auto; margin-right: auto; }
@@ -480,7 +477,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .pb-2 { padding-bottom: 0.5rem; }
 .pb-3 { padding-bottom: 0.75rem; }
 .pb-4 { padding-bottom: 1.0rem; }
-.pb-5 { padding-bottom: 1.25rem; }
 .pb-6 { padding-bottom: 1.5rem; }
 .pl-12 { padding-left: 3.0rem; }
 .pl-2\.5 { padding-left: 0.625rem; }
@@ -495,7 +491,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .pt-2 { padding-top: 0.5rem; }
 .pt-3 { padding-top: 0.75rem; }
 .pt-4 { padding-top: 1.0rem; }
-.pt-6 { padding-top: 1.5rem; }
+.pt-8 { padding-top: 2.0rem; }
 .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
 .px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
 .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
@@ -505,6 +501,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .px-4 { padding-left: 1.0rem; padding-right: 1.0rem; }
 .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-7 { padding-left: 1.75rem; padding-right: 1.75rem; }
 .px-8 { padding-left: 2.0rem; padding-right: 2.0rem; }
 .py-0\.2 { padding-top: 0.05rem; padding-bottom: 0.05rem; }
 .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
@@ -567,7 +564,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .text-\[\#9CA3AF\] { color: #9CA3AF; }
 .text-\[\#9a7418\] { color: #9a7418; }
 .text-\[\#A3E635\] { color: #A3E635; }
-.text-\[\#D1D5DB\] { color: #D1D5DB; }
 .text-\[\#EF4444\] { color: #EF4444; }
 .text-\[\#F3F4F6\] { color: #F3F4F6; }
 .text-\[\#c59b27\] { color: #c59b27; }
@@ -650,6 +646,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .top-1\.5 { top: 0.375rem; }
 .top-2 { top: 0.5rem; }
 .tracking-\[0\.25em\] { letter-spacing: 0.25em; }
+.tracking-\[0\.2em\] { letter-spacing: 0.2em; }
 .tracking-tight { letter-spacing: -0.025em; }
 .tracking-tighter { letter-spacing: -0.05em; }
 .tracking-wide { letter-spacing: 0.025em; }
@@ -667,7 +664,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .w-14 { width: 3.5rem; }
 .w-16 { width: 4.0rem; }
 .w-2 { width: 0.5rem; }
-.w-2\.5 { width: 0.625rem; }
 .w-20 { width: 5.0rem; }
 .w-28 { width: 7.0rem; }
 .w-3 { width: 0.75rem; }
@@ -682,6 +678,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .w-64 { width: 16.0rem; }
 .w-8 { width: 2.0rem; }
 .w-9 { width: 2.25rem; }
+.w-96 { width: 24.0rem; }
 .w-auto { width: auto; }
 .w-full { width: 100%; }
 .whitespace-nowrap { white-space: nowrap; }
@@ -697,25 +694,22 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .sm\:flex { display: flex; }
   .sm\:flex-row { flex-direction: row; }
   .sm\:gap-2\.5 { gap: 0.625rem; }
-  .sm\:gap-6 { gap: 1.5rem; }
-  .sm\:gap-8 { gap: 2.0rem; }
   .sm\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .sm\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .sm\:h-10 { height: 2.5rem; }
   .sm\:h-8 { height: 2.0rem; }
   .sm\:inline { display: inline; }
   .sm\:inline-block { display: inline-block; }
   .sm\:items-center { align-items: center; }
-  .sm\:items-end { align-items: flex-end; }
   .sm\:p-4 { padding: 1.0rem; }
   .sm\:p-5 { padding: 1.25rem; }
-  .sm\:p-6 { padding: 1.5rem; }
   .sm\:p-8 { padding: 2.0rem; }
   .sm\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
   .sm\:px-8 { padding-left: 2.0rem; padding-right: 2.0rem; }
-  .sm\:py-20 { padding-top: 5.0rem; padding-bottom: 5.0rem; }
+  .sm\:py-24 { padding-top: 6.0rem; padding-bottom: 6.0rem; }
   .sm\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
   .sm\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
   .sm\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
@@ -723,6 +717,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .sm\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
   .sm\:text-sm { font-size: 0.875rem; line-height: 1.25rem; }
   .sm\:w-64 { width: 16.0rem; }
+  .sm\:w-auto { width: auto; }
 }
 @media (min-width: 768px) {
   .md\:col-span-2 { grid-column: span 2 / span 2; }
@@ -730,10 +725,8 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .md\:inline { display: inline; }
   .md\:inline-block { display: inline-block; }
   .md\:items-center { align-items: center; }
-  .md\:items-end { align-items: flex-end; }
 }
 @media (min-width: 1024px) {
   .lg\:border-l { border-left-width: 1px; }
@@ -741,12 +734,9 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .lg\:col-span-3 { grid-column: span 3 / span 3; }
   .lg\:col-span-4 { grid-column: span 4 / span 4; }
   .lg\:col-span-5 { grid-column: span 5 / span 5; }
-  .lg\:col-span-6 { grid-column: span 6 / span 6; }
-  .lg\:col-span-7 { grid-column: span 7 / span 7; }
   .lg\:flex { display: flex; }
   .lg\:flex-col { flex-direction: column; }
   .lg\:flex-row { flex-direction: row; }
-  .lg\:gap-8 { gap: 2.0rem; }
   .lg\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -757,6 +747,10 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .lg\:w-36 { width: 9.0rem; }
   .lg\:w-80 { width: 20.0rem; }
 }
+
+
+
+
 
 
 
@@ -1148,11 +1142,117 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       animation: shTermLineFade 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
+
+    /* ======================================================================
+       PREVIOUS INTERFACE + THIS INTERFACE'S BACKGROUND TEXTURE + SABBIR ANIMATIONS
+       ====================================================================== */
+    @keyframes shPreloaderFill {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    @keyframes shPreloaderExit {
+      0% { opacity: 1; transform: translateY(0%); }
+      100% { opacity: 0; transform: translateY(-100%); visibility: hidden; }
+    }
+    .sh-preloader-bar {
+      animation: shPreloaderFill 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    #shPreloaderOverlay {
+      animation: shPreloaderExit 0.55s cubic-bezier(0.76, 0, 0.24, 1) 0.72s forwards;
+    }
+
+    /* Architectural Square-Grid + Radial Emerald/Lime Ambient Texture */
+    .sh-bg-texture {
+      background-color: #0B0F14;
+      background-image:
+        radial-gradient(circle at 50% 18%, rgba(163, 230, 53, 0.11), transparent 55%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.08), transparent 50%),
+        linear-gradient(to right, rgba(163, 230, 53, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(163, 230, 53, 0.045) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    }
+
+    .sh-card-texture {
+      background:
+        radial-gradient(circle at 90% 10%, rgba(163, 230, 53, 0.07), transparent 55%),
+        linear-gradient(180deg, rgba(18, 24, 33, 0.92) 0%, rgba(11, 15, 20, 0.96) 100%);
+      background-image:
+        radial-gradient(circle at 90% 10%, rgba(163, 230, 53, 0.07), transparent 55%),
+        linear-gradient(to right, rgba(163, 230, 53, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(163, 230, 53, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .sh-card-texture:hover {
+      transform: translateY(-4px);
+      border-color: rgba(163, 230, 53, 0.65);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 25px rgba(163, 230, 53, 0.08);
+    }
+
+    /* SabbirHossien.com Masked Clip-Path Slide-Up Text Reveal */
+    .sh-clip-mask {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.08em;
+    }
+    @keyframes shSlideUpMask {
+      0% {
+        transform: translateY(110%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0%);
+        opacity: 1;
+      }
+    }
+    .sh-clip-line-1 {
+      display: inline-block;
+      animation: shSlideUpMask 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.78s both;
+    }
+    .sh-clip-line-2 {
+      display: inline-block;
+      animation: shSlideUpMask 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.92s both;
+    }
+
+    /* Staggered Slide-Up & Fade-In Animations (SabbirHossien.com Scroll/Entry Motion) */
+    @keyframes shStaggerUp {
+      0% {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .sh-anim-1 { animation: shStaggerUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.70s both; }
+    .sh-anim-2 { animation: shStaggerUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.02s both; }
+    .sh-anim-3 { animation: shStaggerUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.14s both; }
+    .sh-anim-4 { animation: shStaggerUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.26s both; }
+    .sh-anim-5 { animation: shStaggerUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.38s both; }
+
+    /* Route Page Section / Card Entry Animation when switching tabs */
+    .sh-page-enter {
+      animation: shStaggerUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body class="h-screen overflow-hidden flex flex-col bg-[#070b13] text-slate-200 select-none">
+  <!-- SABBIRHOSSIEN.COM-STYLE PRELOADER (Centered Brand Mark + Thin Lime Progress Bar) -->
+  <div id="shPreloaderOverlay" class="fixed inset-0 z-50 bg-[#070A0E] flex flex-col items-center justify-center pointer-events-none">
+    <div class="flex flex-col items-center gap-4">
+      <div class="px-5 py-3 rounded-xl bg-[#0B0F14] border border-[#A3E635]/40 shadow-2xl flex items-center justify-center sh-preloader-logo">
+        <img src="data:image/png;base64,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" alt="MY AIR ACADEMY" class="h-9 sm:h-10 w-auto object-contain" />
+      </div>
+      <div class="w-40 h-0.5 bg-[#121821] overflow-hidden rounded-full">
+        <div class="sh-preloader-bar h-full bg-[#A3E635]"></div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- AUTHENTIC SABRE RED 360 (CERT) MINIMALISTIC DARK WORKSPACE (Exact Match to Screenshot 2026-11-09 192526.jpg) -->
   <!-- 1. Minimalist Terminal Header (48-56px height, Monochrome SVG Mark + Wordmark, Clean Context) -->
@@ -1318,22 +1418,6 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       </button>
       <button
         type="button"
-        id="btnLoadRphebsDemoPnr"
-        class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold px-2.5 py-1.5 rounded transition whitespace-nowrap"
-        title="Load 24-Screenshot Family PNR (RPHEBS • 4 Pax • 4 Tickets)"
-      >
-        ⚡ Load RPHEBS
-      </button>
-      <button
-        type="button"
-        id="btnOpenChdInfDobHelper"
-        class="bg-[#121821] hover:bg-[#26303D] text-[#A3E635] px-2.5 py-1.5 rounded border border-[#26303D] transition whitespace-nowrap"
-        title="Open Auto-Prompt for CHD/INF DOB (SSR 3CHLD / 3INFT)"
-      >
-        👶 CHD/INF DOB
-      </button>
-      <button
-        type="button"
         id="btnGuiHelperModal"
         class="bg-[#121821] hover:bg-[#26303D] text-[#F3F4F6] px-2.5 py-1.5 rounded border border-[#26303D] transition hidden sm:inline-block"
         title="Open Command Helper"
@@ -1361,8 +1445,10 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   </div>
 
   <!-- Optional Quick Keys Bar (Hidden by default) -->
-  <div id="pfKeysBar" class="bg-[#121821] border-b border-[#26303D] px-4 py-1.5">
+  <div id="pfKeysBar" class="hidden bg-[#121821] border-b border-[#26303D] px-4 py-1.5">
     <div class="flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono">
+      <button type="button" id="btnLoadRphebsDemoPnr" class="bg-[#A3E635] text-[#0B0F14] font-bold px-2 py-0.5 rounded whitespace-nowrap">⚡ Load RPHEBS</button>
+      <button type="button" id="btnOpenChdInfDobHelper" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded whitespace-nowrap">👶 CHD/INF DOB</button>
       <button type="button" class="pf-key-btn bg-[#0B0F14] hover:border-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6]" data-cmd="120NOVDACDXB¥BG">120NOVDACDXB¥BG</button>
       <button type="button" class="pf-key-btn bg-[#0B0F14] hover:border-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6]" data-cmd="01Y1">01Y1</button>
       <button type="button" class="pf-key-btn bg-[#0B0F14] hover:border-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6]" data-cmd="-TAWHA/MOKTADA AS SADAR MR">Name</button>
@@ -2083,7 +2169,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
        ROUTED SITE PAGES CONTAINER (/, /features, /learn, /exams, /reference, /travel-map, /about)
        Strictly separate from #terminalWorkspaceWrapper so hidden pages are never interactive underneath!
        ============================================================================ -->
-  <div id="academyDashboardModal" class="fixed inset-0 z-40 bg-[#0B0F14] text-[#F3F4F6] flex flex-col overflow-y-auto">
+  <div id="academyDashboardModal" class="sh-bg-texture fixed inset-0 z-40 bg-[#0B0F14] text-[#F3F4F6] flex flex-col overflow-y-auto">
 
     <!-- SHARED MINIMALIST HEADER (Monochrome SVG Mark + Wordmark + Main Nav with ONLY Open Terminal highlighted) -->
     <header class="bg-[#0B0F14] border-b border-[#26303D] px-5 sm:px-8 h-14 min-h-[56px] flex items-center justify-between gap-4 shrink-0">
@@ -2117,470 +2203,56 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
     <div class="flex-1 flex flex-col">
 
       <!-- ====================================================================
-           ROUTE 1: HOMEPAGE (/) — SABBIRHOSSIEN.COM-INSPIRED VISUAL & INTERACTIVE DESIGN
+           ROUTE 1: HOMEPAGE (/) — PREVIOUS CLEAN INTERFACE + GRID TEXTURE + SABBIR ANIMATIONS
            ==================================================================== -->
-      <main id="portalPageHome" class="flex-1 flex flex-col">
+      <main id="portalPageHome" class="sh-bg-texture flex-1 flex flex-col items-center justify-center px-5 sm:px-8 py-16 sm:py-24 relative overflow-hidden">
+        <!-- Subtle Floating Ambient Glow Orbs behind the Hero -->
+        <div class="sh-ambient-orb pointer-events-none absolute -top-24 left-1/4 w-96 h-96 rounded-full bg-[#A3E635]/10 blur-3xl"></div>
+        <div class="sh-ambient-orb pointer-events-none absolute -bottom-24 right-1/4 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
 
-        <!-- SECTION 1: 2-COLUMN ARCHITECTURAL HERO + LIVE DUAL-VIEWPORT SABRE MOCKUP -->
-        <section class="sh-grid-surface border-b border-[#26303D] px-5 sm:px-8 py-12 sm:py-20">
-          <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-
-            <!-- Left Column (7 cols): Editorial Display Typography, CTAs & 3-Metric Strip -->
-            <div class="lg:col-span-7 space-y-6 text-left">
-              <div class="sh-reveal-1 inline-flex items-center gap-2.5 bg-[#121821] border border-[#26303D] px-3.5 py-1.5 rounded-full">
-                <span class="w-2 h-2 rounded-full bg-[#A3E635] badge-pulse"></span>
-                <span class="sh-eyebrow font-mono text-[#A3E635]">SABRE RED 360 &amp; IATA NDC 21.3 SIMULATOR</span>
-              </div>
-
-              <h1 class="sh-reveal-2 sh-hero-display text-[#F3F4F6]">
-                Build real agency confidence.<br>
-                One <span class="sh-serif-accent">command</span> at a time.
-              </h1>
-
-              <p class="sh-reveal-2 sh-lead-copy text-[#D1D5DB] max-w-2xl">
-                Practice authentic Sabre GDS availability (<code class="font-mono text-[#A3E635] text-sm">125DECDACBKK</code>), PNR creation, multi-passenger pricing (<code class="font-mono text-[#A3E635] text-sm">WPABG</code>), automated refunds (<code class="font-mono text-[#A3E635] text-sm">WFRA</code>), and QREX exchanges (<code class="font-mono text-[#A3E635] text-sm">WFRF</code>) in a zero-cost, browser-based workspace.
-              </p>
-
-              <!-- Primary & Secondary CTAs (Harmonized 15px-16px Font Size) -->
-              <div class="sh-reveal-3 pt-1 flex flex-wrap items-center gap-3.5">
-                <a href="#/terminal" id="btnDashOpenTerminal" class="bg-[#A3E635] hover:opacity-95 text-[#0B0F14] font-bold text-base px-6 py-3.5 rounded-lg transition inline-flex items-center gap-2 shadow-lg">
-                  <span>Open Practice Terminal</span>
-                  <span>→</span>
-                </a>
-                <a href="#/learn" id="btnHeroStartGuidedLesson" class="bg-[#121821] hover:bg-[#1e293b] text-[#F3F4F6] border border-[#26303D] font-semibold text-base px-5 py-3.5 rounded-lg transition inline-flex items-center gap-2">
-                  <span>Start 8 Guided Lessons</span>
-                  <span>↗</span>
-                </a>
-                <a href="#/features" class="text-base font-medium text-[#9CA3AF] hover:text-[#A3E635] underline underline-offset-4 px-2 py-2 transition">
-                  Explore All Workspaces
-                </a>
-              </div>
-
-              <!-- SabbirHossien-Style 3-Column Metric Bar -->
-              <div class="sh-reveal-4 pt-6 border-t border-[#26303D] grid grid-cols-3 gap-4 sm:gap-8 max-w-xl">
-                <div>
-                  <div class="text-2xl sm:text-3xl font-extrabold font-mono text-[#F3F4F6]">60<span class="text-[#A3E635]">+</span></div>
-                  <div class="text-sm text-[#9CA3AF] mt-0.5">Live Sabre Commands</div>
-                </div>
-                <div>
-                  <div class="text-2xl sm:text-3xl font-extrabold font-mono text-[#F3F4F6]">8 <span class="text-[#A3E635] text-lg font-sans font-semibold">Steps</span></div>
-                  <div class="text-sm text-[#9CA3AF] mt-0.5">Guided Ticketing Path</div>
-                </div>
-                <div>
-                  <div class="text-2xl sm:text-3xl font-extrabold font-mono text-[#F3F4F6]">100<span class="text-[#A3E635]">%</span></div>
-                  <div class="text-sm text-[#9CA3AF] mt-0.5">Free • No Login Wall</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Column (5 cols): Dual-Viewport Interactive Sabre Red 360 Terminal Mockup -->
-            <div class="lg:col-span-5 sh-reveal-3">
-              <div class="sh-mockup-stage-green border border-[#26303D] rounded-2xl p-4 sm:p-5 relative shadow-2xl">
-                <!-- Top Window Frame (Desktop Viewport) -->
-                <div class="bg-[#0B0F14] border border-[#26303D] rounded-xl overflow-hidden shadow-xl">
-                  <div class="bg-[#121821] border-b border-[#26303D] px-3.5 py-2.5 flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
-                      <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
-                      <span class="w-2.5 h-2.5 rounded-full bg-[#A3E635]"></span>
-                    </div>
-                    <span class="font-mono text-xs text-[#9CA3AF] bg-[#0B0F14] border border-[#26303D] px-2.5 py-0.5 rounded">Agency Workspace (CERT) • PCC: TWH8</span>
-                    <button type="button" id="btnReplayHeroDemo" class="text-xs font-mono text-[#A3E635] hover:underline" title="Replay live terminal sequence">
-                      Run again ↻
-                    </button>
-                  </div>
-
-                  <!-- Live Auto-Typing Sabre Terminal Preview Body -->
-                  <div class="p-4 font-mono text-xs sm:text-sm space-y-2.5 min-h-[250px] text-[#F3F4F6]">
-                    <div class="flex items-center justify-between text-xs text-[#9CA3AF] border-b border-[#26303D] pb-1.5">
-                      <span>AREA A • PNR: <strong class="text-[#A3E635]">RPHEBS</strong></span>
-                      <span>AGENT: 9999TAWHA</span>
-                    </div>
-                    <div id="heroLiveTypingCmd" class="text-[#A3E635] font-bold">
-                      &gt; WFRA9974883803284«<span class="sh-cursor"></span>
-                    </div>
-                    <pre id="heroLiveTypingOutput" class="text-xs leading-relaxed text-[#D1D5DB] whitespace-pre-wrap font-mono">                  REFUND PRICE RESPONSE
-NAME HOSSAIN/ABRAR MSTR     TOTAL REFUND BDT 77232
-TKT 9974883803284
-  1 BG 388 Y 25DEC DACBKK   YBD6M/CH25   OK
-  2 BG 389 Y 30DEC BKKDAC   YBD6M/CH25   OK
-FARE 70538  •  TAX 13253  •  CANCEL FEE -6559
-COMM TO REFUND 7 PCT      •  FOP CASH</pre>
-                  </div>
-
-                  <!-- Quick Demo Command Switcher Pills inside Mockup -->
-                  <div class="bg-[#121821] border-t border-[#26303D] px-3 py-2 flex flex-wrap items-center justify-between gap-1.5">
-                    <div class="flex flex-wrap items-center gap-1">
-                      <button type="button" data-herodemo="avail" class="hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs">125DECDACBKK</button>
-                      <button type="button" data-herodemo="wp" class="hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs">WPABG</button>
-                      <button type="button" data-herodemo="wetr" class="hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs">WETR*2</button>
-                      <button type="button" data-herodemo="wfra" class="hero-demo-pill bg-[#A3E635] text-[#0B0F14] font-bold px-2 py-1 rounded font-mono text-xs">WFRA</button>
-                    </div>
-                    <a href="#/terminal" class="text-xs font-mono font-semibold text-[#A3E635] hover:underline">Launch ↗</a>
-                  </div>
-                </div>
-
-                <!-- Floating Secondary Card (Dual-Viewport E-Ticket / IATA 7% Badge) -->
-                <div class="sh-floating-badge mt-3 bg-[#121821] border border-[#A3E635]/50 rounded-xl p-3.5 flex items-center justify-between gap-3 shadow-lg">
-                  <div class="space-y-0.5">
-                    <div class="text-xs font-mono text-[#A3E635] uppercase font-semibold">Live Sabre Red 360 Output</div>
-                    <div class="text-sm font-bold text-[#F3F4F6]">Authentic Masks: Screen 10, 30, 31, 32 &amp; 40</div>
-                  </div>
-                  <a href="#/terminal" class="sh-arrow-box" title="Open Live Terminal">↗</a>
-                </div>
-              </div>
-            </div>
-
+        <div class="relative z-10 w-full max-w-[720px] mx-auto text-center space-y-6">
+          <!-- Eyebrow Badge with Sabbir-style Staggered Reveal -->
+          <div class="sh-anim-1 inline-flex items-center gap-2 bg-[#121821]/90 border border-[#26303D] px-4 py-1.5 rounded-full text-xs sm:text-sm font-mono uppercase tracking-[0.2em] text-[#A3E635] font-semibold shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-[#A3E635] badge-pulse"></span>
+            <span>MY AIR ACADEMY</span>
           </div>
-        </section>
 
-        <!-- SECTION 2: SABBIRHOSSIEN-STYLE "FOUR MOMENTS, IN THIS ORDER" INTERACTIVE WORKFLOW SHOWCASE -->
-        <section class="bg-[#0B0F14] border-b border-[#26303D] px-5 sm:px-8 py-16">
-          <div class="max-w-6xl mx-auto space-y-10">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#26303D] pb-6">
-              <div class="space-y-2">
-                <div class="sh-eyebrow font-mono text-[#A3E635]">How it works</div>
-                <h2 class="sh-section-heading text-[#F3F4F6]">
-                  Four real agency stages, <span class="sh-serif-accent">in this order.</span>
-                </h2>
-              </div>
-              <p class="sh-body-copy text-[#9CA3AF] max-w-md">
-                Click any stage below to preview the exact Sabre Red 360 command sequence before running it live in the terminal.
-              </p>
-            </div>
+          <!-- Hero Heading with SabbirHossien-style Masked Clip-Path Slide-Up & Italic Serif Accent -->
+          <h1 class="sh-hero-display text-[#F3F4F6]">
+            <span class="sh-clip-mask"><span class="sh-clip-line-1">Build confidence.</span></span>
+            <span class="sh-clip-mask"><span class="sh-clip-line-2">One <span class="sh-serif-accent">command</span> at a time.</span></span>
+          </h1>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              <!-- Left 6 Cols: 4 Interactive Step Cards (01 to 04) -->
-              <div class="lg:col-span-6 space-y-3" id="homeFourStepsList">
-                <button type="button" data-stepidx="0" class="home-step-selector w-full text-left bg-[#121821] border-2 border-[#A3E635] rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
-                  <span class="font-mono text-lg font-extrabold text-[#A3E635] shrink-0">01</span>
-                  <div class="space-y-1">
-                    <div class="text-lg font-bold text-[#F3F4F6]">Availability &amp; Direct Connect Sell</div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Search live schedules (<code class="font-mono text-[#F3F4F6]">125DECDACBKK</code>), expand graphical equipment &amp; meal drawers, and sell confirmed or waitlisted seats (<code class="font-mono text-[#F3F4F6]">03Y3</code>).
-                    </p>
-                  </div>
-                </button>
+          <!-- Subtitle with Harmonized Font Size (17px–19px) -->
+          <p class="sh-anim-2 sh-lead-copy text-[#9CA3AF] max-w-[600px] mx-auto">
+            Practice Sabre GDS booking, pricing and ticketing in a focused training simulator.
+          </p>
 
-                <button type="button" data-stepidx="1" class="home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
-                  <span class="font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0">02</span>
-                  <div class="space-y-1">
-                    <div class="text-lg font-bold text-[#F3F4F6]">PNR Mandatory Elements &amp; APIS (Res 830d)</div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Enter Adult, Child (<code class="font-mono text-[#F3F4F6]">*C10</code>), and Infant (<code class="font-mono text-[#F3F4F6]">I/</code>) names, agency phone, time limit, and mandatory <code class="font-mono text-[#F3F4F6]">3DOCS</code>, <code class="font-mono text-[#F3F4F6]">3CTCM</code>, and <code class="font-mono text-[#F3F4F6]">3CTCE</code>.
-                    </p>
-                  </div>
-                </button>
-
-                <button type="button" data-stepidx="2" class="home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
-                  <span class="font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0">03</span>
-                  <div class="space-y-1">
-                    <div class="text-lg font-bold text-[#F3F4F6]">Graphical Pricing (`WPABG`) &amp; E-Ticket (`WETR*2`)</div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Price multi-passenger itineraries with full Bangladesh tax breakdowns (<code class="font-mono text-[#F3F4F6]">BD</code>, <code class="font-mono text-[#F3F4F6]">UT</code>, <code class="font-mono text-[#F3F4F6]">OW</code>, <code class="font-mono text-[#F3F4F6]">E5</code>, <code class="font-mono text-[#F3F4F6]">TS</code>), store <code class="font-mono text-[#F3F4F6]">PQ</code>, and issue 13-digit E-Tickets.
-                    </p>
-                  </div>
-                </button>
-
-                <button type="button" data-stepidx="3" class="home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4">
-                  <span class="font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0">04</span>
-                  <div class="space-y-1">
-                    <div class="text-lg font-bold text-[#F3F4F6]">Automated Refund (`WFRA`) &amp; QREX Exchange (`WFRF`)</div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Quote and process Cat-33 automated refunds (<code class="font-mono text-[#F3F4F6]">WFRA.../REF</code>) or step through QREX Screens 10, 30, 31, 32, and 40 for ticket reissuance.
-                    </p>
-                  </div>
-                </button>
-              </div>
-
-              <!-- Right 6 Cols: Interactive Stage Preview Window (01 / 04 to 04 / 04) -->
-              <div class="lg:col-span-6 sh-mockup-stage-slate border border-[#26303D] rounded-2xl p-5 sm:p-6 space-y-4">
-                <div class="space-y-2 border-b border-[#26303D] pb-3">
-                  <div class="flex items-center justify-between">
-                    <span id="homeStageCounterLabel" class="font-mono text-sm font-bold text-[#A3E635]">01 / 04 — Availability &amp; Direct Connect Sell</span>
-                    <div class="flex items-center gap-2">
-                      <button type="button" id="btnToggleAutoCycleSteps" class="text-xs font-mono text-[#A3E635] bg-[#0B0F14] border border-[#A3E635]/40 px-2.5 py-1 rounded">Auto-Play: ON ↻</button>
-                    </div>
-                  </div>
-                  <div class="w-full bg-[#0B0F14] h-1 rounded overflow-hidden">
-                    <div id="homeStageAutoProgressBar" class="sh-step-progress-bar"></div>
-                  </div>
-                </div>
-
-                <div class="bg-[#0B0F14] border border-[#26303D] rounded-xl p-4 font-mono text-xs sm:text-sm space-y-3 min-h-[260px]">
-                  <div id="homeStageCmdBadge" class="text-[#A3E635] font-bold text-sm">&gt; 125DECDACBKK«</div>
-                  <pre id="homeStageTerminalPre" class="text-xs leading-relaxed text-[#D1D5DB] whitespace-pre-wrap overflow-x-auto">25DEC FRI DAC/Z¥6 BKK/¥1
-1 TG   322 C9 D9 J9 Y9 B9 M9 DAC BKK 13:40 17:10 333 0 2H 30MIN
-2 PG  4823 C9 D9 Y9 M9 K9 N9 DAC BKK 13:40 17:10 333 0 2H 30MIN
-3 BG   388 J9 C4 DC Y9 A9 N9 DAC BKK 11:15 15:00 738 0 2H 45MIN
-  From: DAC 25DEC at 11:15 - TERMINAL 2  To: BKK 25DEC at 15:00
-  Equipment: BOEING 737-800  Air Miles: 970  E-ticket: Yes
-  [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]</pre>
-                </div>
-
-                <div id="shInteractiveCursorBox" class="bg-[#0B0F14] border border-[#26303D] hover:border-[#A3E635] rounded-xl p-3.5 flex items-center justify-between gap-3 cursor-crosshair transition select-none">
-                  <div class="flex items-center gap-3">
-                    <span class="w-2.5 h-2.5 rounded-full bg-[#A3E635] badge-pulse"></span>
-                    <span class="font-mono text-sm font-bold text-[#F3F4F6]"><span id="shCursorSimCounter" class="text-[#A3E635]">1,420</span> commands simulated · <span class="text-[#9CA3AF] font-normal">move your cursor here</span></span>
-                  </div>
-                  <span class="text-xs font-mono text-[#A3E635]">Interactive ✦</span>
-                </div>
-                <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-                  <span id="homeStageHintText" class="text-sm text-[#9CA3AF]">Click "Run in Terminal" to execute this workflow live.</span>
-                  <button type="button" id="btnRunHomeStageInTerminal" data-cmd="125DECDACBKK" class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold text-sm px-4 py-2 rounded-lg transition">
-                    Run in Terminal →
-                  </button>
-                </div>
-              </div>
-            </div>
+          <!-- Primary & Secondary CTA Buttons with Sabbir-style Hover Motion -->
+          <div class="sh-anim-3 pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#/terminal" id="btnDashOpenTerminal" class="w-full sm:w-auto bg-[#A3E635] hover:opacity-95 text-[#0B0F14] font-bold text-base px-7 py-3.5 rounded-lg transition inline-flex items-center justify-center gap-2 shadow-lg">
+              <span>Open Practice Terminal</span>
+              <span>→</span>
+            </a>
+            <a href="#/features" class="text-base font-medium text-[#F3F4F6] hover:text-[#A3E635] underline underline-offset-4 px-4 py-2.5 transition inline-flex items-center gap-1.5">
+              <span>Explore Features</span>
+              <span>↗</span>
+            </a>
           </div>
-        </section>
 
-        <!-- SECTION 3: SABBIRHOSSIEN-STYLE DUAL-VIEWPORT WORKSPACE SHOWCASE CARDS (2x2 BENTO GRID) -->
-        <section class="sh-grid-surface border-b border-[#26303D] px-5 sm:px-8 py-16">
-          <div class="max-w-6xl mx-auto space-y-10">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#26303D] pb-6">
-              <div class="space-y-2">
-                <div class="sh-eyebrow font-mono text-[#A3E635]">Core Workspaces</div>
-                <h2 class="sh-section-heading text-[#F3F4F6]">
-                  Four specialized studios. <span class="sh-serif-accent">Built for mastery.</span>
-                </h2>
-              </div>
-              <a href="#/features" class="text-base font-semibold text-[#A3E635] hover:underline inline-flex items-center gap-1.5">
-                <span>See all 15+ tools</span>
-                <span>↗</span>
-              </a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Card 1: Sabre Red 360 Terminal -->
-              <a href="#/terminal" class="sh-showcase-card flex flex-col justify-between group">
-                <div class="sh-mockup-stage-green p-5 border-b border-[#26303D]">
-                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
-                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
-                      <span>SABRE 1S HOST • AREAS A–F</span>
-                      <span class="text-[#A3E635]">● LIVE</span>
-                    </div>
-                    <div class="text-[#A3E635] font-bold">&gt; WFRF9974883803282¥ABG¥N1.1«</div>
-                    <div class="text-[#D1D5DB]">WF WFRR EXCHANGE SUMMARY — SCREEN 30 / 31 / 40</div>
-                    <div class="text-emerald-400">MASK PROCESSING COMPLETE - ETR EXCHANGE PROCESSED</div>
-                  </div>
-                </div>
-                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
-                  <div class="space-y-2">
-                    <div class="flex items-start justify-between gap-3">
-                      <h3 class="sh-card-title text-[#F3F4F6]">Sabre Red 360 Cryptic &amp; Graphical Terminal</h3>
-                      <span class="sh-arrow-box">↗</span>
-                    </div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Full 6-area (`A–F`) command workspace with expandable availability drawers, graphical `WP` fare quote cards, QREX refund/reissue masks, and strict PNR state validation.
-                    </p>
-                  </div>
-                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
-                    6 Work Areas · Graphical WP &amp; QREX Masks · 7% IATA Commission
-                  </div>
-                </div>
-              </a>
-
-              <!-- Card 2: 8-Step Guided Learning Lab -->
-              <a href="#/learn" class="sh-showcase-card flex flex-col justify-between group">
-                <div class="sh-mockup-stage-slate p-5 border-b border-[#26303D]">
-                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
-                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
-                      <span>GUIDED CURRICULUM • 8 LESSONS</span>
-                      <span class="text-[#A3E635]">STEP-BY-STEP</span>
-                    </div>
-                    <div class="text-[#F3F4F6] font-bold">Lesson 1 ➔ Lesson 8: Availability to Automated Refund</div>
-                    <div class="text-[#9CA3AF]">120NOVDACDXB¥BG ➔ 01Y1 ➔ 3DOCS ➔ W¥PQ1 ➔ WFRA/REF</div>
-                    <div class="text-[#A3E635]">✓ Resulting-State Inspector verifies every step</div>
-                  </div>
-                </div>
-                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
-                  <div class="space-y-2">
-                    <div class="flex items-start justify-between gap-3">
-                      <h3 class="sh-card-title text-[#F3F4F6]">8-Lesson Guided Ticketing Curriculum</h3>
-                      <span class="sh-arrow-box">↗</span>
-                    </div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Learn every stage of agency ticketing in sequence—with live state verification that checks your active PNR before unlocking the next milestone.
-                    </p>
-                  </div>
-                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
-                    8 Structured Lessons · Live State Check · Beginner Friendly
-                  </div>
-                </div>
-              </a>
-
-              <!-- Card 3: 15-Minute Practical Exam & Certificate -->
-              <a href="#/exams" class="sh-showcase-card flex flex-col justify-between group">
-                <div class="sh-mockup-stage-slate p-5 border-b border-[#26303D]">
-                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
-                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
-                      <span>ISOLATED EXAM SESSION • 15:00 TIMER</span>
-                      <span class="text-[#A3E635]">PASS: 80%</span>
-                    </div>
-                    <div class="text-[#F3F4F6] font-bold">5 Practical Checkpoints + 15-Question Tariff Quiz</div>
-                    <div class="text-[#9CA3AF]">Unlocks Printable Training Completion Certificate</div>
-                    <div class="text-[#A3E635]">★ Credential ID &amp; Breakdown Logged in Browser</div>
-                  </div>
-                </div>
-                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
-                  <div class="space-y-2">
-                    <div class="flex items-start justify-between gap-3">
-                      <h3 class="sh-card-title text-[#F3F4F6]">Exam Centre &amp; Completion Certificate</h3>
-                      <span class="sh-arrow-box">↗</span>
-                    </div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Test your speed in a timed 15-minute practical Sabre session without command hints, or take the written MCQ assessment to unlock your certificate.
-                    </p>
-                  </div>
-                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
-                    15-Min Timed Terminal · MCQ Assessment · Printable Certificate
-                  </div>
-                </div>
-              </a>
-
-              <!-- Card 4: Bangladesh 64-District Domestic Flight Map & Boarding Pass Studio -->
-              <a href="#/travel-map" class="sh-showcase-card flex flex-col justify-between group">
-                <div class="sh-mockup-stage-green p-5 border-b border-[#26303D]">
-                  <div class="bg-[#0B0F14] border border-[#26303D] rounded-lg p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
-                    <div class="flex items-center justify-between text-[11px] text-[#9CA3AF]">
-                      <span>8 DOMESTIC AIRPORTS • 64 DISTRICTS</span>
-                      <span class="text-[#A3E635]">1080×1350 POSTER</span>
-                    </div>
-                    <div class="text-[#F3F4F6] font-bold">DAC • CXB • CGP • ZYL • JSR • RJH • SPD • BZL</div>
-                    <div class="text-[#9CA3AF]">Interactive Radar Map + Downloadable Boarding Pass</div>
-                    <div class="text-[#A3E635]">✓ Inspired by Bangladesh's viral travel map movement</div>
-                  </div>
-                </div>
-                <div class="p-6 space-y-3 flex-1 flex flex-col justify-between">
-                  <div class="space-y-2">
-                    <div class="flex items-start justify-between gap-3">
-                      <h3 class="sh-card-title text-[#F3F4F6]">Bangladesh Flight Map &amp; Boarding Pass Studio</h3>
-                      <span class="sh-arrow-box">↗</span>
-                    </div>
-                    <p class="sh-body-copy text-[#9CA3AF]">
-                      Mark the domestic airports and 64 districts you have visited, track your Sky Explorer rank, and export a high-resolution boarding pass poster.
-                    </p>
-                  </div>
-                  <div class="pt-3 border-t border-[#26303D] text-xs font-mono text-[#9CA3AF]">
-                    8 Domestic Hubs · 64 Districts · Instant PNG Poster Download
-                  </div>
-                </div>
-              </a>
-            </div>
+          <!-- Guided Lesson Link -->
+          <div class="sh-anim-4 pt-1">
+            <a href="#/learn" id="btnHeroStartGuidedLesson" class="text-sm sm:text-base text-[#9CA3AF] hover:text-[#A3E635] transition inline-flex items-center gap-1.5">
+              <span>New here? Start a guided lesson</span>
+              <span>→</span>
+            </a>
           </div>
-        </section>
 
-        <!-- SECTION 4: SABBIRHOSSIEN-STYLE NUMBERED INDEX (01 TO 08) & DISCLAIMER -->
-        <section class="bg-[#0B0F14] px-5 sm:px-8 py-16">
-          <div class="max-w-6xl mx-auto space-y-8">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#26303D] pb-5">
-              <div>
-                <div class="sh-eyebrow font-mono text-[#A3E635]">Quick Directory</div>
-                <h2 class="sh-section-heading text-[#F3F4F6] mt-1">
-                  Eight modules, <span class="sh-serif-accent">ready to launch.</span>
-                </h2>
-              </div>
-              <span class="text-sm font-mono text-[#9CA3AF]">01 — 08</span>
-            </div>
-
-            <div class="border-t border-[#26303D] divide-y divide-[#26303D]">
-              <a href="#/terminal" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">01</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">Sabre Red 360 Terminal</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Full 6-area cryptic &amp; graphical PNR, pricing, ticketing, refund &amp; exchange workspace.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/learn" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">02</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">8 Guided Ticketing Lessons</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Interactive step-by-step training with live PNR state verification.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/exams" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">03</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">15-Minute Practical Exam &amp; MCQ Quiz</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Timed practical assessment and tariff quiz to unlock your completion certificate.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/reference" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">04</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">IATA Geography Atlas (TC1, TC2, TC3 &amp; 10 GI)</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Interactive world tariff conference maps and global routing indicators.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/reference" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">05</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">230+ World City, Airline &amp; Currency Directory</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Instant encoder/decoder for IATA 3-letter airport codes and airline prefixes.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/reference" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">06</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">IATA Resolution 850m ADM Shield &amp; BSPlink Audit</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">12 airline debit memo triggers, churn blocker, and 15-day dispute simulator.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/travel-map" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">07</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">Bangladesh Domestic Flight Map &amp; Poster Studio</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Track 8 domestic airports and 64 districts with downloadable boarding pass art.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-
-              <a href="#/about" class="sh-index-row py-4 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-4 sm:gap-6">
-                  <span class="font-mono text-sm font-bold text-[#A3E635]">08</span>
-                  <div>
-                    <span class="text-base sm:text-lg font-bold text-[#F3F4F6]">About MY AIR ACADEMY &amp; Simulation Governance</span>
-                    <span class="hidden md:inline text-sm text-[#9CA3AF] ml-3">Curriculum scope, Bangladesh BSP tax assumptions, and independent training disclaimer.</span>
-                  </div>
-                </div>
-                <span class="sh-arrow-box">↗</span>
-              </a>
-            </div>
-
-            <p class="pt-6 text-sm text-[#9CA3AF] text-center max-w-2xl mx-auto leading-relaxed">
-              Independent training simulator. No real bookings or tickets are issued. Not affiliated with Sabre Corporation.
-            </p>
-          </div>
-        </section>
-
+          <!-- Disclaimer Footer Note -->
+          <p class="sh-anim-5 pt-8 text-xs sm:text-sm text-[#9CA3AF] border-t border-[#26303D]/80 max-w-[560px] mx-auto leading-relaxed">
+            Independent training simulator. No real bookings or tickets are issued. Not affiliated with Sabre.
+          </p>
+        </div>
       </main>
 
       <!-- ====================================================================
@@ -13369,7 +13041,7 @@ HEALTH   : ${info.health}`
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               ${group.items.map(item => `
-                <div class="bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-5 flex flex-col justify-between space-y-4 transition">
+                <div class="sh-card-texture bg-[#121821] border border-[#26303D] rounded-xl p-5 flex flex-col justify-between space-y-4">
                   <div class="space-y-2.5">
                     <div class="w-8 h-8 rounded-lg bg-[#0B0F14] border border-[#26303D] flex items-center justify-center text-[#A3E635]">
                       <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -14317,165 +13989,23 @@ HEALTH   : ${info.health}`
       });
 
 
-      // Homepage Interactive Hero Demo & 4-Stage ("Four moments, in this order") Showcase
-      const HERO_DEMO_SCENES = {
-        avail: {
-          cmd: '125DECDACBKK',
-          output: `25DEC FRI DAC/Z¥6 BKK/¥1
-1 TG  322 C9 D9 J9 Y9 B9 M9 DAC BKK 13:40 17:10 333 0 2H 30MIN
-2 PG 4823 C9 D9 Y9 M9 K9 N9 DAC BKK 13:40 17:10 333 0 2H 30MIN
-3 BG  388 J9 C4 DC Y9 A9 N9 DAC BKK 11:15 15:00 738 0 2H 45MIN
-  From: DAC 25DEC 11:15 - TERM 2  To: BKK 15:00  Eq: BOEING 737-800
-  [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]`
-        },
-        wp: {
-          cmd: 'WPABG',
-          output: `25DEC DEPARTURE DATE-----LAST DAY TO PURCHASE 26NOV/2359
-       BASE FARE      EQUIV AMOUNT  TAXES/FEES/CHARGES    TOTAL
- 2-      USD760.00        BDT94050       BDT15253XT       BDT109303ADT
- 1-      USD570.00        BDT70538       BDT13253XT        BDT83791C10
- 1-      USD190.00        BDT23513        BDT3294XT        BDT26807INF
-          2280.00          282151          47053            329204TTL`
-        },
-        wetr: {
-          cmd: 'WETR*2',
-          output: `ELECTRONIC TICKET RECORD                        CRS CODE:7766
-TKT:9974883803282       ISSUED:12NOV26  PCC:TWH8  IATA:99999992
-NAME:HOSSAIN/RAHAT MR                           PNR:RPHEBS
-CPN A/L FLT  CLS DATE  BRDOFF TIME  ST F/B            STAT
-1   BG  388   Y  25DEC DACBKK 1115  OK YBD6M          OPEN (BAG:30K)
-2   BG  389   Y  30DEC BKKDAC 1615  OK YBD6M          OPEN (BAG:30K)`
-        },
-        wfra: {
-          cmd: 'WFRA9974883803284',
-          output: `                  REFUND PRICE RESPONSE
-NAME HOSSAIN/ABRAR MSTR     TOTAL REFUND BDT 77232
-TKT 9974883803284
-  1 BG 388 Y 25DEC DACBKK   YBD6M/CH25   OK
-  2 BG 389 Y 30DEC BKKDAC   YBD6M/CH25   OK
-FARE 70538  •  TAX 13253  •  CANCEL FEE -6559
-COMM TO REFUND 7 PCT      •  FOP CASH`
-        }
-      };
-
-      const HOME_FOUR_STAGES = [
-        {
-          label: '01 / 04 — Availability & Direct Connect Sell',
-          cmd: '125DECDACBKK',
-          pre: `25DEC FRI DAC/Z¥6 BKK/¥1
-1 TG   322 C9 D9 J9 Y9 B9 M9 DAC BKK 13:40 17:10 333 0 2H 30MIN
-2 PG  4823 C9 D9 Y9 M9 K9 N9 DAC BKK 13:40 17:10 333 0 2H 30MIN
-3 BG   388 J9 C4 DC Y9 A9 N9 DAC BKK 11:15 15:00 738 0 2H 45MIN
-  From: DAC 25DEC at 11:15 - TERMINAL 2  To: BKK 25DEC at 15:00
-  Equipment: BOEING 737-800  Air Miles: 970  E-ticket: Yes
-  [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]`,
-          hint: 'Searches live Dhaka–Bangkok schedules and opens the expandable sell drawer.'
-        },
-        {
-          label: '02 / 04 — PNR Mandatory Elements & APIS (Res 830d)',
-          cmd: '*A',
-          pre: `RPHEBS
- 1.1HOSSAIN/RAHAT MR   2.1HOSSAIN/JANNAT MRS
- 3.1HOSSAIN/ABRAR MSTR*C10   4.I/1HOSSAIN/KABITA MISS*I05
- 1 BG 388Y 25DEC 5 DACBKK HK3 1115 1500 /DCBG*RPHEBS /E
- 2 BG 389Y 30DEC 3 BKKDAC HK3 1615 1800 /DCBG*RPHEBS /E
-GENERAL FACTS
- 1.SSR CHLD BG HK1/01NOV16
- 2.SSR INFT BG KK1 DACBKK0388Y25DEC/HOSSAIN/KABITA MISS/01DEC25
- 3.SSR DOCS BG HK1/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/HOSSAIN/RAHAT`,
-          hint: 'Builds a complete family PNR with Adult, Child (*C10), Infant (I/), and APIS SSRs.'
-        },
-        {
-          label: '03 / 04 — Graphical Pricing (WPABG) & E-Ticket (WETR*2)',
-          cmd: 'WPABG',
-          pre: `25DEC DEPARTURE DATE-----LAST DAY TO PURCHASE 26NOV/2359
-       BASE FARE      EQUIV AMOUNT  TAXES/FEES/CHARGES    TOTAL
- 2-      USD760.00        BDT94050       BDT15253XT       BDT109303ADT
- 1-      USD570.00        BDT70538       BDT13253XT        BDT83791C10
- 1-      USD190.00        BDT23513        BDT3294XT        BDT26807INF
-          2280.00          282151          47053            329204TTL
-[TAXES/FEES VIEW ALL] [BAGGAGE 30KG] [SEAT MAP] [AIR EXTRAS] [193 kg CO2]`,
-          hint: 'Prices all passenger types with interactive Sabre Red 360 sub-modals and PQ storage.'
-        },
-        {
-          label: '04 / 04 — Automated Refund (WFRA) & QREX Exchange (WFRF)',
-          cmd: 'WFRA9974883803284',
-          pre: `                  REFUND PRICE RESPONSE
-NAME HOSSAIN/ABRAR MSTR            TOTAL REFUND BDT        77232
-TKT 9974883803284
-  1  BG 388  Y 25DEC DACBKK     YBD6M/CH25     OK
-  2  BG 389  Y 30DEC BKKDAC     YBD6M/CH25     OK
-FARE 70538  •  TAX 13253  •  CANCEL FEE -6559  •  TTL REFUND 77232
-----------------------------------------------------------------
-WFRA9974883803284/REF« ➔ ETR REFUND TRANSACTION PROCESSED`,
-          hint: 'Calculates ATPCO Cat-33 automated refund quotes and processes ETR settlement.'
-        }
-      ];
-
-      let currentHeroDemoKey = 'wfra';
-      function setHeroDemoScene(key) {
-        const scene = HERO_DEMO_SCENES[key] || HERO_DEMO_SCENES.wfra;
-        currentHeroDemoKey = key;
-        const cmdEl = document.getElementById('heroLiveTypingCmd');
-        const outEl = document.getElementById('heroLiveTypingOutput');
-        if (cmdEl) cmdEl.innerHTML = `&gt; ${scene.cmd}«<span class="sh-cursor"></span>`;
-        if (outEl) outEl.textContent = scene.output;
-        document.querySelectorAll('.hero-demo-pill').forEach(btn => {
-          const isMatch = btn.getAttribute('data-herodemo') === key;
-          btn.className = isMatch
-            ? 'hero-demo-pill bg-[#A3E635] text-[#0B0F14] font-bold px-2 py-1 rounded font-mono text-xs'
-            : 'hero-demo-pill bg-[#0B0F14] hover:border-[#A3E635] text-[#D1D5DB] border border-[#26303D] px-2 py-1 rounded font-mono text-xs';
-        });
-      }
-
-      document.querySelectorAll('.hero-demo-pill').forEach(btn => {
-        btn.addEventListener('click', () => {
-          setHeroDemoScene(btn.getAttribute('data-herodemo'));
-        });
-      });
-
-      document.getElementById('btnReplayHeroDemo')?.addEventListener('click', () => {
-        const order = ['avail', 'wp', 'wetr', 'wfra'];
-        const nextIdx = (order.indexOf(currentHeroDemoKey) + 1) % order.length;
-        setHeroDemoScene(order[nextIdx]);
-      });
-
-      document.querySelectorAll('.home-step-selector').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const idx = parseInt(btn.getAttribute('data-stepidx') || '0', 10);
-          const st = HOME_FOUR_STAGES[idx] || HOME_FOUR_STAGES[0];
-          document.querySelectorAll('.home-step-selector').forEach((b, i) => {
-            b.className = i === idx
-              ? 'home-step-selector w-full text-left bg-[#121821] border-2 border-[#A3E635] rounded-xl p-4 sm:p-5 transition flex items-start gap-4'
-              : 'home-step-selector w-full text-left bg-[#121821] border border-[#26303D] hover:border-[#A3E635]/60 rounded-xl p-4 sm:p-5 transition flex items-start gap-4';
-            const numSpan = b.querySelector('span');
-            if (numSpan) {
-              numSpan.className = i === idx
-                ? 'font-mono text-lg font-extrabold text-[#A3E635] shrink-0'
-                : 'font-mono text-lg font-extrabold text-[#9CA3AF] shrink-0';
+      // SabbirHossien.com-Style Staggered Scroll & Card Reveal Observer
+      if (typeof IntersectionObserver !== "undefined") {
+        const shObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = "1";
+              entry.target.style.transform = "translateY(0)";
             }
           });
-          const lblEl = document.getElementById('homeStageCounterLabel');
-          const cmdEl = document.getElementById('homeStageCmdBadge');
-          const preEl = document.getElementById('homeStageTerminalPre');
-          const hintEl = document.getElementById('homeStageHintText');
-          const runBtn = document.getElementById('btnRunHomeStageInTerminal');
-          if (lblEl) lblEl.textContent = st.label;
-          if (cmdEl) cmdEl.textContent = `> ${st.cmd}«`;
-          if (preEl) preEl.textContent = st.pre;
-          if (hintEl) hintEl.textContent = st.hint;
-          if (runBtn) runBtn.setAttribute('data-cmd', st.cmd);
-        });
-      });
-
-      document.getElementById('btnRunHomeStageInTerminal')?.addEventListener('click', (e) => {
-        const cmdToRun = e.currentTarget.getAttribute('data-cmd') || '125DECDACBKK';
-        navigateToRoute('/terminal');
+        }, { threshold: 0.08 });
         setTimeout(() => {
-          executeCrypticCommand(cmdToRun);
-        }, 60);
-      });
-
+          document.querySelectorAll(".sh-card-texture, #portalPageFeatures details, #portalPageLearn > div, #portalPageExams > div, #portalPageReference > div, #portalPageAbout > div").forEach((el, idx) => {
+            el.style.transition = `opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1) ${(idx % 6) * 0.06}s, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) ${(idx % 6) * 0.06}s, border-color 0.3s ease, box-shadow 0.3s ease`;
+            shObserver.observe(el);
+          });
+        }, 120);
+      }
 
       // Wire [⚡ Load Demo PNR (RPHEBS • 4 Pax)] button in Terminal bar
       document.getElementById('btnLoadRphebsDemoPnr')?.addEventListener('click', () => {
@@ -14587,40 +14117,6 @@ WFRA9974883803284/REF« ➔ ETR REFUND TRANSACTION PROCESSED`,
 
       document.getElementById('btnOpenChdInfDobHelper')?.addEventListener('click', openChdInfDobModal);
       document.getElementById('railBtnApplications')?.addEventListener('click', openChdInfDobModal);
-
-      // Interactive Hero Auto-Typing & Step Auto-Play Animation Engine
-      let heroAutoCycleTimer = setInterval(() => {
-        const homeEl = document.getElementById('portalPageHome');
-        if (!homeEl || homeEl.classList.contains('hidden')) return;
-        const order = ['avail', 'wp', 'wetr', 'wfra'];
-        const nextIdx = (order.indexOf(currentHeroDemoKey) + 1) % order.length;
-        setHeroDemoScene(order[nextIdx]);
-      }, 4200);
-
-      let homeStepAutoPlay = true;
-      let currentHomeStageIdx = 0;
-      setInterval(() => {
-        const homeEl = document.getElementById('portalPageHome');
-        if (!homeEl || homeEl.classList.contains('hidden') || !homeStepAutoPlay) return;
-        currentHomeStageIdx = (currentHomeStageIdx + 1) % 4;
-        const btns = document.querySelectorAll('.home-step-selector');
-        if (btns[currentHomeStageIdx]) btns[currentHomeStageIdx].click();
-      }, 5000);
-
-      document.getElementById('btnToggleAutoCycleSteps')?.addEventListener('click', (e) => {
-        homeStepAutoPlay = !homeStepAutoPlay;
-        e.currentTarget.textContent = homeStepAutoPlay ? 'Auto-Play: ON ↻' : 'Auto-Play: PAUSED ⏸';
-        const bar = document.getElementById('homeStageAutoProgressBar');
-        if (bar) bar.style.animationPlayState = homeStepAutoPlay ? 'running' : 'paused';
-      });
-
-      // SabbirHossien-Style Cursor Move Interactive Counter
-      let simCursorCount = 1420;
-      document.getElementById('shInteractiveCursorBox')?.addEventListener('mousemove', () => {
-        simCursorCount += 1;
-        const el = document.getElementById('shCursorSimCounter');
-        if (el) el.textContent = simCursorCount.toLocaleString();
-      });
 
       // Initialize Views & Route on Load (If an exam was In progress before refresh, resume its exact deadline!)
       renderFeaturesPage();
