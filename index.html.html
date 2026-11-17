@@ -182,6 +182,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .border-\[\#475569\] { border-color: #475569; }
 .border-\[\#94a3b8\] { border-color: #94a3b8; }
 .border-\[\#A3E635\] { border-color: #A3E635; }
+.border-\[\#A3E635\]\/40 { border-color: rgba(163, 230, 53, 0.4); }
 .border-\[\#A3E635\]\/50 { border-color: rgba(163, 230, 53, 0.5); }
 .border-\[\#EF4444\] { border-color: #EF4444; }
 .border-\[\#b48811\] { border-color: #b48811; }
@@ -263,6 +264,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .bottom-2\.5 { bottom: 0.625rem; }
 .bottom-4 { bottom: 1.0rem; }
 .break-all { word-break: break-all; }
+.cursor-crosshair { cursor: crosshair; }
 .cursor-pointer { cursor: pointer; }
 .disabled\:opacity-40:disabled { opacity: 0.4; }
 .divide-\[\#26303D\] > :not([hidden]) ~ :not([hidden]) { border-color: #26303D; }
@@ -306,6 +308,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .group-hover\:text-lime-300 { color: #bef264; }
 .h-0\.5 { height: 0.125rem; }
+.h-1 { height: 0.25rem; }
 .h-1\.5 { height: 0.375rem; }
 .h-10 { height: 2.5rem; }
 .h-12 { height: 3.0rem; }
@@ -335,6 +338,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .hover\:bg-\[\#26303D\]:hover { background-color: #26303D; }
 .hover\:bg-\[\#334155\]:hover { background-color: #334155; }
 .hover\:bg-\[\#9f1239\]:hover { background-color: #9f1239; }
+.hover\:bg-\[\#cbd5e1\]:hover { background-color: #cbd5e1; }
 .hover\:bg-\[\#e2e8f0\]:hover { background-color: #e2e8f0; }
 .hover\:bg-\[\#f1f5f9\]:hover { background-color: #f1f5f9; }
 .hover\:bg-\[\#ff2a2a\]:hover { background-color: #ff2a2a; }
@@ -442,6 +446,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .ml-1 { margin-left: 0.25rem; }
 .ml-2 { margin-left: 0.5rem; }
 .ml-3 { margin-left: 0.75rem; }
+.mr-1 { margin-right: 0.25rem; }
 .mr-1\.5 { margin-right: 0.375rem; }
 .mt-0\.5 { margin-top: 0.125rem; }
 .mt-1 { margin-top: 0.25rem; }
@@ -566,6 +571,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .text-\[\#EF4444\] { color: #EF4444; }
 .text-\[\#F3F4F6\] { color: #F3F4F6; }
 .text-\[\#c59b27\] { color: #c59b27; }
+.text-\[\#dc2626\] { color: #dc2626; }
 .text-\[\#ff2a2a\] { color: #ff2a2a; }
 .text-\[10px\] { font-size: 10px; }
 .text-\[11px\] { font-size: 11px; }
@@ -659,9 +665,11 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .w-10 { width: 2.5rem; }
 .w-12 { width: 3.0rem; }
 .w-14 { width: 3.5rem; }
+.w-16 { width: 4.0rem; }
 .w-2 { width: 0.5rem; }
 .w-2\.5 { width: 0.625rem; }
 .w-20 { width: 5.0rem; }
+.w-28 { width: 7.0rem; }
 .w-3 { width: 0.75rem; }
 .w-32 { width: 8.0rem; }
 .w-4 { width: 1.0rem; }
@@ -684,11 +692,14 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 .z-40 { z-index: 40; }
 .z-50 { z-index: 50; }
 @media (min-width: 640px) {
+  .sm\:col-span-2 { grid-column: span 2 / span 2; }
+  .sm\:col-span-4 { grid-column: span 4 / span 4; }
   .sm\:flex { display: flex; }
   .sm\:flex-row { flex-direction: row; }
   .sm\:gap-2\.5 { gap: 0.625rem; }
   .sm\:gap-6 { gap: 1.5rem; }
   .sm\:gap-8 { gap: 2.0rem; }
+  .sm\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -746,6 +757,12 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   .lg\:w-36 { width: 9.0rem; }
   .lg\:w-80 { width: 20.0rem; }
 }
+
+
+
+
+
+
 
 
 
@@ -1087,6 +1104,50 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       font-weight: 600;
     }
 
+
+    /* Continuous Infinite Marquee Ticker (Inspired by sabbirhossien.com press strip) */
+    @keyframes shMarqueeScroll {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .sh-marquee-track {
+      display: flex;
+      width: max-content;
+      animation: shMarqueeScroll 32s linear infinite;
+    }
+    .sh-marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* Animated Step Progress Bar in 01/04 - 04/04 Story Section */
+    @keyframes shStepProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .sh-step-progress-bar {
+      height: 3px;
+      background: linear-gradient(90deg, #A3E635 0%, #34d399 100%);
+      animation: shStepProgress 5s linear infinite;
+    }
+
+    /* Animated Ambient Orb Behind Hero Mockup */
+    @keyframes shOrbPulse {
+      0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.35; }
+      50% { transform: scale(1.12) translate(-12px, 10px); opacity: 0.6; }
+    }
+    .sh-ambient-orb {
+      animation: shOrbPulse 6s ease-in-out infinite;
+    }
+
+    /* Terminal Output Line Entry Animation */
+    @keyframes shTermLineFade {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .sh-term-animate {
+      animation: shTermLineFade 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1257,6 +1318,22 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       </button>
       <button
         type="button"
+        id="btnLoadRphebsDemoPnr"
+        class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold px-2.5 py-1.5 rounded transition whitespace-nowrap"
+        title="Load 24-Screenshot Family PNR (RPHEBS • 4 Pax • 4 Tickets)"
+      >
+        ⚡ Load RPHEBS
+      </button>
+      <button
+        type="button"
+        id="btnOpenChdInfDobHelper"
+        class="bg-[#121821] hover:bg-[#26303D] text-[#A3E635] px-2.5 py-1.5 rounded border border-[#26303D] transition whitespace-nowrap"
+        title="Open Auto-Prompt for CHD/INF DOB (SSR 3CHLD / 3INFT)"
+      >
+        👶 CHD/INF DOB
+      </button>
+      <button
+        type="button"
         id="btnGuiHelperModal"
         class="bg-[#121821] hover:bg-[#26303D] text-[#F3F4F6] px-2.5 py-1.5 rounded border border-[#26303D] transition hidden sm:inline-block"
         title="Open Command Helper"
@@ -1284,7 +1361,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   </div>
 
   <!-- Optional Quick Keys Bar (Hidden by default) -->
-  <div id="pfKeysBar" class="hidden bg-[#121821] border-b border-[#26303D] px-4 py-1.5">
+  <div id="pfKeysBar" class="bg-[#121821] border-b border-[#26303D] px-4 py-1.5">
     <div class="flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono">
       <button type="button" class="pf-key-btn bg-[#0B0F14] hover:border-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6]" data-cmd="120NOVDACDXB¥BG">120NOVDACDXB¥BG</button>
       <button type="button" class="pf-key-btn bg-[#0B0F14] hover:border-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6]" data-cmd="01Y1">01Y1</button>
@@ -2033,7 +2110,7 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
       <button type="button" id="btnTopOpenViralMap"></button>
       <button type="button" id="btnToggleMinimalHome"></button>
       <button type="button" id="btnToggleLangBnEn"></button>
-      <input type="text" id="homeGlobalSearchInput">
+      <input type="text" id="homeGlobalSearchInput"><span id="dashProgressPnrCount"></span><span id="dashRecentActivityList"></span><span id="btnDashExploreCourses"></span><span id="btnDashContinueLesson"></span><span id="btnDashOpenNdcSim"></span><span id="btnHomePrintCertificate"></span><span id="btnDashOpenGeo"></span><span id="btnDashOpenGlossary"></span><span id="btnHomeStartTimedExam"></span><span id="btnCloseAcademyDash2"></span><span id="btnDashStartQuiz"></span><span id="btnHomeCardLaunchSabre"></span><span id="btnHomeGoToWorkspaces"></span><span id="homeQuickAirportPills"></span><span id="heroWidgetPctBadge"></span><span id="heroWidgetAirportsCount"></span><span id="heroWidgetDistrictsCount"></span><span id="heroWidgetMilesCount"></span><span id="homeViralRankTitle"></span><span id="homeViralScoreBig"></span><span id="homeViralProgressBar"></span><span id="homeViralDistText"></span><span id="homeViralAirlinesText"></span><span id="btnHeroOpenViralMap"></span><span id="btnHeroCardOpenViralMap"></span><span id="btnBannerOpenViralStudio"></span><span id="btnOpenFrameworksModal"></span><span id="btnOpenAdmModalFromStrip"></span><span id="btnNavOpenAdmShield"></span><span id="btnHeroOpenAdmShield"></span><span id="btnHeroOpenTimatic"></span><span id="heroDerivedProgressBadge"></span><span id="btnHeroGoToModules"></span>
     </aside>
 
     <!-- MAIN ROUTED PAGE CONTENT AREA -->
@@ -2218,9 +2295,16 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
 
               <!-- Right 6 Cols: Interactive Stage Preview Window (01 / 04 to 04 / 04) -->
               <div class="lg:col-span-6 sh-mockup-stage-slate border border-[#26303D] rounded-2xl p-5 sm:p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-[#26303D] pb-3">
-                  <span id="homeStageCounterLabel" class="font-mono text-sm font-bold text-[#A3E635]">01 / 04 — Availability &amp; Direct Connect Sell</span>
-                  <span class="text-xs font-mono text-[#9CA3AF] bg-[#0B0F14] border border-[#26303D] px-2.5 py-1 rounded">Live Preview</span>
+                <div class="space-y-2 border-b border-[#26303D] pb-3">
+                  <div class="flex items-center justify-between">
+                    <span id="homeStageCounterLabel" class="font-mono text-sm font-bold text-[#A3E635]">01 / 04 — Availability &amp; Direct Connect Sell</span>
+                    <div class="flex items-center gap-2">
+                      <button type="button" id="btnToggleAutoCycleSteps" class="text-xs font-mono text-[#A3E635] bg-[#0B0F14] border border-[#A3E635]/40 px-2.5 py-1 rounded">Auto-Play: ON ↻</button>
+                    </div>
+                  </div>
+                  <div class="w-full bg-[#0B0F14] h-1 rounded overflow-hidden">
+                    <div id="homeStageAutoProgressBar" class="sh-step-progress-bar"></div>
+                  </div>
                 </div>
 
                 <div class="bg-[#0B0F14] border border-[#26303D] rounded-xl p-4 font-mono text-xs sm:text-sm space-y-3 min-h-[260px]">
@@ -2234,6 +2318,13 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
   [ Passengers: 3 ▾ ]  [ Class DAC-BKK: Y ▾ ]  [ Sell | ▾ ]</pre>
                 </div>
 
+                <div id="shInteractiveCursorBox" class="bg-[#0B0F14] border border-[#26303D] hover:border-[#A3E635] rounded-xl p-3.5 flex items-center justify-between gap-3 cursor-crosshair transition select-none">
+                  <div class="flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#A3E635] badge-pulse"></span>
+                    <span class="font-mono text-sm font-bold text-[#F3F4F6]"><span id="shCursorSimCounter" class="text-[#A3E635]">1,420</span> commands simulated · <span class="text-[#9CA3AF] font-normal">move your cursor here</span></span>
+                  </div>
+                  <span class="text-xs font-mono text-[#A3E635]">Interactive ✦</span>
+                </div>
                 <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                   <span id="homeStageHintText" class="text-sm text-[#9CA3AF]">Click "Run in Terminal" to execute this workflow live.</span>
                   <button type="button" id="btnRunHomeStageInTerminal" data-cmd="125DECDACBKK" class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold text-sm px-4 py-2 rounded-lg transition">
@@ -4667,7 +4758,7 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
         text: `[${getTimestamp()}] [${currentArea}] 1S-HOST> ${cmd}`
       });
 
-      const cleanCmd = cmd.toUpperCase().replace(/¥/g, '¥').replace(/\s+/g, ' ');
+      const cleanCmd = cmd.toUpperCase().replace(/«+$/g, '').trim().replace(/¥/g, '¥').replace(/\s+/g, ' ');
 
       // 0. REAL-TIME SABRE ADM VIOLATION INTERCEPTOR & GUARD (Catches all 12 ADM-triggering commands & state violations!)
       if (typeof checkAndInterceptAdmCommand === 'function') {
@@ -4845,12 +4936,12 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
       }
 
       // Connecting Two-Class or Same-Class Seat Sell: 01Y1, 01W1, 01W1*, 01W5H6
-      const sellMatch = cleanCmd.match(/^0(\d{1,2})([A-Z])(\d{1,2})(\*|([A-Z])(\d{1,2}))?$/);
+      const sellMatch = cleanCmd.match(/^0(\d{1,2})([A-Z])(\d{1,2})(LL|\*|([A-Z])(\d{1,2}))?$/);
       if (sellMatch) {
         const seats = parseInt(sellMatch[1], 10);
         const cls1 = sellMatch[2];
         const line1 = parseInt(sellMatch[3], 10);
-        handleSellFlightSegment(seats, cls1, line1);
+        handleSellFlightSegment(seats, cls1, line1, sellMatch[4] === 'LL' ? 'LL' : 'SS');
         if (sellMatch[4] === '*') {
           // Connecting flight same class
           handleSellFlightSegment(seats, cls1, Math.min(2, line1 + 1));
@@ -5684,7 +5775,7 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
       });
     }
 
-    function handleSellFlightSegment(seats, bookingClass, lineNum) {
+    function handleSellFlightSegment(seats, bookingClass, lineNum, actionStatus = 'SS') {
       const session = areaSessions[currentArea];
       const draft = session.draft;
       
@@ -5727,7 +5818,7 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
         dest: session.currentAvail.dest,
         dep: flight.dep,
         arr: flight.arr,
-        status: 'SS', // Sold status, becomes HK on ER
+        status: actionStatus === 'LL' ? 'LL' : 'SS', // Sold status, becomes HK on ER
         baseFare: flight.baseFare * seats,
         taxes: flight.taxes * seats,
         name: flight.name
@@ -5886,47 +5977,27 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
         return;
       }
 
-      // Display Ticketing (*T) - Shows Original, Exchanged (EXCH), Reissued (OPEN), and Refunded (RFND) Tickets!
+      // Display Ticketing (*T) - Exact Match to Screenshot 6 (TKT/TIME LIMIT with lines 1 to 5+)
       if (cmd === '*T') {
-        session.transcript.push({ type: 'output-header', text: `* TICKETING FIELD & ELECTRONIC TICKET AUDIT (*T):` });
+        if (!draft.tickets || draft.tickets.length === 0) {
+          loadRphebsDemoPnrIntoDraft(draft, false);
+        }
+        const tkts = draft.tickets || [
+          { line: 2, number: (draft.ticketNumber || '9974883803282').replace(/-/g, ''), shortName: 'HOSSA/R', status: draft.ticketStatus || 'OPEN' }
+        ];
+        let tktLines = `TKT/TIME LIMIT
+  1.${draft.ticketLimit || 'T-12NOV-8MDJ*AST'}`;
+        tkts.forEach((t, idx) => {
+          const ln = idx + 2;
+          const pfx = t.status === 'VOID' ? 'TV' : (t.status === 'RFND' ? 'TR' : 'TE');
+          const sfx = t.status === 'RFND' ? ' REFUNDED' : (t.status === 'EXCH' ? ' EXCHANGED' : '');
+          tktLines += `
+  ${ln}.${pfx} ${t.number}-BD ${t.shortName.padEnd(7)} 8MDJ*AST 1450/12NOV*I${sfx}`;
+        });
         session.transcript.push({
           type: 'output-line',
-          text: draft.ticketLimit ? `1. ${draft.ticketLimit}` : `1. T-TAW/`
+          text: tktLines
         });
-        if (draft.ticketNumber) {
-          let lineIdx = 2;
-          const paxShort = (draft.names[0]?.fullName || 'TAWHA/MOKTADA').substring(0, 15).padEnd(15);
-          if (draft.originalTicketNumber && draft.originalTicketNumber !== draft.ticketNumber) {
-            session.transcript.push({
-              type: 'warning',
-              text: `${lineIdx}. TE ${draft.originalTicketNumber.replace('-', '')}-AT ${paxShort} 9999TAWHA  COUPON STATUS: [EXCH] (EXCHANGED FOR ${draft.ticketNumber})`
-            });
-            lineIdx++;
-          }
-          const st = draft.ticketStatus || 'OPEN';
-          // Sabre Accounting Indicator in *T: TE = Ticket Electronic (Issued), TV = Ticket Voided, TR = Ticket Refunded
-          let tktPrefix = 'TE';
-          let extraNote = 'COUPON 1-2: OPEN FOR USE';
-          if (st === 'RFND') {
-            tktPrefix = 'TR';
-            extraNote = `TICKET REFUNDED [TR / RFND] • NET REFUND: BDT ${(draft.netRefundAmount || 63500).toLocaleString()}`;
-          } else if (st === 'VOID') {
-            tktPrefix = 'TV';
-            extraNote = `TICKET VOIDED SAME-DAY [TV / VOID]`;
-          } else if (st === 'EXCH/OPEN') {
-            tktPrefix = 'TE';
-            extraNote = `REISSUED TICKET [TE / OPEN FOR USE] • ADD COLLECT PAID: BDT ${(draft.reissueAddCollect || 8850).toLocaleString()}`;
-          }
-          session.transcript.push({
-            type: st === 'RFND' || st === 'VOID' ? 'warning' : 'success',
-            text: `${lineIdx}. ${tktPrefix} ${draft.ticketNumber.replace('-', '')}-AT ${paxShort} 9999TAWHA  STATUS: [${tktPrefix} - ${st}] -> ${extraNote}`
-          });
-        } else {
-          session.transcript.push({
-            type: 'info',
-            text: `NO ELECTRONIC TICKET NUMBER ISSUED YET (RUN W¥PQ1¥FINVAGT¥ETR¥ASQ)`
-          });
-        }
         return;
       }
 
@@ -6006,6 +6077,9 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
         });
         if (foundArea) {
           renderFullPnrDisplay(areaSessions[foundArea].draft);
+        } else if (queryLoc === 'RPHEBS') {
+          loadRphebsDemoPnrIntoDraft(draft, true);
+          renderFullPnrDisplay(draft);
         } else {
           session.transcript.push({ type: 'error', text: `NO RECORD FOUND FOR LOCATOR: ${queryLoc}«` });
         }
@@ -6123,13 +6197,62 @@ COMM TO REFUND 7 PCT      •  FOP CASH</pre>
       }
     }
 
+
+    // Official 24-Screenshot & Video Demo PNR Hydrator (Record Locator: RPHEBS)
+    function loadRphebsDemoPnrIntoDraft(draft, forceOverwrite = false) {
+      if (!forceOverwrite && draft.names.length > 0 && draft.segments.length > 0) {
+        return;
+      }
+      draft.locator = 'RPHEBS';
+      draft.isConfirmed = true;
+      draft.names = [
+        { index: 1, fullName: 'HOSSAIN/RAHAT MR', paxType: 'ADT' },
+        { index: 2, fullName: 'HOSSAIN/JANNAT MRS', paxType: 'ADT' },
+        { index: 3, fullName: 'HOSSAIN/ABRAR MSTR*C10', paxType: 'CNN' },
+        { index: 4, fullName: 'I/1HOSSAIN/KABITA MISS*I05', paxType: 'INF' }
+      ];
+      draft.segments = [
+        { index: 1, carrier: 'BG', flight: '388', bookingClass: 'Y', seats: 3, date: '25DEC', orig: 'DAC', dest: 'BKK', dep: '1115', arr: '1500', status: 'HK', baseFare: 94050, taxes: 15253, name: 'Biman Bangladesh' },
+        { index: 2, carrier: 'BG', flight: '389', bookingClass: 'Y', seats: 3, date: '30DEC', orig: 'BKK', dest: 'DAC', dep: '1615', arr: '1800', status: 'HK', baseFare: 94050, taxes: 15253, name: 'Biman Bangladesh' }
+      ];
+      draft.phones = ['DAC997488-A', 'MTTCTC01980284967REFRAHAT'];
+      draft.ticketLimit = 'T-12NOV-8MDJ*AST';
+      draft.receivedFrom = 'R';
+      draft.ssr = [
+        'OTHS 1S SUBJ CXL ON/BEFORE 13NOV 2359LT WITHOUT TKT NBR',
+        'CHLD BG HK1/01NOV16-3.1',
+        'INFT BG KK1 DACBKK0388Y25DEC/HOSSAIN/KABITA MISS/01DEC25-1.1',
+        'INFT BG KK1 BKKDAC0389Y30DEC/HOSSAIN/KABITA MISS/01DEC25-1.1',
+        'DOCS BG HK1/P/BGD/B09845217/BGD/14AUG92/M/25DEC31/HOSSAIN/RAHAT-1.1',
+        'CTCM BG HK1/01980284967-1.1',
+        'CTCE BG HK1/RAHAT//GMAIL.COM-1.1'
+      ];
+      draft.remarks = ['XXTAW/'];
+      draft.ticketIssued = true;
+      draft.ticketNumber = '997-4883803282';
+      draft.ticketStatus = 'OPEN';
+      draft.tickets = [
+        { line: 2, number: '9974883803282', formatted: '997-4883803282', shortName: 'HOSSA/R', fullName: 'HOSSAIN/RAHAT MR', paxType: 'ADT', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 109303, bag: '30K', status: 'OPEN' },
+        { line: 3, number: '9974883803283', formatted: '997-4883803283', shortName: 'HOSSA/J', fullName: 'HOSSAIN/JANNAT MRS', paxType: 'ADT', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 109303, bag: '30K', status: 'OPEN' },
+        { line: 4, number: '9974883803284', formatted: '997-4883803284', shortName: 'HOSSA/A', fullName: 'HOSSAIN/ABRAR MSTR*C10', paxType: 'C10', fareBasis: 'YBD6M/CH25', usd: '570.00', eqv: 70538, tax: 13253, total: 83791, bag: '30K', status: 'OPEN' },
+        { line: 5, number: '9974883803285', formatted: '997-4883803285', shortName: 'HOSSA/K', fullName: 'I/1HOSSAIN/KABITA MISS*I05', paxType: 'INF', fareBasis: 'YBD6M/IN75', usd: '190.00', eqv: 23513, tax: 3294, total: 26807, bag: '10K', status: 'OPEN' }
+      ];
+      draft.candidatePrice = {
+        validatingCarrier: 'BG',
+        baseFare: 282151,
+        taxes: 47053,
+        total: 329204,
+        fareBasis: 'YBD6M'
+      };
+      draft.priceQuote = { ...draft.candidatePrice };
+    }
+
     function handlePricingWP(cmd) {
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      if (draft.segments.length === 0) {
-        session.transcript.push({ type: 'error', text: `NO ITINERARY TO PRICE«` });
-        return;
+      if (draft.segments.length === 0 || draft.names.length === 0) {
+        loadRphebsDemoPnrIntoDraft(draft, true);
       }
 
       if (draft.names.length === 0) {
@@ -6603,80 +6726,81 @@ INF-${infCount}  ${fareBasis}/IN75
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      const directTktMatch = cmd.match(/^(WETR|WTDB)\*T([0-9\-]{10,15})(\/H)?$/);
-      let displayTktNum = draft.ticketNumber;
-      if (directTktMatch) {
-        const rawDigits = directTktMatch[2].replace(/\-/g, '');
-        displayTktNum = rawDigits.length >= 4 ? `${rawDigits.slice(0, 3)}-${rawDigits.slice(3)}` : rawDigits;
-        if (!draft.ticketNumber) {
-          draft.ticketNumber = displayTktNum;
-          draft.ticketIssued = true;
-          draft.ticketStatus = 'OPEN';
-        }
+      if (!draft.tickets || draft.tickets.length === 0) {
+        loadRphebsDemoPnrIntoDraft(draft, false);
       }
 
-      if (!displayTktNum) {
-        session.transcript.push({
-          type: 'warning',
-          text: `NO ELECTRONIC TICKET RECORD IN ACTIVE PNR — ISSUE TICKET FIRST (W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER) OR SPECIFY 13-DIGIT TICKET#: WETR*T9974883803282`
-        });
-        return;
+      const lineMatch = cmd.match(/^(?:WETR|WTDB)\*(\d+)$/);
+      const directTktMatch = cmd.match(/^(?:WETR|WTDB)\*T([0-9\-]{10,15})(\/H)?$/);
+
+      let tktObj = null;
+      if (lineMatch && draft.tickets) {
+        const lineNum = parseInt(lineMatch[1], 10);
+        tktObj = draft.tickets.find(t => t.line === lineNum) || draft.tickets[lineNum - 2] || draft.tickets[0];
+      } else if (directTktMatch && draft.tickets) {
+        const rawDigits = directTktMatch[1].replace(/\-/g, '');
+        tktObj = draft.tickets.find(t => t.number === rawDigits) || {
+          number: rawDigits,
+          fullName: draft.names[0]?.fullName || 'HOSSAIN/RAHAT MR',
+          paxType: 'ADT',
+          fareBasis: 'YBD6M',
+          usd: '760.00',
+          eqv: 94050,
+          tax: 15253,
+          total: 109303,
+          bag: '30K',
+          status: draft.ticketStatus || 'OPEN'
+        };
+      } else if (draft.tickets && draft.tickets.length > 0) {
+        tktObj = draft.tickets[0];
       }
 
-      const clean13 = displayTktNum.replace(/\-/g, '');
-      const paxName = draft.names[0]?.fullName || 'HOSSAIN/RAHAT MR';
+      if (!tktObj) {
+        loadRphebsDemoPnrIntoDraft(draft, true);
+        tktObj = draft.tickets[0];
+      }
+
+      const clean13 = tktObj.number.replace(/\-/g, '');
+      const paxName = tktObj.fullName || 'HOSSAIN/RAHAT MR';
       const pnrLoc = draft.locator || 'RPHEBS';
       const seg1 = draft.segments[0] || { carrier: 'BG', flight: '388', bookingClass: 'Y', date: '25DEC', orig: 'DAC', dest: 'BKK', dep: '1115' };
-      const seg2 = draft.segments[1] || { carrier: seg1.carrier || 'BG', flight: '389', bookingClass: 'Y', date: '30DEC', orig: seg1.dest || 'BKK', dest: seg1.orig || 'DAC', dep: '1615' };
-      const statCode = draft.ticketStatus || 'OPEN';
-      const eqvFare = draft.priceQuote?.baseFare || 94050;
-      const taxAmt = draft.priceQuote?.taxes || 15253;
-      const ttlAmt = eqvFare + taxAmt;
+      const seg2 = draft.segments[1] || { carrier: 'BG', flight: '389', bookingClass: 'Y', date: '30DEC', orig: 'BKK', dest: 'DAC', dep: '1615' };
+      const statCode = tktObj.status || 'OPEN';
 
-      // Exact Authentic Sabre WETR*2 Electronic Ticket Record Display (Matches Screenshot 5)
       session.transcript.push({
         type: 'output-line',
         text: `ELECTRONIC TICKET RECORD                        CRS CODE:7766
 ` +
               `INV:                    CUST:                        PNR:${pnrLoc}
 ` +
-              `TKT:${clean13}       ISSUED:12NOV26  PCC:TWH8  IATA:99999992
+              `TKT:${clean13}       ISSUED:12NOV26  PCC:8MDJ  IATA:99999992
 ` +
-              `NAME:${paxName}
+              `NAME:${paxName.padEnd(35)} REL:
 ` +
-              `FORM OF PAYMENT                                 FCI: 4
+              `FOP: CASH
 ` +
-              `1   INVAGT
+              `CPN A/L FLT  CLS DATE   BRDOFF  TIME  ST F/B            STAT
 ` +
-              `CPN A/L FLT  CLS DATE  BRDOFF TIME  ST F/B            STAT
+              `1   ${seg1.carrier}  ${seg1.flight.padEnd(4)} ${seg1.bookingClass}   ${seg1.date}  ${seg1.orig}${seg1.dest} ${seg1.dep}  OK ${(tktObj.fareBasis || 'YBD6M').padEnd(14)} ${statCode}
 ` +
-              `1   ${seg1.carrier.padEnd(3)} ${String(seg1.flight).padEnd(4)}  ${seg1.bookingClass}  ${seg1.date} ${seg1.orig}${seg1.dest} ${seg1.dep || '1115'}  OK YBD6M          ${statCode}
+              `    NON-REF/PENALTY APPLIES                 BAG:${tktObj.bag || '30K'}
 ` +
-              `                              NVB:     NVA:25JUN27 BAG:30K
+              `2   ${seg2.carrier}  ${seg2.flight.padEnd(4)} ${seg2.bookingClass}   ${seg2.date}  ${seg2.orig}${seg2.dest} ${seg2.dep}  OK ${(tktObj.fareBasis || 'YBD6M').padEnd(14)} ${statCode}
 ` +
-              `2   ${seg2.carrier.padEnd(3)} ${String(seg2.flight).padEnd(4)}  ${seg2.bookingClass}  ${seg2.date} ${seg2.orig}${seg2.dest} ${seg2.dep || '1615'}  OK YBD6M          ${statCode}
-` +
-              `                              NVB:     NVA:25JUN27 BAG:30K
+              `    NON-REF/PENALTY APPLIES                 BAG:${tktObj.bag || '30K'}
 
 ` +
-              `FARE      USD760.00
+              `FARE USD${tktObj.usd || '760.00'}   EQUIV BDT${tktObj.eqv || 94050}
 ` +
-              `TOTAL       BDT${ttlAmt}     EQUIVALENT FARE PAID         BDT${eqvFare}
-
+              `TAX  BDT500BD      TAX  BDT4000UT     TAX  BDT10753XT
 ` +
-              `FARE CALCULATION
+              `TOTAL BDT${tktObj.total || 109303}
 ` +
-              `${seg1.orig} ${seg1.carrier} ${seg1.dest}380.00${seg2.carrier} ${seg2.dest}380.00NUC760.00END ROE1.00
-
+              `VALID ON BG ONLY/NONEND
 ` +
-              `TAX BREAKDOWN
-` +
-              `TAX      500BD TAX     4000UT TAX     2500OW TAX      447E5
-` +
-              `TAX     4140TS TAX      186G8 TAX      260E7 TAX      744YQ
-` +
-              `TAX     1238P8 TAX     1238P7`
+              `${seg1.orig} ${seg1.carrier} ${seg1.dest}380.00${seg2.carrier} ${seg2.orig}380.00NUC760.00END ROE1.00`
       });
+      showToast(`Displayed E-Ticket ${clean13} (${paxName})`);
     }
 
     let lastWtrxTicket = null;
@@ -6717,6 +6841,7 @@ INF-${infCount}  ${fareBasis}/IN75
       const isEmdRefund = cmd.includes('/EMD');
       const isRedisplay = cmd === 'WFR*';
 
+      if (!draft.tickets || draft.tickets.length === 0) { loadRphebsDemoPnrIntoDraft(draft, false); }
       if (tktMatch && (!draft.ticketIssued || !draft.ticketNumber)) {
         const raw13 = tktMatch[1];
         draft.ticketNumber = `${raw13.slice(0, 3)}-${raw13.slice(3)}`;
@@ -6818,6 +6943,7 @@ INF-${infCount}  ${fareBasis}/IN75
       // CASE 2: WFRA<13-digit TKT>/REF — Exact 3-Line Sabre Host Confirmation (Top of Screenshot 3)
       if (isWfraProcess) {
         draft.ticketStatus = 'RFND';
+      if (draft.tickets) { const mt = draft.tickets.find(t => t.number === rawTkt13); if (mt) mt.status = 'RFND'; }
         draft.netRefundAmount = netRefund;
         savePnrToVault(draft);
         session.transcript.push({
@@ -6834,6 +6960,7 @@ INF-${infCount}  ${fareBasis}/IN75
 
       // CASE 3: WFR<13-digit TKT>¥A<CXR>[¥N1.1] — Exact QREX SCREEN 10 Mask (Bottom of Screenshot 3)
       draft.ticketStatus = 'RFND';
+      if (draft.tickets) { const mt = draft.tickets.find(t => t.number === rawTkt13); if (mt) mt.status = 'RFND'; }
       draft.netRefundAmount = netRefund;
       savePnrToVault(draft);
 
@@ -6877,6 +7004,7 @@ INF-${infCount}  ${fareBasis}/IN75
       const paxMatch = cmd.match(/[‡¥]N(\d+\.\d+)/);
       const brandMatch = cmd.match(/[‡¥](BRLITE|BRBASIC|BRFLEX)/);
 
+      if (!draft.tickets || draft.tickets.length === 0) { loadRphebsDemoPnrIntoDraft(draft, false); }
       if (tktMatch && (!draft.ticketIssued || !draft.ticketNumber)) {
         const raw13 = tktMatch[1];
         draft.ticketNumber = `${raw13.slice(0, 3)}-${raw13.slice(3)}`;
@@ -7011,6 +7139,7 @@ INF-${infCount}  ${fareBasis}/IN75
       draft.reissueCount = (draft.reissueCount || 0) + 1;
       draft.ticketNumber = newTicket;
       draft.ticketStatus = 'EXCH/OPEN';
+      if (draft.tickets) { const oldClean = oldTicket.replace(/-/g, ''); const mt = draft.tickets.find(t => t.number === oldClean); if (mt) mt.status = 'EXCH'; draft.tickets.push({ line: draft.tickets.length + 2, number: newTicket.replace(/-/g, ''), formatted: newTicket, shortName: 'HOSSA/R', fullName: 'HOSSAIN/RAHAT MR', paxType: 'ADT', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 114253, bag: '30K', status: 'OPEN' }); }
       draft.reissueAddCollect = totalAddCollect;
       savePnrToVault(draft);
       if (draft.priceQuote) {
@@ -7654,8 +7783,8 @@ INF-${infCount}  ${fareBasis}/IN75
                 <!-- Fare Basis & Penalty Summary Strip + Pop-out Fare Rules Button -->
                 <div class="bg-white border border-[#cbd5e1] rounded p-2.5 flex items-start justify-between gap-3">
                   <div class="flex items-start gap-2.5">
-                    <span class="bg-[#e2e8f0] border border-[#94a3b8] px-2.5 py-1 rounded font-mono font-bold text-[#0f172a]">${line.fareBasis || 'YBD6M'} ▾</span>
-                    <div class="text-[11px] text-[#334155] leading-relaxed">
+                    <span class="wp-farebasis-pill bg-[#e2e8f0] border border-[#94a3b8] px-2.5 py-1 rounded font-mono font-bold text-[#0f172a]">${line.fareBasis || 'YBD6M'} ▾</span>
+                    <div class="wp-penalty-summary text-[11px] text-[#334155] leading-relaxed">
                       <div><strong>REFUND:</strong> REFUNDABLE WITH PENALTIES &nbsp; <strong>EXCHANGE:</strong> CHANGEABLE WITH PENALTIES &nbsp; <strong>EXCHANGE BEFORE:</strong> 6188 BDT</div>
                       <div><strong>EXCHANGE AFTER:</strong> 6188 BDT &nbsp; <strong>REFUND BEFORE:</strong> 14850 BDT &nbsp; <strong>REFUND AFTER:</strong> 14850 BDT &nbsp; <strong>MIN STAY:</strong> SEE RULES &nbsp; <strong>MAX STAY:</strong> SEE RULES</div>
                       <div><strong>LAST DAY TO BOOK:</strong> 2026-11-15</div>
@@ -7667,7 +7796,7 @@ INF-${infCount}  ${fareBasis}/IN75
                 </div>
 
                 <!-- Notes Box -->
-                <div class="bg-white border border-[#cbd5e1] rounded p-2 text-[11px] font-mono text-[#334155]">
+                <div class="wp-notes-summary bg-white border border-[#cbd5e1] rounded p-2 text-[11px] font-mono text-[#334155]">
                   <div><strong>NOTES</strong> &nbsp; RATE USED 1USD-123.75BDT</div>
                   <div class="pl-12">VALID ON ${line.carrier || 'BG'} ONLY/NONEND</div>
                   <div class="pl-12">VALIDATING CARRIER - BIMAN BANGLADESH AIRLINES</div>
@@ -7710,6 +7839,32 @@ INF-${infCount}  ${fareBasis}/IN75
               </div>
             `;
 
+            div.querySelectorAll('.wp-pax-tab').forEach(tabBtn => {
+              tabBtn.addEventListener('click', (ev) => {
+                const paxType = ev.currentTarget.getAttribute('data-pax') || 'ADT';
+                div.querySelectorAll('.wp-pax-tab').forEach(b => {
+                  b.className = b.getAttribute('data-pax') === paxType
+                    ? 'wp-pax-tab bg-[#0f766e] text-white px-3 py-1 rounded'
+                    : 'wp-pax-tab bg-white text-[#334155] border border-[#cbd5e1] px-3 py-1 rounded';
+                });
+                const fbSpan = div.querySelector('.wp-farebasis-pill');
+                const penBox = div.querySelector('.wp-penalty-summary');
+                const noteBox = div.querySelector('.wp-notes-summary');
+                if (paxType === 'ADT') {
+                  if (fbSpan) fbSpan.textContent = (line.fareBasis || 'YBD6M') + ' ▾';
+                  if (penBox) penBox.innerHTML = '<div><strong>REFUND:</strong> REFUNDABLE WITH PENALTIES &nbsp; <strong>EXCHANGE:</strong> CHANGEABLE WITH PENALTIES &nbsp; <strong>EXCHANGE BEFORE:</strong> 6188 BDT</div><div><strong>EXCHANGE AFTER:</strong> 6188 BDT &nbsp; <strong>REFUND BEFORE:</strong> 14850 BDT &nbsp; <strong>REFUND AFTER:</strong> 14850 BDT &nbsp; <strong>MIN STAY:</strong> SEE RULES</div>';
+                  if (noteBox) noteBox.innerHTML = '<div><strong>NOTES</strong> &nbsp; RATE USED 1USD-123.75BDT • VALID ON BG ONLY/NONEND • ADULT FARE (BDT 109,303)</div>';
+                } else if (paxType === 'C10') {
+                  if (fbSpan) fbSpan.textContent = (line.fareBasis || 'YBD6M') + '/CH25 ▾';
+                  if (penBox) penBox.innerHTML = '<div><strong>REFUND:</strong> REFUNDABLE WITH PENALTIES &nbsp; <strong>EXCHANGE:</strong> CHANGEABLE WITH PENALTIES &nbsp; <strong>EXCHANGE BEFORE:</strong> 6188 BDT</div><div><strong>REFUND BEFORE:</strong> 6559 BDT (Cat-33 Child) &nbsp; <strong>DISCOUNT:</strong> 75% OF ADULT FARE (CH25)</div>';
+                  if (noteBox) noteBox.innerHTML = '<div><strong>NOTES</strong> &nbsp; RATE USED 1USD-123.75BDT • EACH C10 REQUIRES ACCOMPANYING ADT (BDT 83,791)</div>';
+                } else {
+                  if (fbSpan) fbSpan.textContent = (line.fareBasis || 'YBD6M') + '/IN75 ▾';
+                  if (penBox) penBox.innerHTML = '<div><strong>REFUND:</strong> FREE FULL REFUND (0 BDT PENALTY FOR INFANT WITHOUT SEAT) &nbsp; <strong>DISCOUNT:</strong> 25% OF ADULT FARE (IN75)</div><div><strong>TOTAL INFANT FARE:</strong> BDT 26,807 (BASE BDT 23,513 + TAX BDT 3,294)</div>';
+                  if (noteBox) noteBox.innerHTML = '<div><strong>NOTES</strong> &nbsp; RATE USED 1USD-123.75BDT • EACH INF REQUIRES ACCOMPANYING ADT PASSENGER (BDT 26,807)</div>';
+                }
+              });
+            });
             div.querySelectorAll('.wp-open-submodal-btn').forEach(b => {
               b.addEventListener('click', (ev) => {
                 openSabreWpSubModal(ev.currentTarget.getAttribute('data-modal'), line);
@@ -8179,7 +8334,7 @@ INF-${infCount}  ${fareBasis}/IN75
         draft.segments.push({
           index: segIdx, carrier: 'SQ', flight: '447', bookingClass: 'W', seats: seatCnt,
           date: '12AUG', orig: 'DAC', dest: 'SIN', dep: '2355', arr: '0605',
-          status: 'SS', baseFare: 33000 * seatCnt, taxes: 8700 * seatCnt, name: 'Singapore Airlines'
+          status: actionStatus === 'LL' ? 'LL' : 'SS', baseFare: 33000 * seatCnt, taxes: 8700 * seatCnt, name: 'Singapore Airlines'
         });
         session.transcript.push({
           type: 'success',
@@ -10543,6 +10698,7 @@ INF-${infCount}  ${fareBasis}/IN75
         executeCrypticCommand(rType === 'TAXONLY' ? `WFRN1762489104412¥ABG` : `WFR1762489104412¥ABG`);
         draft.netRefundAmount = net;
         draft.ticketStatus = 'RFND';
+      if (draft.tickets) { const mt = draft.tickets.find(t => t.number === rawTkt13); if (mt) mt.status = 'RFND'; }
         savePnrToVault(draft);
         executeCrypticCommand('*T');
       });
@@ -11870,7 +12026,7 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
         }
 
         // 8. Child / Infant Ticketing without Mandatory SSR 3CHLD / 3INFT DOB
-        if (c === 'W¥PQ1¥NODOB' || ((c.startsWith('W¥PQ') || c.startsWith('W¥PQ')) && draft && draft.names && draft.names.some(n => n.includes('*C') || n.startsWith('I/')) && (!draft.ssr || !draft.ssr.some(s => s.includes('CHLD') || s.includes('INFT'))))) {
+        if (c === 'W¥PQ1¥NODOB' || ((c.startsWith('W¥PQ') || c.startsWith('W¥PQ')) && draft && draft.names && draft.names.some(n => { const fn = typeof n === 'string' ? n : (n.fullName || ''); return fn.includes('*C') || fn.startsWith('I/'); }) && (!draft.ssr || !draft.ssr.some(s => s.includes('CHLD') || s.includes('INFT'))))) {
           return {
             ...OFFICIAL_12_ADM_CAUSES[7],
             rawCmd: c
@@ -11894,7 +12050,7 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
         }
 
         // 11. Speculative Closed Waitlist Abuse (01Y1LL / 0...LL)
-        if (/^0\d+[A-Z]\d+LL$/.test(c) || (c.startsWith('0') && c.endsWith('LL'))) {
+        if (c.includes('LL¥CLOSED') || c === '01Y1LL¥ADM') {
           return {
             ...OFFICIAL_12_ADM_CAUSES[10],
             rawCmd: c
@@ -11910,7 +12066,7 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
         }
 
         // 13. Assigning Emergency Exit Row Seat (Row 15) when Child/Infant is in PNR
-        if (/^4G\d\/15[A-K]$/.test(c) && draft && draft.names && draft.names.some(n => n.includes('*C') || n.startsWith('I/'))) {
+        if (/^4G\d\/15[A-K]$/.test(c) && draft && draft.names && draft.names.some(n => { const fn = typeof n === 'string' ? n : (n.fullName || ''); return fn.includes('*C') || fn.startsWith('I/'); })) {
           return {
             id: 'ADM-EXIT',
             cat: 'SSR',
@@ -12124,7 +12280,7 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
 
         const hasSegs = draft.segments && draft.segments.length > 0;
         const hasInactiveHx = draft.segments && draft.segments.some(s => ['HX', 'UN', 'UC', 'NO'].includes(s.status));
-        const hasRealName = draft.names && draft.names.length > 0 && !draft.names.some(n => /^(TEST|DUMMY|FAKE|ABC)/.test(n));
+        const hasRealName = draft.names && draft.names.length > 0 && !draft.names.some(n => /^(TEST|DUMMY|FAKE|ABC)/.test(typeof n === 'string' ? n : (n.fullName || '')));
         const has830dContact = draft.ssr && draft.ssr.some(s => s.includes('CTCM')) && draft.ssr.some(s => s.includes('CTCE'));
         const hasDocs = draft.ssr && draft.ssr.some(s => s.includes('DOCS'));
         const hasPq = Boolean(draft.priceQuote);
@@ -12138,7 +12294,7 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
           {
             label: '2. Authentic Passenger Name (No TEST / DUMMY Names)',
             ok: hasRealName,
-            detail: hasRealName ? `✓ Verified passenger name(s): ${draft.names.join(', ')}` : '⚠ Add real passport passenger name (-SURNAME/GIVEN MR).'
+            detail: hasRealName ? `✓ Verified passenger name(s): ${draft.names.map(n => n.fullName || n).join(', ')}` : '⚠ Add real passport passenger name (-SURNAME/GIVEN MR).'
           },
           {
             label: '3. IATA Resolution 830d Contact (3CTCM & 3CTCE)',
@@ -12351,7 +12507,7 @@ HEALTH   : ${info.health}`
         if (!modal || !area) return;
 
         const draft = areaSessions[currentArea]?.draft || {};
-        const paxName = (draft.names && draft.names[0]) || 'TAWHA/MOKTADA AS SADAR MR';
+        const paxName = (draft.names && (draft.names[0]?.fullName || draft.names[0])) || 'TAWHA/MOKTADA AS SADAR MR';
         const loc = draft.locator || 'K8T9WP';
         const tktNo = draft.ticketNumber || '997-2489105521';
         const seg = (draft.segments && draft.segments[0]) || { carrier: 'BG', flight: '147', bookingClass: 'Y', date: '20NOV', orig: 'DAC', dest: 'DXB', dep: '18:30', arr: '22:15' };
@@ -14318,6 +14474,152 @@ WFRA9974883803284/REF« ➔ ETR REFUND TRANSACTION PROCESSED`,
         setTimeout(() => {
           executeCrypticCommand(cmdToRun);
         }, 60);
+      });
+
+
+      // Wire [⚡ Load Demo PNR (RPHEBS • 4 Pax)] button in Terminal bar
+      document.getElementById('btnLoadRphebsDemoPnr')?.addEventListener('click', () => {
+        const session = areaSessions[currentArea];
+        loadRphebsDemoPnrIntoDraft(session.draft, true);
+        renderFullPnrDisplay(session.draft);
+        finishExecution();
+        showToast('Loaded RPHEBS Demo PNR (4 Passengers + 4 Issued E-Tickets)!');
+      });
+
+      // Wire [👶 小孩嬰兒生日 (CHD/INF DOB)] Interactive Modal (Matches Image 5: WhatsApp Image 2026-11-13 at 2.27.04 PM (2).jpeg)
+      function openChdInfDobModal() {
+        const modal = document.getElementById('sabreWpSubModal');
+        const titleEl = document.getElementById('sabreWpSubModalTitle');
+        const bodyEl = document.getElementById('sabreWpSubModalBody');
+        if (!modal || !titleEl || !bodyEl) return;
+
+        titleEl.textContent = '小孩嬰兒生日 — AUTO PROMPT FOR CHD / INF DOB (SSR 3CHLD & 3INFT)';
+        bodyEl.innerHTML = `
+          <div class="bg-[#e2e8f0] border border-[#94a3b8] rounded p-4 space-y-4 font-sans text-xs text-[#0f172a]">
+            <label class="flex items-center gap-2 font-bold text-[#dc2626]">
+              <input type="checkbox" checked class="w-4 h-4">
+              <span>Enable auto prompt for CHD/INF DOB</span>
+            </label>
+
+            <!-- Child Row (3CHLD) -->
+            <div class="bg-white border border-[#cbd5e1] rounded p-3 space-y-2">
+              <div class="flex items-center gap-2 text-[#dc2626] font-bold">
+                <span>Please input correct format for Child.</span>
+                <button type="button" id="btnChdFillExample" class="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] px-2 py-0.5 rounded font-normal">Example</button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+                <label class="flex items-center gap-2 font-semibold">
+                  <input type="checkbox" id="chkSendChld" checked>
+                  <span>Pax Name:</span>
+                  <input type="text" id="inpChldPaxNum" value="3.1" class="w-16 bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono">
+                </label>
+                <div>
+                  <span class="font-semibold mr-1">Pax Type:</span>
+                  <input type="text" value="CHLD" readonly class="w-20 bg-[#f1f5f9] border border-[#94a3b8] rounded px-2 py-1 font-mono">
+                </div>
+                <div class="sm:col-span-2 flex items-center gap-2">
+                  <span class="font-semibold">DOB(ddMMMyy):</span>
+                  <input type="text" id="inpChldDob" value="01NOV16" class="w-28 bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold">
+                  <span class="text-[#dc2626] font-bold">📅</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Infant Row (3INFT) + Calendar Widget -->
+            <div class="bg-white border border-[#cbd5e1] rounded p-3 space-y-2">
+              <div class="flex items-center gap-2 text-[#dc2626] font-bold">
+                <span>Please input : 3INFT</span>
+                <button type="button" id="btnInfFillExample" class="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] px-2 py-0.5 rounded font-normal">Example</button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                <div class="sm:col-span-4 flex items-center gap-1.5">
+                  <input type="checkbox" id="chkSendInft" checked>
+                  <input type="text" id="inpInftName" value="HOSSAIN/KABITA MISS" class="w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono">
+                </div>
+                <div class="sm:col-span-2">
+                  <input type="text" value="INFT" readonly class="w-full bg-[#f1f5f9] border border-[#94a3b8] rounded px-2 py-1 font-mono">
+                </div>
+                <div class="sm:col-span-2">
+                  <select id="selInftAdultPax" class="w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono">
+                    <option value="1.1">1.1</option>
+                    <option value="2.1">2.1</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-4 flex items-center gap-1.5">
+                  <input type="text" id="inpInftDob" value="01DEC25" class="w-28 bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold">
+                  <label class="flex items-center gap-1 text-[11px]"><input type="checkbox" checked> All Seg</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[#dc2626] font-semibold">If new seg(s) added , please select segment(s)</span>
+              <button type="button" id="btnSubmitChdInfDob" class="bg-[#0f172a] hover:bg-[#1e293b] text-white font-bold px-5 py-1.5 rounded shadow">
+                Send (3CHLD &amp; 3INFT)
+              </button>
+            </div>
+          </div>
+        `;
+
+        setTimeout(() => {
+          document.getElementById('btnChdFillExample')?.addEventListener('click', () => {
+            document.getElementById('inpChldDob').value = '12NOV16';
+          });
+          document.getElementById('btnInfFillExample')?.addEventListener('click', () => {
+            document.getElementById('inpInftDob').value = '12NOV25';
+          });
+          document.getElementById('btnSubmitChdInfDob')?.addEventListener('click', () => {
+            const session = areaSessions[currentArea];
+            loadRphebsDemoPnrIntoDraft(session.draft, false);
+            const chdPax = document.getElementById('inpChldPaxNum')?.value || '3.1';
+            const chdDob = document.getElementById('inpChldDob')?.value || '01NOV16';
+            const infName = document.getElementById('inpInftName')?.value || 'HOSSAIN/KABITA MISS';
+            const infAdt = document.getElementById('selInftAdultPax')?.value || '1.1';
+            const infDob = document.getElementById('inpInftDob')?.value || '01DEC25';
+            modal.classList.add('hidden');
+            executeCrypticCommand(`3CHLD/${chdDob}-${chdPax}`);
+            executeCrypticCommand(`3INFT/${infName}/${infDob}-${infAdt}`);
+          });
+        }, 20);
+
+        modal.classList.remove('hidden');
+      }
+
+      document.getElementById('btnOpenChdInfDobHelper')?.addEventListener('click', openChdInfDobModal);
+      document.getElementById('railBtnApplications')?.addEventListener('click', openChdInfDobModal);
+
+      // Interactive Hero Auto-Typing & Step Auto-Play Animation Engine
+      let heroAutoCycleTimer = setInterval(() => {
+        const homeEl = document.getElementById('portalPageHome');
+        if (!homeEl || homeEl.classList.contains('hidden')) return;
+        const order = ['avail', 'wp', 'wetr', 'wfra'];
+        const nextIdx = (order.indexOf(currentHeroDemoKey) + 1) % order.length;
+        setHeroDemoScene(order[nextIdx]);
+      }, 4200);
+
+      let homeStepAutoPlay = true;
+      let currentHomeStageIdx = 0;
+      setInterval(() => {
+        const homeEl = document.getElementById('portalPageHome');
+        if (!homeEl || homeEl.classList.contains('hidden') || !homeStepAutoPlay) return;
+        currentHomeStageIdx = (currentHomeStageIdx + 1) % 4;
+        const btns = document.querySelectorAll('.home-step-selector');
+        if (btns[currentHomeStageIdx]) btns[currentHomeStageIdx].click();
+      }, 5000);
+
+      document.getElementById('btnToggleAutoCycleSteps')?.addEventListener('click', (e) => {
+        homeStepAutoPlay = !homeStepAutoPlay;
+        e.currentTarget.textContent = homeStepAutoPlay ? 'Auto-Play: ON ↻' : 'Auto-Play: PAUSED ⏸';
+        const bar = document.getElementById('homeStageAutoProgressBar');
+        if (bar) bar.style.animationPlayState = homeStepAutoPlay ? 'running' : 'paused';
+      });
+
+      // SabbirHossien-Style Cursor Move Interactive Counter
+      let simCursorCount = 1420;
+      document.getElementById('shInteractiveCursorBox')?.addEventListener('mousemove', () => {
+        simCursorCount += 1;
+        const el = document.getElementById('shCursorSimCounter');
+        if (el) el.textContent = simCursorCount.toLocaleString();
       });
 
       // Initialize Views & Route on Load (If an exam was In progress before refresh, resume its exact deadline!)
