@@ -1483,18 +1483,18 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
 
   <!-- PROGRAMMABLE F1–F12 FUNCTION KEYS & FAST PNR MACRO BAR (Visible by Default, Customizable) -->
   <div id="pfKeysBar" class="bg-[#121821] border-b border-[#26303D] px-3 py-1.5">
-    <div class="flex items-center justify-between gap-2">
-      <div id="fKeysButtonsContainer" class="flex items-center gap-1 overflow-x-auto text-[11px] font-mono py-0.5">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div id="fKeysButtonsContainer" class="flex items-center gap-1 overflow-x-auto text-[11px] font-mono py-0.5 flex-1">
         <!-- Dynamically populated F1..F12 buttons -->
       </div>
       <div class="flex items-center gap-1.5 shrink-0 text-[11px] font-mono">
-        <button type="button" id="btnOpenFKeysConfigModal" class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold px-2.5 py-1 rounded whitespace-nowrap shadow">
-          ⚙️ Set F1–F12 Keys
+        <button type="button" id="btnOpenFKeysConfigModal" class="bg-[#A3E635] hover:opacity-90 text-[#0B0F14] font-bold px-2.5 py-1 rounded whitespace-nowrap shadow cursor-pointer">
+          ⚙️ Store F1–F12 Cmds
         </button>
-        <button type="button" id="btnOpenRealSabreImporter" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] font-semibold px-2.5 py-1 rounded whitespace-nowrap">
+        <button type="button" id="btnOpenRealSabreImporter" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] font-semibold px-2.5 py-1 rounded whitespace-nowrap cursor-pointer">
           🌐 Open Real Sabre PNR
         </button>
-        <button type="button" id="btnLoadRphebsDemoPnr" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#F3F4F6] border border-[#26303D] px-2 py-1 rounded whitespace-nowrap" title="Load Demo Family PNR (RPHEBS)">
+        <button type="button" id="btnLoadRphebsDemoPnr" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#F3F4F6] border border-[#26303D] px-2 py-1 rounded whitespace-nowrap cursor-pointer" title="Load Demo Family PNR (RPHEBS)">
           ⚡ Demo PNR
         </button>
         <button type="button" id="btnOpenChdInfDobHelper" class="hidden"></button>
@@ -4413,6 +4413,7 @@ PHONES
           ticketIssued: false,
           ticketNumber: null,
           originalTicketNumber: null,
+          tickets: [],
           ticketHistory: [],
           ticketStatus: null,
           netRefundAmount: null,
@@ -4525,23 +4526,177 @@ PHONES
       { key: 'F12', label: 'CLEAR', cmd: 'CLEAR' }
     ];
 
+    // Forward global references so functions inside and outside DOMContentLoaded share full scope
+    var openSabreWpSubModal = null;
+    var openChdInfDobModal = null;
+    var openRealSabrePnrModalForLocator = null;
+    var checkAndInterceptAdmCommand = null;
+    var openAdmShieldModal = null;
+    var handleTimaticCrypticCommand = null;
+    var handleMultiCurrencyBdtTaxCommand = null;
+    var openClientInvoiceModal = null;
+    var renderFKeysTopBar = null;
+    var openFKeysConfigModal = null;
+    var executeFKeyMacro = null;
+    var saveFKeysFromInputs = null;
+
     function initPFKeys() {
-      const bar = document.getElementById('pfKeysBar');
-      bar.innerHTML = '';
-      
-      PF_KEYS.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 border border-slate-800 px-2.5 py-1 rounded transition flex items-center gap-1 active:scale-95 whitespace-nowrap shadow-sm';
-        btn.innerHTML = `<span class="text-cyan-400 font-bold">${item.key}</span> <span>${item.label}</span>`;
-        btn.title = `Execute command: ${item.cmd}`;
-        btn.addEventListener('click', () => {
-          if (item.cmd === 'CLEAR') {
-            clearTerminal();
-          } else {
-            executeCrypticCommand(item.cmd);
-          }
-        });
-        bar.appendChild(btn);
+      // Never wipe #pfKeysBar.innerHTML! Delegate to renderFKeysTopBar so F1-F12 & Store buttons stay intact.
+      if (typeof renderFKeysTopBar === 'function') {
+        renderFKeysTopBar();
+      }
+    }
+
+    // Automatically closes any open transient boxes, drawers, availability panels, pricing panels, or modals
+    // as soon as their action is completed or the user moves to the next command!
+    function closeAllTransientBoxes(exceptModalId = null) {
+      // 1. Auto-close Visual Flight Availability & Seat Sell Panel (#visualAvailPanel)
+      if (exceptModalId !== 'visualAvailPanel') {
+        const availPanel = document.getElementById('visualAvailPanel');
+        if (availPanel) availPanel.classList.add('hidden');
+      }
+
+      // 2. Auto-close Graphical WP Pricing Drawer inside current transcript
+      if (exceptModalId !== 'wp-graphical-drawer' && areaSessions && areaSessions[currentArea] && Array.isArray(areaSessions[currentArea].transcript)) {
+        areaSessions[currentArea].transcript = areaSessions[currentArea].transcript.filter(
+          item => item.type !== 'wp-graphical-drawer'
+        );
+      }
+
+      // 3. Auto-close all floating helper/action modals unless explicitly exempted
+      const transientModals = [
+        'sabreWpSubModal',
+        'seatMapModal',
+        'guiHelperModal',
+        'fareShoppingModal',
+        'refundExchangeModal',
+        'childInfantModal',
+        'timaticModal',
+        'queueCenterModal',
+        'admShieldModal',
+        'clientInvoiceModal',
+        'etktReceiptModal',
+        'iataGeographyModal',
+        'codeGlossaryModal',
+        'exerciseModal',
+        'ndcInteractiveModal',
+        'realSabrePnrModal',
+        'fKeysConfigModal'
+      ];
+      transientModals.forEach(id => {
+        if (id !== exceptModalId) {
+          document.getElementById(id)?.classList.add('hidden');
+        }
+      });
+    }
+    window.closeAllTransientBoxes = closeAllTransientBoxes;
+
+    function getMissingMandatoryPnrElements(draft, requireConfirmed = false) {
+      // Allow SSR/OSI/APIS (3DOCS, 3CTCM, 3CTCE, 3CHLD, 3INFT, PE¥) to be entered freely
+      // whenever there is at least a name or segment in the work area (before or after ER).
+      if (!draft) return ['ITINERARY (125DECDACBKK)'];
+      if (draft.names.length === 0 && draft.segments.length === 0) {
+        return ['ITINERARY (125DECDACBKK)', 'PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)'];
+      }
+      return [];
+    }
+
+    function getMissingTicketingPrerequisites(draft) {
+      const missing = [];
+      if (!draft || draft.segments.length === 0) {
+        missing.push('ITINERARY (125DECDACBKK ➔ 01Y1)');
+      }
+      if (!draft || draft.names.length === 0) {
+        missing.push('PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)');
+      }
+      if (missing.length > 0) return missing;
+
+      // Auto-complete any secondary fields on W¥PQ...¥ER so custom ticket issuance never fails!
+      if (!draft.phones || draft.phones.length === 0) {
+        draft.phones = ['DAC ATAB TOURS AND TRAVELS REF AGENT'];
+      }
+      if (!draft.ticketLimit) {
+        draft.ticketLimit = 'T-TAW/';
+      }
+      if (!draft.receivedFrom) {
+        draft.receivedFrom = 'R';
+      }
+      if (!draft.locator) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let loc = '';
+        for (let i = 0; i < 6; i++) loc += chars.charAt(Math.floor(Math.random() * chars.length));
+        draft.locator = loc;
+      }
+      draft.isConfirmed = true;
+
+      if (!draft.priceQuote) {
+        if (draft.candidatePrice) {
+          draft.priceQuote = JSON.parse(JSON.stringify(draft.candidatePrice));
+        } else {
+          // Dynamically calculate priceQuote from active segments & passengers
+          const seg1 = draft.segments[0] || { carrier: 'BG', bookingClass: 'Y', orig: 'DAC', dest: 'BKK' };
+          const isDacBkk = (seg1.orig === 'DAC' && seg1.dest === 'BKK') || (seg1.orig === 'BKK' && seg1.dest === 'DAC');
+          const unitAdtEqv = isDacBkk ? 94050 : (seg1.baseFare ? Math.round(seg1.baseFare / Math.max(1, seg1.seats || 1)) : 55000);
+          const unitAdtTax = isDacBkk ? 15253 : (seg1.taxes ? Math.round(seg1.taxes / Math.max(1, seg1.seats || 1)) : 14500);
+          const unitCnnEqv = isDacBkk ? 70538 : Math.round(unitAdtEqv * 0.75);
+          const unitCnnTax = isDacBkk ? 13253 : Math.max(2000, unitAdtTax - 2000);
+          const unitInfEqv = isDacBkk ? 23513 : Math.round(unitAdtEqv * 0.25);
+          const unitInfTax = isDacBkk ? 3294  : Math.round(unitAdtTax * 0.22);
+
+          let adtCount = 0, cnnCount = 0, infCount = 0;
+          draft.names.forEach(n => {
+            const fn = (n.fullName || String(n)).toUpperCase();
+            if (n.paxType === 'INF' || fn.startsWith('I/') || fn.includes('*I')) infCount++;
+            else if (n.paxType === 'CNN' || fn.includes('*C') || fn.includes(' MSTR') || fn.includes(' MISS')) cnnCount++;
+            else adtCount++;
+          });
+          if (adtCount === 0 && cnnCount === 0 && infCount === 0) adtCount = 1;
+
+          const totalBase = (adtCount * unitAdtEqv) + (cnnCount * unitCnnEqv) + (infCount * unitInfEqv);
+          const totalTaxes = (adtCount * unitAdtTax) + (cnnCount * unitCnnTax) + (infCount * unitInfTax);
+          draft.priceQuote = {
+            validatingCarrier: seg1.carrier || 'BG',
+            baseFare: totalBase,
+            taxes: totalTaxes,
+            total: totalBase + totalTaxes,
+            fareBasis: `${seg1.bookingClass || 'Y'}BD6M`,
+            unitAdtEqv, unitAdtTax, unitAdtTtl: unitAdtEqv + unitAdtTax,
+            unitCnnEqv, unitCnnTax, unitCnnTtl: unitCnnEqv + unitCnnTax,
+            unitInfEqv, unitInfTax, unitInfTtl: unitInfEqv + unitInfTax,
+            adtUsd: (unitAdtEqv / 123.75).toFixed(2),
+            cnnUsd: (unitCnnEqv / 123.75).toFixed(2),
+            infUsd: (unitInfEqv / 123.75).toFixed(2)
+          };
+          draft.candidatePrice = JSON.parse(JSON.stringify(draft.priceQuote));
+        }
+      }
+      return [];
+    }
+
+    function ensureAutoReadyForTicketing(draft) {
+      if (!draft) return;
+      getMissingTicketingPrerequisites(draft);
+    }
+
+    function renderSabreHelp() {
+      const session = areaSessions[currentArea];
+      session.transcript.push({
+        type: "output-header",
+        text: "* SABRE RED 360 QUICK CRYPTIC COMMAND REFERENCE & F1–F12 GUIDE:"
+      });
+      session.transcript.push({
+        type: "output-line",
+        text: [
+          "1. AVAILABILITY & SELL : 125DECDACBKK  •  125DECDACBKK¥BG  •  01Y1  •  03Y3",
+          "2. PASSENGER NAMES     : -HOSSAIN/RAHAT MR  •  -HOSSAIN/ABRAR MSTR  •  -I/HOSSAIN/KABITA MISS",
+          "3. MANDATORY PNR       : 9 ATAB TOURS REF RAHAT  •  7TAW/  •  6R  •  ER  •  IR",
+          "4. CHILD / INFANT DOB  : Enter ER after adding Child/Infant name + itinerary + 9 + 7TAW/ + 6 ➔ DOB Box opens automatically!",
+          "5. FARE & PRICING      : FQ12NOV26DACBKK25DEC26-BG¥BY  •  RD1  •  WP  •  WPABG  •  PQ  •  *PQ",
+          "6. APIS & CONTACT      : 3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1  •  3CTCM/...  •  3CTCE/...",
+          "7. TICKET ISSUE & VIEW : W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER  •  *T  •  WETR*2  •  *A  •  *<LOCATOR>",
+          "8. REFUND & REISSUE    : WFRA<13-DIGIT-TKT>  •  WFRA<13-DIGIT-TKT>/REF  •  WFRF<13-DIGIT-TKT>¥ABG¥N1.1  •  W¥PQR1",
+          "9. F1–F12 SHORTCUTS    : Press F1–F12 (or type F1..F12) to run saved commands, or click [⚙️ Store F1–F12 Cmds] above!"
+        ].join("\n")
       });
     }
 
@@ -4584,11 +4739,26 @@ PHONES
       
       const cleanCmd = cmd.toUpperCase().replace(/«+$/g, '').trim().replace(/¥/g, '¥').replace(/\s+/g, ' ');
 
+      // 0A. Direct F1–F12 Command Execution if typed into Command Input (e.g. "F1", "F2" ... "F12")
+      const fKeyDirectMatch = cleanCmd.match(/^F([1-9]|1[0-2])$/);
+      if (fKeyDirectMatch && typeof executeFKeyMacro === 'function') {
+        const fkIdx = parseInt(fKeyDirectMatch[1], 10) - 1;
+        executeFKeyMacro(fkIdx);
+        return;
+      }
+
+      // Auto-close any open transient boxes/drawers/modals (Seat Sell #visualAvailPanel, WP Graphical Pricing Box, Seat Map, etc.)
+      // whenever a new command is executed!
+      const isAvailSearchCmd = (
+        /^1(\d{1,2}[A-Z]{3})?[A-Z]{6}/.test(cleanCmd) ||
+        cleanCmd === '1*' || cleanCmd === '1*OA' || /^1R/.test(cleanCmd) || /^1[‡¥\-]\d+/.test(cleanCmd)
+      );
+      closeAllTransientBoxes(isAvailSearchCmd ? 'visualAvailPanel' : null);
+
       // SABRE NATIVE AUTO-CLEAN SCREEN ON MAJOR DISPLAY / ITINERARY / AVAILABILITY / FARE LOAD / PRICING COMMANDS:
       // Clears previous clutter from the Command Display Panel so only the newly entered command & its response appear!
       const isAutoCleanMajorCmd = (
-        /^1(\d{1,2}[A-Z]{3})?[A-Z]{6}/.test(cleanCmd) ||
-        cleanCmd === '1*' || cleanCmd === '1*OA' || /^1R/.test(cleanCmd) || /^1[‡¥\-]\d+/.test(cleanCmd) ||
+        isAvailSearchCmd ||
         /^S(\d{1,2}[A-Z]{3})?[A-Z]{6}\/ES/.test(cleanCmd) ||
         cleanCmd.startsWith('*') ||
         cleanCmd.startsWith('FQ') ||
@@ -4635,7 +4805,7 @@ PHONES
           return;
         }
       }
-      if (cleanCmd === 'W¥INV' || cleanCmd === 'W¥INV' || cleanCmd === 'DINV') {
+      if (cleanCmd === 'W¥INV' || cleanCmd === 'W‡INV' || cleanCmd === 'DINV') {
         if (typeof openClientInvoiceModal === 'function') {
           session.transcript.push({
             type: 'success',
@@ -4670,7 +4840,6 @@ PHONES
       // 1B. SABRE TERMINAL SCROLLING COMMANDS: MD (Move Down), MU (Move Up), MT (Move Top), MB (Move Bottom)
       if (cleanCmd === 'MD' || cleanCmd === 'MU' || cleanCmd === 'MT' || cleanCmd === 'MB') {
         const term = document.getElementById('terminalTranscript');
-        // Remove the user prompt we just pushed so MD/MU acts like a native terminal scroll key, or show a clean scroll indicator
         session.transcript.pop();
         renderTerminal();
         if (term) {
@@ -4692,7 +4861,7 @@ PHONES
       }
 
       // 2. HELP Command
-      if (cleanCmd === 'HELP' || cleanCmd === 'F1') {
+      if (cleanCmd === 'HELP') {
         renderSabreHelp();
         finishExecution();
         return;
@@ -4839,7 +5008,7 @@ PHONES
           }
         }
         const phBody = cleanCmd.substring(1).trim();
-        if (phBody.length < 6 || !/\d{6,}/.test(phBody)) {
+        if (phBody.length < 2) {
           triggerStrictError(
             cleanCmd,
             phBody || cleanCmd,
@@ -5104,7 +5273,7 @@ PHONES
       // 15F. E-TICKET ISSUANCE:
       // 1) Single Passenger from Group/PNR: W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER
       // 2) Full PNR / All Passengers: W¥PQ1-3¥ABG¥FINVAGT¥KP7¥ETR¥ER or W¥PQ1¥ABG¥FINVAGT¥KP7¥ETR¥ER
-      if (/^W[‡¥+]PQ\d(\-\d)?(N\d+\.\d+)?([‡¥+][A-Z0-9\.]+)+$/.test(cleanCmd)) {
+      if (/^W[‡¥+]PQ(\d+(\-\d+)?)?(N\d+(\.\d+)?)?([‡¥+][A-Z0-9\.\-\/]+)+$/.test(cleanCmd)) {
         handleElectronicTicketing(cleanCmd);
         finishExecution();
         return;
@@ -5677,17 +5846,34 @@ PHONES
 
       draft.segments.push(segData);
 
+      // Automatically close the Visual Flight Availability / Seat Sell panel once seat(s) are sold!
+      document.getElementById('visualAvailPanel')?.classList.add('hidden');
+
       session.transcript.push({
         type: 'success',
         text: `${segIndex} ${flight.carrier} ${flight.flight}${bookingClass} ${session.currentAvail.date} ${segData.status}${seats} ${session.currentAvail.orig}${session.currentAvail.dest} ${flight.dep} ${flight.arr}`
       });
 
-      showToast(`Segment Sold: ${flight.carrier} ${flight.flight} (${bookingClass} Class)`);
+      showToast(`Segment Sold: ${flight.carrier} ${flight.flight} (${bookingClass} Class) — Availability Box Closed`);
     }
 
     function handlePassengerName(namePayload) {
       const session = areaSessions[currentArea];
-      const draft = session.draft;
+      let draft = session.draft;
+
+      // If a previous PNR was already confirmed & ticketed in this work area and the user is starting a new PNR
+      // without typing 'I' first, preserve the previous PNR in savedPnrVault and reset locator/ticket state for the new PNR!
+      if (draft.isConfirmed && draft.locator && draft.ticketIssued) {
+        savePnrToVault(draft);
+        updateSavedPnrDropdown();
+        draft.locator = null;
+        draft.isConfirmed = false;
+        draft.ticketIssued = false;
+        draft.ticketNumber = null;
+        draft.tickets = [];
+        draft.priceQuote = null;
+        draft.candidatePrice = null;
+      }
       
       // Syntax: -SURNAME/FIRSTNAME TITLE (e.g. -TAWHA/MOKTADA AS SADAR MR)
       if (!namePayload.includes('/')) {
@@ -5984,16 +6170,37 @@ PHONES
         } else {
           // If user typed a 6-character Record Locator (*ABCDEF) created in external/real Sabre Red 360:
           const queryLocClean = cmd.substring(1).trim().toUpperCase();
-          if (/^[A-Z0-9]{6}$/.test(queryLocClean)) {
+          if (/^[A-Z0-9]{5,8}$/.test(queryLocClean)) {
+            // Immediately build & open the Real Sabre PNR in the terminal so *<LOCATOR> always works on 1st try!
+            draft.locator = queryLocClean;
+            draft.isConfirmed = true;
+            draft.chdInfDobVerified = true;
+            if (!draft.names || draft.names.length === 0) {
+              draft.names = [{ index: 1, fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT' }];
+            }
+            if (!draft.segments || draft.segments.length === 0) {
+              draft.segments = [{
+                index: 1, carrier: 'BG', flight: '388', bookingClass: 'Y', seats: Math.max(1, draft.names.length),
+                date: '25DEC', orig: 'DAC', dest: 'BKK', dep: '1115', arr: '1500',
+                status: 'HK', baseFare: 94050, taxes: 15253, name: 'Biman Bangladesh'
+              }];
+            }
+            if (!draft.phones || draft.phones.length === 0) {
+              draft.phones = ['DAC ATAB TOURS AND TRAVELS REF AGENT'];
+            }
+            if (!draft.ticketLimit) draft.ticketLimit = 'T-17NOV-8MDJ*AST';
+            if (!draft.receivedFrom) draft.receivedFrom = 'R';
+            draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
+            savePnrToVault(draft);
+            updateSavedPnrDropdown();
+            renderFullPnrDisplay(draft);
             session.transcript.push({
               type: 'info',
-              text: `* EXTERNAL / REAL SABRE RECORD LOCATOR DETECTED: ${queryLocClean}\nOPENING REAL SABRE PNR SYNC BRIDGE — PASTE YOUR REAL SABRE '*A' TEXT OR CLICK 'CREATE & OPEN' TO LOAD *${queryLocClean} INTO THIS TERMINAL!`
+              text: `✓ REAL SABRE PNR *${queryLocClean} OPENED IN WORK AREA [${currentArea}] — CLICK [🌐 Open Real Sabre PNR] ABOVE IF YOU WANT TO PASTE EXACT RAW SABRE '*A' TEXT FOR *${queryLocClean}.`
             });
-            setTimeout(() => {
-              if (typeof openRealSabrePnrModalForLocator === 'function') {
-                openRealSabrePnrModalForLocator(queryLocClean);
-              }
-            }, 60);
+            showConfirmedPnrBanner(queryLocClean);
+            updatePnrTrackerUI();
+            showToast(`Opened Real Sabre PNR *${queryLocClean}`);
           } else {
             const availLocs = savedPnrVault.map(p => p.locator).filter(Boolean);
             session.transcript.push({
@@ -6390,6 +6597,25 @@ PHONES
         return;
       }
 
+      const hasChildOrInfant = draft.names.some(n => {
+        const fn = (n.fullName || String(n)).toUpperCase();
+        return n.paxType === 'CNN' || n.paxType === 'INF' || fn.includes('*C') || fn.startsWith('I/') || fn.includes(' MSTR') || fn.includes(' MISS') || fn.includes(' CHD') || fn.includes(' INF');
+      });
+
+      // MANDATORY RULE (Screenshot 5): If Child or Infant is in the PNR and their DOB/Age has not been saved yet,
+      // DO NOT create the PNR yet! Print the Sabre SSR requirement warning and open the Child/Infant DOB box automatically!
+      if (hasChildOrInfant && !draft.chdInfDobVerified) {
+        session.transcript.push({
+          type: 'warning',
+          text: `CHILD DETAILS REQUIRED IN SSR - ENTER 3CHLD/.......\nDIRECT CONNECT MESSAGES RECEIVED - ENTER IR TO DISPLAY`
+        });
+        showToast('Mandatory Child/Infant Age & DOB Box Opened — Fill DOB & Click Save, then enter ER ➔ IR!');
+        if (typeof openChdInfDobModal === 'function') {
+          openChdInfDobModal();
+        }
+        return;
+      }
+
       if (!draft.locator) {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let loc = '';
@@ -6400,25 +6626,6 @@ PHONES
       }
 
       draft.isConfirmed = true;
-
-      const hasChildOrInfant = draft.names.some(n => {
-        const fn = (n.fullName || String(n)).toUpperCase();
-        return n.paxType === 'CNN' || n.paxType === 'INF' || fn.includes('*C') || fn.startsWith('I/') || fn.includes(' MSTR') || fn.includes(' MISS') || fn.includes(' CHD') || fn.includes(' INF');
-      });
-
-      // MANDATORY RULE: If Child or Infant is in the PNR and their DOB/Age has not been saved in the Child/Infant DOB box yet,
-      // open the Child/Infant DOB box on ER and block PNR creation until DOB is saved!
-      if (hasChildOrInfant && !draft.chdInfDobVerified) {
-        session.transcript.push({
-          type: 'warning',
-          text: `⚠ CHILD / INFANT PASSENGER DETECTED — MANDATORY AGE & DOB REQUIRED BEFORE PNR CREATION (ER)!\nCOMPLETE THE CHILD/INFANT DOB BOX THAT JUST OPENED, CLICK SAVE, THEN ENTER 'ER' FOLLOWED BY 'IR'.`
-        });
-        showToast('Child/Infant DOB Required! Fill DOB Box & Save, then enter ER.');
-        setTimeout(() => {
-          if (typeof openChdInfDobModal === 'function') openChdInfDobModal();
-        }, 80);
-        return;
-      }
       draft.segments.forEach(seg => {
         if (seg.status === 'SS' || seg.status === 'LL') {
           seg.status = hasChildOrInfant ? 'NN' : 'HK';
@@ -6667,6 +6874,10 @@ PHONES
       draft.ticketIssued = true;
       draft.ticketStatus = 'OPEN';
       draft.ticketLimit = `T-17NOV-8MDJ*AST`;
+
+      // Render the full active PNR (including all names, segments, phones, SSRs, and newly issued *T tickets)
+      // so the user sees all their PNR details intact alongside the newly issued E-Ticket(s)!
+      renderFullPnrDisplay(draft);
 
       session.transcript.push({
         type: 'output-header',
@@ -7260,6 +7471,9 @@ PHONES
         return;
       }
 
+      if (cmd.startsWith('3CHLD') || cmd.startsWith('3INFT')) {
+        draft.chdInfDobVerified = true;
+      }
       draft.ssr.push(cmd);
       session.transcript.push({
         type: 'success',
@@ -7762,7 +7976,10 @@ PHONES
             div.innerHTML = `
               <div class="bg-[#e2e8f0] border-b border-[#cbd5e1] px-3.5 py-2 flex items-center justify-between text-[#0f172a] font-semibold">
                 <span class="flex items-center gap-2"><span class="text-[#0284c7]">ℹ</span> NO ALTERNATE FARES FOUND</span>
-                <span class="font-mono text-[11px] text-[#475569]">TOTAL: BDT ${(line.grandTotal || 329204).toLocaleString()}</span>
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-[11px] text-[#475569]">TOTAL: BDT ${(line.grandTotal || 329204).toLocaleString()}</span>
+                  <button type="button" class="wp-close-drawer-btn bg-[#cbd5e1] hover:bg-[#94a3b8] text-[#0f172a] px-2 py-0.5 rounded text-[11px] font-bold" title="Close Pricing Drawer">✕ Close</button>
+                </div>
               </div>
               <div class="p-3.5 space-y-3">
                 <!-- Passenger Type Tabs -->
@@ -7865,7 +8082,11 @@ PHONES
             div.querySelector('.wp-reprice-btn')?.addEventListener('click', () => {
               executeCrypticCommand('WPNCB');
             });
+            div.querySelector('.wp-close-drawer-btn')?.addEventListener('click', () => {
+              div.remove();
+            });
             div.querySelector('.wp-save-price-btn')?.addEventListener('click', () => {
+              div.remove();
               executeCrypticCommand('PQ');
             });
             break;
@@ -9346,6 +9567,7 @@ PHONES
               renderInteractiveSeatGrid();
               const statusTxt = document.getElementById('selectedSeatStatusText');
               if (statusTxt) statusTxt.textContent = `Assigned Seat: ${seatCode} (4G1/${seatCode})`;
+              document.getElementById('seatMapModal')?.classList.add('hidden');
               executeCrypticCommand(`4G1/${seatCode}`);
             });
           }
@@ -10088,11 +10310,13 @@ PHONES
         }
       });
 
-      // PF Keys Toggle
-      document.getElementById('btnTogglePFKeys').addEventListener('click', () => {
+      // PF Keys Bar & F1–F12 Command Store Modal Trigger
+      document.getElementById('btnTogglePFKeys')?.addEventListener('click', () => {
         const bar = document.getElementById('pfKeysBar');
-        bar.classList.toggle('hidden');
-        showToast(bar.classList.contains('hidden') ? 'PF Keys Bar Hidden' : 'PF Keys Bar Shown');
+        bar?.classList.remove('hidden');
+        if (typeof openFKeysConfigModal === 'function') {
+          openFKeysConfigModal();
+        }
       });
 
       // Quick Command Bar Toggle
@@ -10573,7 +10797,10 @@ PHONES
         executeCrypticCommand('9 MTTCTC01980284967REFTAWHA');
       });
       document.getElementById('railBtnWorkflows')?.addEventListener('click', () => {
-        document.getElementById('pfKeysBar')?.classList.toggle('hidden');
+        document.getElementById('pfKeysBar')?.classList.remove('hidden');
+        if (typeof openFKeysConfigModal === 'function') {
+          openFKeysConfigModal();
+        }
       });
       document.getElementById('railBtnApplications')?.addEventListener('click', () => {
         document.getElementById('guiHelperModal')?.classList.remove('hidden');
@@ -10744,7 +10971,7 @@ PHONES
         executeCrypticCommand(rType === 'TAXONLY' ? `WFRN1762489104412¥ABG` : `WFR1762489104412¥ABG`);
         draft.netRefundAmount = net;
         draft.ticketStatus = 'RFND';
-      if (draft.tickets) { const mt = draft.tickets.find(t => t.number === rawTkt13); if (mt) mt.status = 'RFND'; }
+      if (Array.isArray(draft.tickets) && draft.tickets[0]) { draft.tickets[0].status = 'RFND'; }
         savePnrToVault(draft);
         executeCrypticCommand('*T');
       });
@@ -12071,8 +12298,8 @@ Create your free Bangladesh Flight Map & VIP Boarding Pass at MY AIR ACADEMY!`;
           }
         }
 
-        // 8. Child / Infant Ticketing without Mandatory SSR 3CHLD / 3INFT DOB
-        if (c === 'W¥PQ1¥NODOB' || ((c.startsWith('W¥PQ') || c.startsWith('W¥PQ')) && draft && draft.names && draft.names.some(n => { const fn = typeof n === 'string' ? n : (n.fullName || ''); return fn.includes('*C') || fn.startsWith('I/'); }) && (!draft.ssr || !draft.ssr.some(s => s.includes('CHLD') || s.includes('INFT'))))) {
+        // 8. Child / Infant Ticketing without Mandatory SSR 3CHLD / 3INFT DOB (Only trigger ADM modal on explicit W¥PQ1¥NODOB test)
+        if (c === 'W¥PQ1¥NODOB') {
           return {
             ...OFFICIAL_12_ADM_CAUSES[7],
             rawCmd: c
@@ -13209,7 +13436,7 @@ HEALTH   : ${info.health}`
               names: [], segments: [], phones: [], ticketLimit: null, receivedFrom: null,
               remarks: [], osi: [], ssr: [], priceQuote: null, candidatePrice: null,
               pqrRetained: false, pqrData: null, refundQuote: null,
-              ticketIssued: false, ticketNumber: null, ticketStatus: null,
+              ticketIssued: false, ticketNumber: null, tickets: [], ticketStatus: null,
               locator: null, isConfirmed: false
             },
             currentAvail: null,
@@ -14390,8 +14617,16 @@ HEALTH   : ${info.health}`
         showToast('Loaded RPHEBS Demo PNR (4 Passengers + 4 Issued E-Tickets)!');
       });
 
+      // Expose internal DOMContentLoaded functions to global scope so top-level handlers can invoke them
+      window.checkAndInterceptAdmCommand = checkAndInterceptAdmCommand;
+      window.openAdmShieldModal = openAdmShieldModal;
+      window.handleTimaticCrypticCommand = handleTimaticCrypticCommand;
+      window.handleMultiCurrencyBdtTaxCommand = handleMultiCurrencyBdtTaxCommand;
+      window.openClientInvoiceModal = openClientInvoiceModal;
+      window.openSabreWpSubModal = openSabreWpSubModal;
+
       // Dynamic Sabre Red 360 Child & Infant Age/DOB Box (Opens automatically on ER when Child/Infant is in PNR!)
-      function openChdInfDobModal() {
+      openChdInfDobModal = function() {
         const modal = document.getElementById('sabreWpSubModal');
         const titleEl = document.getElementById('sabreWpSubModalTitle');
         const bodyEl = document.getElementById('sabreWpSubModalBody');
@@ -14424,12 +14659,12 @@ HEALTH   : ${info.health}`
         const chdRowsHtml = chdPassengers.length > 0 ? chdPassengers.map((c, i) => `
           <div class="bg-white border border-[#cbd5e1] rounded p-3 space-y-2">
             <div class="flex items-center justify-between text-[#dc2626] font-bold">
-              <span>Child Passenger #${i + 1}: ${c.paxNum} — ${c.fullName} (Input Mandatory Age &amp; DOB)</span>
-              <button type="button" class="btn-chd-example bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] px-2 py-0.5 rounded font-normal" data-idx="${i}">Example</button>
+              <span>Please input correct format for Child (${c.paxNum} — ${c.fullName})</span>
+              <button type="button" class="btn-chd-example bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] px-2.5 py-0.5 rounded font-semibold cursor-pointer" data-idx="${i}">Example (01NOV16)</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
               <div>
-                <span class="font-semibold block text-[10px] text-[#475569]">Pax Line:</span>
+                <span class="font-semibold block text-[10px] text-[#475569]">Pax Name:</span>
                 <input type="text" class="inp-chd-paxnum w-full bg-[#f1f5f9] border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold" value="${c.paxNum}" readonly>
               </div>
               <div>
@@ -14437,23 +14672,26 @@ HEALTH   : ${info.health}`
                 <input type="text" value="CHLD" readonly class="w-full bg-[#f1f5f9] border border-[#94a3b8] rounded px-2 py-1 font-mono">
               </div>
               <div>
-                <span class="font-semibold block text-[10px] text-[#475569]">Age (2–11 Yrs):</span>
-                <select class="inp-chd-age w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold">
-                  <option value="C10">10 Yrs (*C10)</option>
-                  <option value="C09">09 Yrs (*C09)</option>
-                  <option value="C08">08 Yrs (*C08)</option>
-                  <option value="C07">07 Yrs (*C07)</option>
-                  <option value="C06">06 Yrs (*C06)</option>
-                  <option value="C05">05 Yrs (*C05)</option>
-                  <option value="C04">04 Yrs (*C04)</option>
-                  <option value="C03">03 Yrs (*C03)</option>
-                  <option value="C02">02 Yrs (*C02)</option>
-                  <option value="C11">11 Yrs (*C11)</option>
+                <span class="font-semibold block text-[10px] text-[#475569]">Child Age (2–11 Yrs):</span>
+                <select class="inp-chd-age w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold" data-idx="${i}">
+                  <option value="C10" data-dob="01NOV16">10 Yrs (*C10)</option>
+                  <option value="C09" data-dob="01NOV17">09 Yrs (*C09)</option>
+                  <option value="C08" data-dob="01NOV18">08 Yrs (*C08)</option>
+                  <option value="C07" data-dob="01NOV19">07 Yrs (*C07)</option>
+                  <option value="C06" data-dob="01NOV20">06 Yrs (*C06)</option>
+                  <option value="C05" data-dob="01NOV21">05 Yrs (*C05)</option>
+                  <option value="C04" data-dob="01NOV22">04 Yrs (*C04)</option>
+                  <option value="C03" data-dob="01NOV23">03 Yrs (*C03)</option>
+                  <option value="C02" data-dob="01NOV24">02 Yrs (*C02)</option>
+                  <option value="C11" data-dob="01NOV15">11 Yrs (*C11)</option>
                 </select>
               </div>
               <div>
                 <span class="font-semibold block text-[10px] text-[#dc2626]">DOB (ddMMMyy) *Required:</span>
-                <input type="text" class="inp-chd-dob w-full bg-white border-2 border-[#dc2626] rounded px-2 py-1 font-mono font-bold uppercase" placeholder="e.g. 01NOV16" value="">
+                <div class="flex items-center gap-1">
+                  <input type="text" class="inp-chd-dob w-full bg-white border-2 border-[#dc2626] rounded px-2 py-1 font-mono font-bold uppercase" placeholder="e.g. 01NOV16" value="">
+                  <button type="button" class="btn-chd-example bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-[#94a3b8] px-2 py-1 rounded text-xs cursor-pointer" data-idx="${i}" title="Auto-fill DOB">📅</button>
+                </div>
               </div>
             </div>
           </div>
@@ -14462,36 +14700,39 @@ HEALTH   : ${info.health}`
         const infRowsHtml = infPassengers.length > 0 ? infPassengers.map((inf, i) => `
           <div class="bg-white border border-[#cbd5e1] rounded p-3 space-y-2">
             <div class="flex items-center justify-between text-[#dc2626] font-bold">
-              <span>Infant Passenger #${i + 1}: ${inf.fullName} (Input Mandatory 3INFT Age &amp; DOB)</span>
-              <button type="button" class="btn-inf-example bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] px-2 py-0.5 rounded font-normal" data-idx="${i}">Example</button>
+              <span>Please input : 3INFT (${inf.fullName})</span>
+              <button type="button" class="btn-inf-example bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] px-2.5 py-0.5 rounded font-semibold cursor-pointer" data-idx="${i}">Example (01DEC25)</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
               <div>
-                <span class="font-semibold block text-[10px] text-[#475569]">Infant Name:</span>
+                <span class="font-semibold block text-[10px] text-[#475569]">Surname/GivenNameTitle:</span>
                 <input type="text" class="inp-inf-name w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold" value="${inf.fullName}">
               </div>
               <div>
-                <span class="font-semibold block text-[10px] text-[#475569]">Accompanying Adult:</span>
+                <span class="font-semibold block text-[10px] text-[#475569]">Pax Name/Select (Adult):</span>
                 <select class="inp-inf-adt w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono">
                   ${adtOptionsHtml}
                 </select>
               </div>
               <div>
-                <span class="font-semibold block text-[10px] text-[#475569]">Age (01–23 Mos):</span>
-                <select class="inp-inf-age w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold">
-                  <option value="I05">05 Mos (*I05)</option>
-                  <option value="I06">06 Mos (*I06)</option>
-                  <option value="I08">08 Mos (*I08)</option>
-                  <option value="I10">10 Mos (*I10)</option>
-                  <option value="I12">12 Mos (*I12)</option>
-                  <option value="I15">15 Mos (*I15)</option>
-                  <option value="I18">18 Mos (*I18)</option>
-                  <option value="I22">22 Mos (*I22)</option>
+                <span class="font-semibold block text-[10px] text-[#475569]">Infant Age (01–23 Mos):</span>
+                <select class="inp-inf-age w-full bg-white border border-[#94a3b8] rounded px-2 py-1 font-mono font-bold" data-idx="${i}">
+                  <option value="I05" data-dob="01DEC25">05 Mos (*I05)</option>
+                  <option value="I06" data-dob="01NOV25">06 Mos (*I06)</option>
+                  <option value="I08" data-dob="01SEP25">08 Mos (*I08)</option>
+                  <option value="I10" data-dob="01JUL25">10 Mos (*I10)</option>
+                  <option value="I12" data-dob="01MAY25">12 Mos (*I12)</option>
+                  <option value="I15" data-dob="01FEB25">15 Mos (*I15)</option>
+                  <option value="I18" data-dob="01NOV24">18 Mos (*I18)</option>
+                  <option value="I22" data-dob="01JUL24">22 Mos (*I22)</option>
                 </select>
               </div>
               <div>
                 <span class="font-semibold block text-[10px] text-[#dc2626]">DOB (ddMMMyy) *Required:</span>
-                <input type="text" class="inp-inf-dob w-full bg-white border-2 border-[#dc2626] rounded px-2 py-1 font-mono font-bold uppercase" placeholder="e.g. 01DEC25" value="">
+                <div class="flex items-center gap-1">
+                  <input type="text" class="inp-inf-dob w-full bg-white border-2 border-[#dc2626] rounded px-2 py-1 font-mono font-bold uppercase" placeholder="e.g. 01DEC25" value="">
+                  <button type="button" class="btn-inf-example bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-[#94a3b8] px-2 py-1 rounded text-xs cursor-pointer" data-idx="${i}" title="Auto-fill DOB">📅</button>
+                </div>
               </div>
             </div>
           </div>
@@ -14501,7 +14742,10 @@ HEALTH   : ${info.health}`
         bodyEl.innerHTML = `
           <div class="bg-[#e2e8f0] border border-[#94a3b8] rounded p-4 space-y-4 font-sans text-xs text-[#0f172a]">
             <div class="flex items-center justify-between bg-[#fef2f2] border border-[#f87171] rounded px-3 py-2 text-[#b91c1c] font-bold">
-              <span>⚠ PNR Creation (ER) is paused until mandatory Child/Infant DOB (ddMMMyy) is entered and saved below.</span>
+              <label class="flex items-center gap-2">
+                <input type="checkbox" checked readonly>
+                <span>Enable auto prompt for CHD/INF DOB (Mandatory on ER before PNR creation)</span>
+              </label>
               <span class="font-mono text-[11px]">3CHLD / 3INFT</span>
             </div>
 
@@ -14515,32 +14759,95 @@ HEALTH   : ${info.health}`
             ` : ''}
 
             <div id="chdInfDobValidationAlert" class="hidden bg-[#dc2626] text-white font-bold px-3 py-2 rounded">
-              ✕ Please enter the Date of Birth (DOB in ddMMMyy format, e.g. 01NOV16 or 01DEC25) for all Child/Infant passengers before saving!
+              ✕ Please enter the Date of Birth (e.g. 01NOV16 or click the [Example] / 📅 button) for all Child/Infant passengers before saving!
             </div>
 
-            <div class="flex items-center justify-between pt-2 border-t border-[#cbd5e1]">
-              <span class="text-[#475569] font-semibold">After clicking Save, enter <code class="font-mono font-bold text-[#0f172a]">ER</code> and then <code class="font-mono font-bold text-[#0f172a]">IR</code> to finalize PNR.</span>
-              <button type="button" id="btnSubmitChdInfDob" class="bg-[#0f766e] hover:bg-[#115e59] text-white font-bold px-6 py-2 rounded shadow">
-                ✓ Save Age &amp; DOB (Close Box)
-              </button>
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#cbd5e1]">
+              <span class="text-[#475569] font-semibold">After clicking Send / Save, this box closes automatically — then enter <code class="font-mono font-bold text-[#0f172a]">ER</code> and <code class="font-mono font-bold text-[#0f172a]">IR</code>.</span>
+              <div class="flex items-center gap-2">
+                <button type="button" id="btnAutoFillAllChdInfDob" class="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0f172a] border border-[#94a3b8] font-semibold px-3 py-2 rounded cursor-pointer">
+                  ⚡ Auto-Fill Example DOBs
+                </button>
+                <button type="button" id="btnSubmitChdInfDob" class="bg-[#0f766e] hover:bg-[#115e59] text-white font-bold px-6 py-2 rounded shadow cursor-pointer">
+                  ✓ Send / Save Age &amp; DOB
+                </button>
+              </div>
             </div>
           </div>
         `;
 
-        setTimeout(() => {
+        // Helper to normalize flexible user input into ddMMMyy (e.g. "01NOV16")
+        const normalizeDobInput = (rawVal, fallbackDob) => {
+          const v = (rawVal || '').trim().toUpperCase();
+          if (!v) return '';
+          if (/^\d{2}[A-Z]{3}\d{2}$/.test(v)) return v;
+          if (/^\d{1}[A-Z]{3}\d{2}$/.test(v)) return '0' + v;
+          if (/^\d{2}[A-Z]{3}\d{4}$/.test(v)) return v.slice(0, 5) + v.slice(7, 9);
+          // If user typed YYYY-MM-DD or DD/MM/YYYY or numeric age, convert cleanly
+          const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+          const iso = v.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+          if (iso) {
+            const yy = iso[1].slice(2, 4);
+            const mm = months[(parseInt(iso[2], 10) - 1) % 12] || 'NOV';
+            const dd = iso[3].padStart(2, '0');
+            return `${dd}${mm}${yy}`;
+          }
+          const dmy = v.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{2,4})$/);
+          if (dmy) {
+            const dd = dmy[1].padStart(2, '0');
+            const mm = months[(parseInt(dmy[2], 10) - 1) % 12] || 'NOV';
+            const yy = dmy[3].length === 4 ? dmy[3].slice(2, 4) : dmy[3];
+            return `${dd}${mm}${yy}`;
+          }
+          // If user typed at least 2 characters (e.g. age "10" or "05"), map to fallbackDob
+          if (v.length >= 1) return fallbackDob;
+          return '';
+        };
+
+        const wireChdInfHandlers = () => {
           bodyEl.querySelectorAll('.btn-chd-example').forEach(btn => {
             btn.addEventListener('click', (e) => {
               const idx = parseInt(e.currentTarget.getAttribute('data-idx') || '0', 10);
               const inputs = bodyEl.querySelectorAll('.inp-chd-dob');
-              if (inputs[idx]) inputs[idx].value = '01NOV16';
+              const selects = bodyEl.querySelectorAll('.inp-chd-age');
+              const selOpt = selects[idx]?.selectedOptions?.[0];
+              const dob = selOpt?.getAttribute('data-dob') || '01NOV16';
+              if (inputs[idx]) inputs[idx].value = dob;
+              document.getElementById('chdInfDobValidationAlert')?.classList.add('hidden');
+            });
+          });
+          bodyEl.querySelectorAll('.inp-chd-age').forEach(sel => {
+            sel.addEventListener('change', (e) => {
+              const idx = parseInt(e.currentTarget.getAttribute('data-idx') || '0', 10);
+              const inputs = bodyEl.querySelectorAll('.inp-chd-dob');
+              const dob = e.currentTarget.selectedOptions?.[0]?.getAttribute('data-dob') || '01NOV16';
+              if (inputs[idx] && !inputs[idx].value.trim()) inputs[idx].value = dob;
             });
           });
           bodyEl.querySelectorAll('.btn-inf-example').forEach(btn => {
             btn.addEventListener('click', (e) => {
               const idx = parseInt(e.currentTarget.getAttribute('data-idx') || '0', 10);
               const inputs = bodyEl.querySelectorAll('.inp-inf-dob');
-              if (inputs[idx]) inputs[idx].value = '01DEC25';
+              const selects = bodyEl.querySelectorAll('.inp-inf-age');
+              const selOpt = selects[idx]?.selectedOptions?.[0];
+              const dob = selOpt?.getAttribute('data-dob') || '01DEC25';
+              if (inputs[idx]) inputs[idx].value = dob;
+              document.getElementById('chdInfDobValidationAlert')?.classList.add('hidden');
             });
+          });
+          bodyEl.querySelectorAll('.inp-inf-age').forEach(sel => {
+            sel.addEventListener('change', (e) => {
+              const idx = parseInt(e.currentTarget.getAttribute('data-idx') || '0', 10);
+              const inputs = bodyEl.querySelectorAll('.inp-inf-dob');
+              const dob = e.currentTarget.selectedOptions?.[0]?.getAttribute('data-dob') || '01DEC25';
+              if (inputs[idx] && !inputs[idx].value.trim()) inputs[idx].value = dob;
+            });
+          });
+
+          document.getElementById('btnAutoFillAllChdInfDob')?.addEventListener('click', () => {
+            bodyEl.querySelectorAll('.inp-chd-dob').forEach(inp => { if (!inp.value.trim()) inp.value = '01NOV16'; });
+            bodyEl.querySelectorAll('.inp-inf-dob').forEach(inp => { if (!inp.value.trim()) inp.value = '01DEC25'; });
+            document.getElementById('chdInfDobValidationAlert')?.classList.add('hidden');
           });
 
           document.getElementById('btnSubmitChdInfDob')?.addEventListener('click', () => {
@@ -14551,10 +14858,9 @@ HEALTH   : ${info.health}`
             const infNameInputs = Array.from(bodyEl.querySelectorAll('.inp-inf-name'));
             const infAdtSelects = Array.from(bodyEl.querySelectorAll('.inp-inf-adt'));
 
-            // Validate every DOB input is non-empty and matches ddMMMyy (e.g. 01NOV16)
-            const dobRegex = /^\d{2}[A-Z]{3}\d{2}$/i;
-            const anyMissing = chdDobInputs.some(i => !dobRegex.test(i.value.trim())) ||
-                               infDobInputs.some(i => !dobRegex.test(i.value.trim()));
+            // Require every Child/Infant DOB input to be non-empty before saving
+            const anyMissing = chdDobInputs.some(i => !i.value.trim()) ||
+                               infDobInputs.some(i => !i.value.trim());
             if (anyMissing && (chdPassengers.length > 0 || infPassengers.length > 0)) {
               document.getElementById('chdInfDobValidationAlert')?.classList.remove('hidden');
               return;
@@ -14564,7 +14870,8 @@ HEALTH   : ${info.health}`
 
             // Save Child PDT & 3CHLD SSR
             chdPassengers.forEach((c, idx) => {
-              const dobVal = (chdDobInputs[idx]?.value || '01NOV16').trim().toUpperCase();
+              const fallbackDob = chdAgeSelects[idx]?.selectedOptions?.[0]?.getAttribute('data-dob') || '01NOV16';
+              const dobVal = normalizeDobInput(chdDobInputs[idx]?.value, fallbackDob) || '01NOV16';
               const ageCode = (chdAgeSelects[idx]?.value || 'C10').trim().toUpperCase();
               if (c.rawObj && !c.rawObj.fullName.includes('*C')) {
                 c.rawObj.fullName = `${c.rawObj.fullName}*${ageCode}`;
@@ -14579,22 +14886,23 @@ HEALTH   : ${info.health}`
 
             // Save Infant PDT & 3INFT SSR across segments
             infPassengers.forEach((inf, idx) => {
-              const dobVal = (infDobInputs[idx]?.value || '01DEC25').trim().toUpperCase();
+              const fallbackDob = infAgeSelects[idx]?.selectedOptions?.[0]?.getAttribute('data-dob') || '01DEC25';
+              const dobVal = normalizeDobInput(infDobInputs[idx]?.value, fallbackDob) || '01DEC25';
               const ageCode = (infAgeSelects[idx]?.value || 'I05').trim().toUpperCase();
               const infCleanName = (infNameInputs[idx]?.value || inf.fullName).trim().toUpperCase();
               const assocAdt = (infAdtSelects[idx]?.value || '1.1').trim();
               if (inf.rawObj) {
-                const baseName = inf.rawObj.fullName.startsWith('I/') ? inf.rawObj.fullName.split('*')[0] : `I/${inf.rawObj.fullName.split('*')[0]}`;
+                const baseName = inf.rawObj.fullName.startsWith('I/') ? inf.rawObj.fullName.split('*')[0] : `I/1${inf.rawObj.fullName.split('*')[0]}`;
                 inf.rawObj.fullName = `${baseName}*${ageCode}`;
               }
               if (draft.segments.length > 0) {
                 draft.segments.forEach(sg => {
                   if (sg.carrier === 'ARNK') return;
-                  const ssrInf = `INFT ${sg.carrier} NN1 ${sg.orig}${sg.dest}0${sg.flight}${sg.bookingClass}${sg.date}/${infCleanName}/${dobVal}-${assocAdt}`;
+                  const ssrInf = `INFT ${sg.carrier} KK1 ${sg.orig}${sg.dest}0${sg.flight}${sg.bookingClass}${sg.date}/${infCleanName}/${dobVal}`;
                   if (!draft.ssr.includes(ssrInf)) draft.ssr.push(ssrInf);
                 });
               } else {
-                draft.ssr.push(`INFT ${cxr} NN1/${infCleanName}/${dobVal}-${assocAdt}`);
+                draft.ssr.push(`INFT ${cxr} KK1/${infCleanName}/${dobVal}-${assocAdt}`);
               }
               session.transcript.push({
                 type: 'success',
@@ -14603,22 +14911,25 @@ HEALTH   : ${info.health}`
             });
 
             draft.chdInfDobVerified = true;
+            // Automatically close the Child/Infant Age & DOB Box immediately upon saving!
             modal.classList.add('hidden');
             session.transcript.push({
               type: 'info',
-              text: `✓ CHILD/INFANT AGE & DOB SAVED! NOW ENTER 'ER' TO COMMIT PNR, THEN ENTER 'IR' TO DISPLAY CONFIRMED PNR.`
+              text: `✓ CHILD/INFANT AGE & DOB SAVED & BOX CLOSED! NOW ENTER 'ER' TO SAVE PNR, THEN ENTER 'IR' TO DISPLAY CONFIRMED PNR.`
             });
             finishExecution();
-            showToast('Child/Infant DOB Saved! Now enter ER then IR.');
+            showToast('Child/Infant DOB Saved & Box Closed! Now enter ER then IR.');
+            document.getElementById('terminalInput')?.focus();
           });
-        }, 20);
+        };
 
+        wireChdInfHandlers();
         modal.classList.remove('hidden');
-      }
+      };
+      window.openChdInfDobModal = openChdInfDobModal;
 
       document.getElementById('btnOpenChdInfDobHelper')?.addEventListener('click', openChdInfDobModal);
 
-      
       updateSavedPnrDropdown();
       document.getElementById('savedPnrQuickSelect')?.addEventListener('change', (e) => {
         const loc = e.target.value;
@@ -14632,38 +14943,37 @@ HEALTH   : ${info.health}`
         copyTextToClipboard(allText || 'No terminal output to copy.', e.currentTarget);
       });
 
-      
       // =====================================================================
       // PROGRAMMABLE F1–F12 FUNCTION KEYS & FAST PNR MACRO ENGINE
       // =====================================================================
       const DEFAULT_STEP_BY_STEP_FKEYS = [
         { key: 'F1',  label: '1. Avail',      cmd: '125DECDACBKK' },
-        { key: 'F2',  label: '2. Sell 01Y1',  cmd: '01Y3' },
-        { key: 'F3',  label: '3. Name (-)',   cmd: '-TAWHA/MOKTADA AS SADAR MR' },
-        { key: 'F4',  label: '4. Phone (9)',  cmd: '9 MTTCTC01980284967REFTAWHA' },
+        { key: 'F2',  label: '2. Sell 03Y3',  cmd: '03Y3' },
+        { key: 'F3',  label: '3. Name (-)',   cmd: '-HOSSAIN/RAHAT MR' },
+        { key: 'F4',  label: '4. Phone (9)',  cmd: '9 ATAB TOURS AND TRAVELS REF RAHAT' },
         { key: 'F5',  label: '5. Tkt (7TAW)', cmd: '7TAW/' },
-        { key: 'F6',  label: '6. Rcvd (6)',   cmd: '6TAWHA' },
+        { key: 'F6',  label: '6. Rcvd (6)',   cmd: '6R' },
         { key: 'F7',  label: '7. Save (ER)',  cmd: 'ER' },
         { key: 'F8',  label: '8. Retr (IR)',  cmd: 'IR' },
         { key: 'F9',  label: '9. Price (WP)', cmd: 'WPABG' },
         { key: 'F10', label: '10. Store PQ',  cmd: 'PQ' },
-        { key: 'F11', label: '11. APIS All',  cmd: '3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1 ; 3CTCM/01980284967-1.1 ; 3CTCE/MOKTADA200644//GMAIL.COM-1.1 ; ER' },
-        { key: 'F12', label: '12. Issue Tkt', cmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER' }
+        { key: 'F11', label: '11. Issue Tkt', cmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER' },
+        { key: 'F12', label: '12. View *T',   cmd: '*T' }
       ];
 
       const FAST_PNR_MACRO_FKEYS = [
-        { key: 'F1',  label: '⚡ Fast Adult PNR',  cmd: '120NOVDACDXB¥BG ; 01Y1 ; -TAWHA/MOKTADA AS SADAR MR ; 9 MTTCTC01980284967REFTAWHA ; 7TAW/ ; 6TAWHA ; ER ; IR' },
-        { key: 'F2',  label: '👨‍👩‍👧‍👦 Family PNR (Chd/Inf)', cmd: '125DECDACBKK ; 03Y3 ; -HOSSAIN/RAHAT MR ; -HOSSAIN/JANNAT MRS ; -HOSSAIN/ABRAR MSTR ; -I/HOSSAIN/KABITA MISS ; 9 DAC997488-A ; 7TAW/ ; 6R ; ER' },
-        { key: 'F3',  label: '🛂 Fast APIS+CTC',   cmd: '3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1 ; 3CTCM/01980284967-1.1 ; 3CTCE/MOKTADA200644//GMAIL.COM-1.1 ; ER ; IR' },
-        { key: 'F4',  label: '💰 Fast Price+PQ',   cmd: 'WPABG ; PQ ; ER ; IR' },
-        { key: 'F5',  label: '🎫 Issue E-Ticket',  cmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER' },
-        { key: 'F6',  label: '📋 Check *T',        cmd: '*T' },
-        { key: 'F7',  label: '🔍 Check WETR*2',    cmd: 'WETR*2' },
-        { key: 'F8',  label: '💸 Refund Quote',    cmd: 'WFRA2' },
-        { key: 'F9',  label: '🔄 Reissue (WFRF)',  cmd: 'WFRFTR2¥ABG' },
-        { key: 'F10', label: '📊 Fare Load (FQ)',  cmd: 'FQ12NOV26DACBKK25DEC26-BG¥BY' },
-        { key: 'F11', label: '📜 Rules (RD1)',     cmd: 'RD1' },
-        { key: 'F12', label: '🧹 Ignore (I)',      cmd: 'I' }
+        { key: 'F1',  label: '⚡ Fast Adult PNR',      cmd: '125DECDACBKK ; 01Y1 ; -TAWHA/MOKTADA AS SADAR MR ; 9 ATAB TOURS AND TRAVELS REF TAWHA ; 7TAW/ ; 6TAWHA ; ER ; IR' },
+        { key: 'F2',  label: '👨‍👩‍👧‍👦 Family PNR (Chd/Inf)', cmd: '125DECDACBKK ; 03Y3 ; -HOSSAIN/RAHAT MR ; -HOSSAIN/JANNAT MRS ; -HOSSAIN/ABRAR MSTR ; -I/HOSSAIN/KABITA MISS ; 9 ATAB TOURS AND TRAVELS REF RAHAT ; 7TAW/ ; 6R ; ER' },
+        { key: 'F3',  label: '🛂 Fast APIS+CTC',       cmd: '3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1 ; 3CTCM/01980284967-1.1 ; 3CTCE/MOKTADA200644//GMAIL.COM-1.1 ; ER ; IR' },
+        { key: 'F4',  label: '💰 Fast Price+PQ',       cmd: 'WPABG ; PQ' },
+        { key: 'F5',  label: '🎫 Issue E-Ticket',      cmd: 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER' },
+        { key: 'F6',  label: '📋 Check *T',            cmd: '*T' },
+        { key: 'F7',  label: '🔍 Check WETR*2',        cmd: 'WETR*2' },
+        { key: 'F8',  label: '💸 Refund Quote',        cmd: 'WFRA2' },
+        { key: 'F9',  label: '🔄 Reissue (WFRF)',      cmd: 'WFRFTR2¥ABG' },
+        { key: 'F10', label: '📊 Fare Load (FQ)',      cmd: 'FQ12NOV26DACBKK25DEC26-BG¥BY' },
+        { key: 'F11', label: '📜 Rules (RD1)',         cmd: 'RD1' },
+        { key: 'F12', label: '🧹 Ignore (I)',          cmd: 'I' }
       ];
 
       let userProgrammableFKeys = JSON.parse(JSON.stringify(DEFAULT_STEP_BY_STEP_FKEYS));
@@ -14677,51 +14987,88 @@ HEALTH   : ${info.health}`
         }
       } catch (e) {}
 
-      function executeFKeyMacro(fKeyIndex) {
+      executeFKeyMacro = function(fKeyIndex) {
         const fkObj = userProgrammableFKeys[fKeyIndex];
         if (!fkObj || !fkObj.cmd) return;
+
+        // Visual flash feedback on the active F-Key button
+        const btnEl = document.querySelector(`.custom-fkey-btn[data-fkidx="${fKeyIndex}"]`);
+        if (btnEl) {
+          btnEl.classList.add('ring-2', 'ring-[#A3E635]');
+          setTimeout(() => btnEl.classList.remove('ring-2', 'ring-[#A3E635]'), 350);
+        }
+
         // Split macro by ';' or newline so multi-command Fast PNR macros run sequentially!
         const steps = fkObj.cmd
           .split(/[;\n]+/)
           .map(s => s.trim())
           .filter(Boolean);
         if (steps.length === 0) return;
-        showToast(`${fkObj.key} (${fkObj.label}) ➔ Running ${steps.length > 1 ? steps.length + ' commands' : steps[0]}`);
+        showToast(`${fkObj.key} (${fkObj.label}) ➔ Running: ${steps.join(' ➔ ')}`);
         steps.forEach(stepCmd => {
           executeCrypticCommand(stepCmd);
         });
-      }
+      };
+      window.executeFKeyMacro = executeFKeyMacro;
 
-      function renderFKeysTopBar() {
+      renderFKeysTopBar = function() {
+        const bar = document.getElementById('pfKeysBar');
+        if (bar) bar.classList.remove('hidden');
         const container = document.getElementById('fKeysButtonsContainer');
         if (!container) return;
-        container.innerHTML = userProgrammableFKeys.map((fk, idx) => `
-          <button
-            type="button"
-            data-fkidx="${idx}"
-            class="custom-fkey-btn bg-[#0B0F14] hover:border-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6] whitespace-nowrap flex items-center gap-1 transition"
-            title="${fk.key}: ${fk.cmd.replace(/"/g, '&quot;')}"
-          >
-            <strong class="text-[#A3E635]">${fk.key}</strong>
-            <span class="text-[#9CA3AF]">${fk.label}</span>
-          </button>
-        `).join('');
+        container.innerHTML = userProgrammableFKeys.map((fk, idx) => {
+          const shortCmd = fk.cmd.length > 14 ? fk.cmd.slice(0, 12) + '…' : fk.cmd;
+          return `
+            <div class="inline-flex items-center bg-[#0B0F14] border border-[#26303D] hover:border-[#A3E635] rounded overflow-hidden shrink-0 transition">
+              <button
+                type="button"
+                data-fkidx="${idx}"
+                class="custom-fkey-btn px-2 py-1 text-[#F3F4F6] whitespace-nowrap flex items-center gap-1 cursor-pointer"
+                title="Click or press ${fk.key} to run: ${fk.cmd.replace(/"/g, '&quot;')}"
+              >
+                <strong class="text-[#A3E635]">${fk.key}</strong>
+                <span class="text-[#F3F4F6] font-medium">${fk.label}</span>
+                <span class="text-[9px] text-cyan-300/90 hidden sm:inline">(${shortCmd})</span>
+              </button>
+              <button
+                type="button"
+                data-fkedit="${idx}"
+                class="custom-fkey-edit-btn px-1.5 py-1 text-[10px] text-[#9CA3AF] hover:text-[#A3E635] border-l border-[#26303D] cursor-pointer"
+                title="Store / Edit command for ${fk.key}"
+              >✎</button>
+            </div>
+          `;
+        }).join('');
 
         container.querySelectorAll('.custom-fkey-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const idx = parseInt(e.currentTarget.getAttribute('data-fkidx') || '0', 10);
             executeFKeyMacro(idx);
           });
+          btn.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const idx = parseInt(e.currentTarget.getAttribute('data-fkidx') || '0', 10);
+            openFKeysConfigModal(idx);
+          });
         });
-      }
 
-      function openFKeysConfigModal() {
+        container.querySelectorAll('.custom-fkey-edit-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(e.currentTarget.getAttribute('data-fkedit') || '0', 10);
+            openFKeysConfigModal(idx);
+          });
+        });
+      };
+      window.renderFKeysTopBar = renderFKeysTopBar;
+
+      openFKeysConfigModal = function(focusIdx = null) {
         const modal = document.getElementById('fKeysConfigModal');
         const grid = document.getElementById('fKeysEditorGrid');
         if (!modal || !grid) return;
 
         grid.innerHTML = userProgrammableFKeys.map((fk, idx) => `
-          <div class="bg-[#121821] border border-[#26303D] rounded-lg p-3 space-y-2">
+          <div class="bg-[#121821] border ${focusIdx === idx ? 'border-[#A3E635]' : 'border-[#26303D]'} rounded-lg p-3 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span class="bg-[#A3E635] text-[#0B0F14] font-mono font-bold px-2 py-0.5 rounded text-xs">${fk.key}</span>
               <input
@@ -14731,7 +15078,10 @@ HEALTH   : ${info.health}`
                 value="${fk.label.replace(/"/g, '&quot;')}"
                 placeholder="Button Label (e.g. Fast PNR)"
               >
-              <button type="button" class="fk-test-run-btn bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] font-mono px-2 py-1 rounded text-[11px]" data-idx="${idx}">
+              <button type="button" class="fk-capture-btn bg-[#0B0F14] hover:border-[#A3E635] text-cyan-300 border border-[#26303D] font-mono px-2 py-1 rounded text-[10px] cursor-pointer" data-idx="${idx}" title="Save current terminal input or last command into ${fk.key}">
+                + Capture Input
+              </button>
+              <button type="button" class="fk-test-run-btn bg-[#A3E635] text-[#0B0F14] font-mono font-bold px-2.5 py-1 rounded text-[11px] cursor-pointer" data-idx="${idx}">
                 ▶ Run
               </button>
             </div>
@@ -14741,11 +15091,26 @@ HEALTH   : ${info.health}`
                 class="fk-edit-cmd w-full bg-[#0B0F14] border border-[#26303D] focus:border-[#A3E635] rounded px-2.5 py-1.5 font-mono text-xs text-[#A3E635] outline-none"
                 data-idx="${idx}"
                 value="${fk.cmd.replace(/"/g, '&quot;')}"
-                placeholder="Sabre command or ';' separated Fast PNR macro..."
+                placeholder="Enter Sabre command or ';' separated Fast PNR macro..."
               >
             </div>
           </div>
         `).join('');
+
+        grid.querySelectorAll('.fk-capture-btn').forEach(b => {
+          b.addEventListener('click', (ev) => {
+            const idx = parseInt(ev.currentTarget.getAttribute('data-idx') || '0', 10);
+            const termInpVal = (document.getElementById('terminalInput')?.value || '').trim();
+            const hist = areaSessions[currentArea]?.history || [];
+            const lastCmd = hist.length > 0 ? hist[hist.length - 1] : '125DECDACBKK';
+            const captured = termInpVal || lastCmd;
+            const cmdInputs = grid.querySelectorAll('.fk-edit-cmd');
+            if (cmdInputs[idx]) {
+              cmdInputs[idx].value = captured;
+              showToast(`Captured "${captured}" into F${idx + 1} — Click Save below!`);
+            }
+          });
+        });
 
         grid.querySelectorAll('.fk-test-run-btn').forEach(b => {
           b.addEventListener('click', (ev) => {
@@ -14757,9 +15122,14 @@ HEALTH   : ${info.health}`
         });
 
         modal.classList.remove('hidden');
-      }
+        if (focusIdx !== null) {
+          const targetInp = grid.querySelectorAll('.fk-edit-cmd')[focusIdx];
+          if (targetInp) setTimeout(() => { targetInp.focus(); targetInp.select(); }, 30);
+        }
+      };
+      window.openFKeysConfigModal = openFKeysConfigModal;
 
-      function saveFKeysFromInputs() {
+      saveFKeysFromInputs = function() {
         const grid = document.getElementById('fKeysEditorGrid');
         if (!grid) return;
         const lbls = grid.querySelectorAll('.fk-edit-label');
@@ -14774,11 +15144,12 @@ HEALTH   : ${info.health}`
           localStorage.setItem('sabre_custom_fkeys_v1', JSON.stringify(userProgrammableFKeys));
         } catch (e) {}
         renderFKeysTopBar();
-      }
+      };
+      window.saveFKeysFromInputs = saveFKeysFromInputs;
 
       renderFKeysTopBar();
 
-      document.getElementById('btnOpenFKeysConfigModal')?.addEventListener('click', openFKeysConfigModal);
+      document.getElementById('btnOpenFKeysConfigModal')?.addEventListener('click', () => openFKeysConfigModal());
       document.getElementById('btnCloseFKeysConfigModal')?.addEventListener('click', () => {
         document.getElementById('fKeysConfigModal')?.classList.add('hidden');
       });
@@ -14802,22 +15173,33 @@ HEALTH   : ${info.health}`
         showToast('Loaded 1-Key Fast PNR Macros onto F1–F12!');
       });
 
-      // Global Hardware Keyboard F1–F12 Listener (Automatically executes saved F1–F12 command when pressed!)
+      // Global Hardware Keyboard F1–F12 Listener in CAPTURE PHASE (plus Alt+1..Alt+= fallback)
       window.addEventListener('keydown', (e) => {
-        if (/^F([1-9]|1[0-2])$/.test(e.key)) {
-          const termWrapper = document.getElementById('terminalWorkspaceWrapper');
-          if (termWrapper && !termWrapper.classList.contains('hidden')) {
-            e.preventDefault();
-            const fNum = parseInt(e.key.substring(1), 10);
-            executeFKeyMacro(fNum - 1);
-          }
+        const keyStr = e.key || e.code || '';
+        const fMatch = keyStr.match(/^F([1-9]|1[0-2])$/i);
+        let targetFIdx = -1;
+        if (fMatch) {
+          targetFIdx = parseInt(fMatch[1], 10) - 1;
+        } else if (e.altKey && !e.ctrlKey && !e.metaKey) {
+          const altMap = { '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '0': 9, '-': 10, '=': 11 };
+          if (altMap[e.key] !== undefined) targetFIdx = altMap[e.key];
         }
-      });
+        if (targetFIdx >= 0 && targetFIdx < 12) {
+          e.preventDefault();
+          e.stopPropagation();
+          // Ensure we are in the terminal view if an F-key is pressed
+          const termWrapper = document.getElementById('terminalWorkspaceWrapper');
+          if (termWrapper && termWrapper.classList.contains('hidden')) {
+            navigateToRoute('/terminal');
+          }
+          executeFKeyMacro(targetFIdx);
+        }
+      }, { capture: true });
 
       // =====================================================================
       // REAL SABRE PNR LIVE IMPORTER & PARSER (*<LOCATOR> OR RAW *A TEXT)
       // =====================================================================
-      function openRealSabrePnrModalForLocator(locCode = '') {
+      openRealSabrePnrModalForLocator = function(locCode = '') {
         const modal = document.getElementById('realSabrePnrModal');
         const locInp = document.getElementById('inpRealPnrLoc');
         const titleEl = document.getElementById('realSabreModalTitle');
@@ -14831,7 +15213,8 @@ HEALTH   : ${info.health}`
             : 'Open or Import Real Sabre PNR';
         }
         modal.classList.remove('hidden');
-      }
+      };
+      window.openRealSabrePnrModalForLocator = openRealSabrePnrModalForLocator;
 
       document.getElementById('btnOpenRealSabreImporter')?.addEventListener('click', () => {
         openRealSabrePnrModalForLocator('');
@@ -14860,7 +15243,7 @@ HEALTH   : ${info.health}`
         }
         if (!loc) loc = (document.getElementById('inpRealPnrLoc')?.value || 'REAL1S').trim().toUpperCase().slice(0, 6);
 
-        // Extract Passenger Names (e.g. 1.1SURNAME/GIVEN MR or 1.I/1SURNAME/GIVEN MISS*I05)
+        // Extract Passenger Names
         const parsedNames = [];
         const nameRegex = /(?:\b\d+\.(?:\d+|I\/\d*)\s*)([A-Z]+\/[A-Z\s]+(?:MR|MRS|MS|MSTR|MISS|CHD|INF)?(?:\*[CI]\d{1,2})?)/g;
         let nmMatch;
@@ -14878,7 +15261,7 @@ HEALTH   : ${info.health}`
           parsedNames.push({ index: 1, fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT' });
         }
 
-        // Extract Flight Segments (e.g. 1 BG 388Y 25DEC 5 DACBKK HK3 1115 1500)
+        // Extract Flight Segments
         const parsedSegs = [];
         const segRegex = /^\d+\s+([A-Z0-9]{2})\s+(\d{1,4})([A-Z])\s+(\d{1,2}[A-Z]{3})(?:\s+\d)?\s+([A-Z]{3})([A-Z]{3})\s+([A-Z]{2})(\d+)\s+(\d{4})\s+(\d{4})/;
         lines.forEach(l => {
@@ -14910,7 +15293,7 @@ HEALTH   : ${info.health}`
           });
         }
 
-        // Extract Issued Tickets (e.g. 2.TE 9974883803282-BD HOSSA/R)
+        // Extract Issued Tickets
         const parsedTkts = [];
         const tktRegex = /(\d+)\.(TE|TR|TV)\s+(\d{13})(?:-[A-Z]{2})?\s+([A-Z\/]+)/g;
         let tkMatch;
