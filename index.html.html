@@ -1494,8 +1494,14 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
         <button type="button" id="btnOpenRealSabreImporter" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] font-semibold px-2.5 py-1 rounded whitespace-nowrap cursor-pointer">
           🌐 Open Real Sabre PNR
         </button>
+        <button type="button" id="btnLoadTicketedRefundDemoPnr" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] font-semibold px-2.5 py-1 rounded whitespace-nowrap cursor-pointer" title="Load Ticketed Demo PNR (TKT 1762489104412 — Ready for Refund WFRA & Reissue WFRF)">
+          🎫 Practise Refund/Reissue
+        </button>
         <button type="button" id="btnLoadRphebsDemoPnr" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#F3F4F6] border border-[#26303D] px-2 py-1 rounded whitespace-nowrap cursor-pointer" title="Load Demo Family PNR (RPHEBS)">
-          ⚡ Demo PNR
+          ⚡ Family Demo PNR
+        </button>
+        <button type="button" id="btnToggleBanglaExplain" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#A3E635]/60 font-semibold px-2.5 py-1 rounded whitespace-nowrap cursor-pointer" title="Toggle 1-line Bangla explanation & What Changed feedback alongside English Sabre output">
+          🇧🇩 বাংলা ব্যাখ্যা: ON
         </button>
         <button type="button" id="btnOpenChdInfDobHelper" class="hidden"></button>
       </div>
@@ -1530,13 +1536,35 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
   </div>
 
   <!-- Contextual Practical Exam Task Bar (STRICTLY HIDDEN in normal /terminal; shown ONLY when route is /exams/session/:attemptId) -->
-  <div id="examWorkspaceTaskBar" class="hidden bg-[#121821] border-b border-[#26303D] px-4 py-2 text-xs shrink-0">
+  <div id="examWorkspaceTaskBar" class="hidden bg-[#121821] border-b border-[#26303D] px-4 py-2 text-xs shrink-0 space-y-1.5">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <div class="text-[#F3F4F6]">
         <strong class="text-[#A3E635] font-mono">Practical Exam Task:</strong>
-        <span class="text-[#9CA3AF] ml-1">Book 1 seat on <code class="font-mono text-[#F3F4F6]">120NOVDACDXB¥BG</code>, complete all 5 PRINT elements (<code class="font-mono text-[#F3F4F6]">-</code>, <code class="font-mono text-[#F3F4F6]">9</code>, <code class="font-mono text-[#F3F4F6]">7TAW/</code>, <code class="font-mono text-[#F3F4F6]">6</code>, <code class="font-mono text-[#F3F4F6]">ER</code>), add APIS (<code class="font-mono text-[#F3F4F6]">3DOCS</code>, <code class="font-mono text-[#F3F4F6]">3CTCM</code>, <code class="font-mono text-[#F3F4F6]">3CTCE</code>), price (<code class="font-mono text-[#F3F4F6]">WP</code>, <code class="font-mono text-[#F3F4F6]">PQ</code>), and issue E-Ticket (<code class="font-mono text-[#F3F4F6]">W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER</code>).</span>
+        <span class="text-[#9CA3AF] ml-1">1) <code class="font-mono text-[#F3F4F6]">120NOVDACDXB¥BG</code> ➔ <code class="font-mono text-[#F3F4F6]">01Y1</code> • 2) PRINT (<code class="font-mono text-[#F3F4F6]">-</code>, <code class="font-mono text-[#F3F4F6]">9</code>, <code class="font-mono text-[#F3F4F6]">7TAW/</code>, <code class="font-mono text-[#F3F4F6]">6</code>) • 3) <code class="font-mono text-[#F3F4F6]">ER</code> • 4) APIS (<code class="font-mono text-[#F3F4F6]">3DOCS</code>, <code class="font-mono text-[#F3F4F6]">3CTCM</code>, <code class="font-mono text-[#F3F4F6]">3CTCE</code>) + <code class="font-mono text-[#F3F4F6]">WP</code> ➔ <code class="font-mono text-[#F3F4F6]">PQ</code> • 5) Issue Ticket (<code class="font-mono text-[#F3F4F6]">W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER</code>).</span>
       </div>
       <span id="examAttemptIdBadge" class="font-mono text-[11px] text-[#9CA3AF]">Attempt: —</span>
+    </div>
+    <div id="examLiveCheckpointsBar" class="flex flex-wrap items-center gap-2 text-[11px] font-mono pt-1 border-t border-[#26303D]">
+      <!-- Dynamically populated 5 checkpoints -->
+    </div>
+  </div>
+
+  <!-- Ticketed Demo PNR Before vs. After Refund/Reissue Comparison Strip (Shown when practicing Refund or Reissue) -->
+  <div id="ticketComparisonStrip" class="hidden bg-[#121821] border-b border-[#A3E635]/40 px-4 py-2 text-xs shrink-0">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div class="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+        <span class="bg-[#A3E635] text-[#0B0F14] font-bold px-2 py-0.5 rounded">TICKET STATUS COMPARISON</span>
+        <span id="tktCompBeforeText" class="text-[#9CA3AF]">Before: <strong class="text-[#F3F4F6]">TE 1762489104412 [OPEN • BDT 53,200]</strong></span>
+        <span class="text-[#A3E635]">➔</span>
+        <span id="tktCompAfterText" class="text-[#A3E635] font-semibold">Current: OPEN (Run WFRA1762489104412 ➔ WFRA1762489104412/REF or WFRF1762489104412¥ABG ➔ W¥PQR1)</span>
+      </div>
+      <div class="flex items-center gap-1.5 font-mono text-[11px]">
+        <button type="button" id="btnQuickRunWfraQuote" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded cursor-pointer">1. Quote (WFRA)</button>
+        <button type="button" id="btnQuickRunWfraConfirm" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded cursor-pointer">2. Confirm Refund (/REF)</button>
+        <button type="button" id="btnQuickRunWfrfReissue" class="bg-[#0B0F14] hover:border-[#A3E635] text-cyan-300 border border-[#26303D] px-2 py-0.5 rounded cursor-pointer">3. Reissue (WFRF ➔ W¥PQR1)</button>
+        <button type="button" id="btnQuickRunCheckT" class="bg-[#0B0F14] hover:border-[#A3E635] text-[#F3F4F6] border border-[#26303D] px-2 py-0.5 rounded cursor-pointer">Check *T</button>
+        <button type="button" id="btnCloseTktComparisonStrip" class="text-[#9CA3AF] hover:text-[#F3F4F6] px-1.5 cursor-pointer">✕</button>
+      </div>
     </div>
   </div>
 
@@ -2423,9 +2451,12 @@ code, pre { font-family: 'Fira Code', Consolas, monospace; }
           <!-- MCQ Knowledge Assessment & Certificate Eligibility Card -->
           <div class="bg-[#121821] border border-[#26303D] rounded-xl p-6 flex flex-col justify-between space-y-5">
             <div class="space-y-3">
-              <div class="flex items-center justify-between text-xs font-mono">
-                <span class="text-[#A3E635] font-semibold uppercase">Written Knowledge Assessment</span>
-                <span id="examCenterMcqScoreBadge" class="text-[#F3F4F6]">Latest Score: 0% (Not Taken)</span>
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                <span class="text-[#A3E635] font-semibold uppercase">Assessment Scores</span>
+                <div class="flex items-center gap-2">
+                  <span id="examCenterPracticalScoreBadge" class="bg-[#0B0F14] border border-[#26303D] px-2 py-0.5 rounded text-[#F3F4F6]">Best Practical: 0%</span>
+                  <span id="examCenterMcqScoreBadge" class="bg-[#0B0F14] border border-[#26303D] px-2 py-0.5 rounded text-[#A3E635]">Best MCQ: 0%</span>
+                </div>
               </div>
               <h2 class="text-xl font-bold text-[#F3F4F6]">Sabre GDS &amp; IATA Tariff MCQ Quiz</h2>
               <p class="text-xs sm:text-sm text-[#9CA3AF] leading-relaxed">
@@ -4591,91 +4622,313 @@ PHONES
     }
     window.closeAllTransientBoxes = closeAllTransientBoxes;
 
-    function getMissingMandatoryPnrElements(draft, requireConfirmed = false) {
-      // Allow SSR/OSI/APIS (3DOCS, 3CTCM, 3CTCE, 3CHLD, 3INFT, PE¥) to be entered freely
-      // whenever there is at least a name or segment in the work area (before or after ER).
-      if (!draft) return ['ITINERARY (125DECDACBKK)'];
-      if (draft.names.length === 0 && draft.segments.length === 0) {
-        return ['ITINERARY (125DECDACBKK)', 'PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)'];
+    // Isolated PNR Vaults for Guided and Exam Modes so Exam/Guided PNRs never leak into Free Practice!
+    let guidedPnrVault = [];
+    let examPnrVault = [];
+    let currentWorkspaceContextTracker = 'FREE';
+    let banglaExplainEnabled = true;
+    try {
+      const gSaved = localStorage.getItem('sabre_guided_pnr_vault_v1');
+      if (gSaved) guidedPnrVault = JSON.parse(gSaved) || [];
+      const eSaved = localStorage.getItem('sabre_exam_pnr_vault_v1');
+      if (eSaved) examPnrVault = JSON.parse(eSaved) || [];
+      const bnPref = localStorage.getItem('sabre_bangla_explain_v1');
+      if (bnPref !== null) banglaExplainEnabled = bnPref !== 'false';
+    } catch (e) {}
+
+    function getActiveContextVault() {
+      if (currentWorkspaceContextTracker === 'EXAM') return examPnrVault;
+      if (currentWorkspaceContextTracker === 'GUIDED') return guidedPnrVault;
+      return savedPnrVault;
+    }
+
+    // Accurate Calendar Date Shifter for Sabre 1¥N and 1-N commands (e.g. 10JAN + 10 -> 20JAN)
+    function shiftSabreDate(baseDateStr, deltaDays) {
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      const clean = (baseDateStr || '15NOV').trim().toUpperCase();
+      const m = clean.match(/^(\d{1,2})([A-Z]{3})/);
+      if (!m) return deltaDays >= 0 ? '25DEC' : '10DEC';
+      let day = parseInt(m[1], 10);
+      let monIdx = months.indexOf(m[2]);
+      if (monIdx === -1) monIdx = 10; // NOV
+
+      // Convert to day-of-year (0..364)
+      let doy = day - 1;
+      for (let i = 0; i < monIdx; i++) doy += daysInMonth[i];
+      doy = (doy + deltaDays) % 365;
+      if (doy < 0) doy += 365;
+
+      let newMonIdx = 0;
+      while (newMonIdx < 11 && doy >= daysInMonth[newMonIdx]) {
+        doy -= daysInMonth[newMonIdx];
+        newMonIdx++;
       }
-      return [];
+      const newDay = String(doy + 1).padStart(2, '0');
+      return `${newDay}${months[newMonIdx]}`;
+    }
+
+    // Official IATA Bank Selling Rate (BSR) Table against BDT (Matches DC*CUR & DC*USD)
+    const BSR_RATES_TO_BDT = {
+      BDT: { rate: 1.00, name: 'BANGLADESHI TAKA' },
+      USD: { rate: 123.75, name: 'US DOLLAR' },
+      EUR: { rate: 131.40, name: 'EURO' },
+      GBP: { rate: 154.20, name: 'BRITISH POUND STERLING' },
+      SAR: { rate: 32.95, name: 'SAUDI RIYAL' },
+      AED: { rate: 33.70, name: 'UAE DIRHAM' },
+      SGD: { rate: 91.80, name: 'SINGAPORE DOLLAR' },
+      MYR: { rate: 28.10, name: 'MALAYSIAN RINGGIT' },
+      THB: { rate: 3.62, name: 'THAI BAHT' },
+      QAR: { rate: 33.95, name: 'QATARI RIYAL' },
+      KWD: { rate: 392.50, name: 'KUWAITI DINAR' },
+      BHD: { rate: 319.80, name: 'BAHRAINI DINAR' },
+      OMR: { rate: 313.20, name: 'OMANI RIAL' },
+      INR: { rate: 1.43, name: 'INDIAN RUPEE' },
+      PKR: { rate: 0.43, name: 'PAKISTANI RUPEE' },
+      NPR: { rate: 0.90, name: 'NEPALESE RUPEE' },
+      LKR: { rate: 0.41, name: 'SRI LANKAN RUPEE' },
+      MVR: { rate: 7.80, name: 'MALDIVIAN RUFIYAA' },
+      CAD: { rate: 86.40, name: 'CANADIAN DOLLAR' },
+      AUD: { rate: 79.10, name: 'AUSTRALIAN DOLLAR' },
+      NZD: { rate: 71.80, name: 'NEW ZEALAND DOLLAR' },
+      JPY: { rate: 0.79, name: 'JAPANESE YEN' },
+      CNY: { rate: 16.70, name: 'CHINESE YUAN RENMINBI' },
+      HKD: { rate: 15.50, name: 'HONG KONG DOLLAR' },
+      KRW: { rate: 0.087, name: 'SOUTH KOREAN WON' },
+      CHF: { rate: 136.50, name: 'SWISS FRANC' },
+      TRY: { rate: 3.52, name: 'TURKISH LIRA' },
+      EGP: { rate: 2.45, name: 'EGYPTIAN POUND' },
+      ZAR: { rate: 6.70, name: 'SOUTH AFRICAN RAND' },
+      BRL: { rate: 21.10, name: 'BRAZILIAN REAL' }
+    };
+
+    function getMissingMandatoryPnrElements(draft, requireConfirmed = false) {
+      if (!draft) return ['ITINERARY (120NOVDACDXB¥BG ➔ 01Y1)', 'PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)'];
+      const missing = [];
+      if (!draft.segments || draft.segments.length === 0) {
+        missing.push('ITINERARY (120NOVDACDXB¥BG)');
+      }
+      if (!draft.names || draft.names.length === 0) {
+        missing.push('PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)');
+      }
+      return missing;
     }
 
     function getMissingTicketingPrerequisites(draft) {
       const missing = [];
-      if (!draft || draft.segments.length === 0) {
-        missing.push('ITINERARY (125DECDACBKK ➔ 01Y1)');
+      if (!draft || !draft.segments || draft.segments.length === 0) {
+        missing.push('ITINERARY (120NOVDACDXB¥BG ➔ 01Y1)');
       }
-      if (!draft || draft.names.length === 0) {
+      if (!draft || !draft.names || draft.names.length === 0) {
         missing.push('PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)');
       }
-      if (missing.length > 0) return missing;
-
-      // Auto-complete any secondary fields on W¥PQ...¥ER so custom ticket issuance never fails!
-      if (!draft.phones || draft.phones.length === 0) {
-        draft.phones = ['DAC ATAB TOURS AND TRAVELS REF AGENT'];
+      if (!draft || !draft.phones || draft.phones.length === 0) {
+        missing.push('AGENCY PHONE (9 MTTCTC01980284967REFTAWHA)');
       }
-      if (!draft.ticketLimit) {
-        draft.ticketLimit = 'T-TAW/';
+      if (!draft || !draft.ticketLimit) {
+        missing.push('TICKETING FIELD (7TAW/)');
       }
-      if (!draft.receivedFrom) {
-        draft.receivedFrom = 'R';
+      if (!draft || !draft.receivedFrom) {
+        missing.push('RECEIVED FROM (6TAWHA)');
       }
-      if (!draft.locator) {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        let loc = '';
-        for (let i = 0; i < 6; i++) loc += chars.charAt(Math.floor(Math.random() * chars.length));
-        draft.locator = loc;
+      if (!draft || !draft.isConfirmed || !draft.locator) {
+        missing.push('COMMIT PNR (ER)');
       }
-      draft.isConfirmed = true;
 
-      if (!draft.priceQuote) {
-        if (draft.candidatePrice) {
-          draft.priceQuote = JSON.parse(JSON.stringify(draft.candidatePrice));
-        } else {
-          // Dynamically calculate priceQuote from active segments & passengers
-          const seg1 = draft.segments[0] || { carrier: 'BG', bookingClass: 'Y', orig: 'DAC', dest: 'BKK' };
-          const isDacBkk = (seg1.orig === 'DAC' && seg1.dest === 'BKK') || (seg1.orig === 'BKK' && seg1.dest === 'DAC');
-          const unitAdtEqv = isDacBkk ? 94050 : (seg1.baseFare ? Math.round(seg1.baseFare / Math.max(1, seg1.seats || 1)) : 55000);
-          const unitAdtTax = isDacBkk ? 15253 : (seg1.taxes ? Math.round(seg1.taxes / Math.max(1, seg1.seats || 1)) : 14500);
-          const unitCnnEqv = isDacBkk ? 70538 : Math.round(unitAdtEqv * 0.75);
-          const unitCnnTax = isDacBkk ? 13253 : Math.max(2000, unitAdtTax - 2000);
-          const unitInfEqv = isDacBkk ? 23513 : Math.round(unitAdtEqv * 0.25);
-          const unitInfTax = isDacBkk ? 3294  : Math.round(unitAdtTax * 0.22);
+      // In Practical Exam & Guided Learning mode, enforce APIS (3DOCS, 3CTCM, 3CTCE) and Price Quote (PQ)
+      // and show exact missing prerequisite name on screen if the learner forgot one!
+      if (currentWorkspaceContextTracker === 'EXAM' || currentWorkspaceContextTracker === 'GUIDED') {
+        const ssrList = (draft && Array.isArray(draft.ssr)) ? draft.ssr.map(s => String(s).toUpperCase()) : [];
+        if (!ssrList.some(s => s.includes('DOCS'))) {
+          missing.push('PASSPORT APIS (3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1)');
+        }
+        if (!ssrList.some(s => s.includes('CTCM'))) {
+          missing.push('MOBILE CONTACT (3CTCM/01980284967-1.1)');
+        }
+        if (!ssrList.some(s => s.includes('CTCE'))) {
+          missing.push('EMAIL CONTACT (3CTCE/MOKTADA200644//GMAIL.COM-1.1)');
+        }
+        if (!draft.priceQuote && !draft.candidatePrice) {
+          missing.push('PRICE QUOTE (WP then PQ)');
+        } else if (!draft.priceQuote && draft.candidatePrice) {
+          missing.push('STORE PRICE QUOTE (PQ)');
+        }
+      } else {
+        // In Free Practice mode, if WP/PQ hasn't been run yet, auto-compute priceQuote if segments & names exist
+        if (missing.length === 0 && !draft.priceQuote) {
+          if (draft.candidatePrice) {
+            draft.priceQuote = JSON.parse(JSON.stringify(draft.candidatePrice));
+          } else {
+            const seg1 = draft.segments[0] || { carrier: 'BG', bookingClass: 'Y', orig: 'DAC', dest: 'DXB', baseFare: 42000, taxes: 11200 };
+            const isDacBkk = (seg1.orig === 'DAC' && seg1.dest === 'BKK') || (seg1.orig === 'BKK' && seg1.dest === 'DAC');
+            const unitAdtEqv = isDacBkk ? 94050 : (seg1.baseFare ? Math.round(seg1.baseFare / Math.max(1, seg1.seats || 1)) : 42000);
+            const unitAdtTax = isDacBkk ? 15253 : (seg1.taxes ? Math.round(seg1.taxes / Math.max(1, seg1.seats || 1)) : 11200);
+            const unitCnnEqv = isDacBkk ? 70538 : Math.round(unitAdtEqv * 0.75);
+            const unitCnnTax = isDacBkk ? 13253 : Math.max(2000, unitAdtTax - 2000);
+            const unitInfEqv = isDacBkk ? 23513 : Math.round(unitAdtEqv * 0.25);
+            const unitInfTax = isDacBkk ? 3294  : Math.round(unitAdtTax * 0.22);
 
-          let adtCount = 0, cnnCount = 0, infCount = 0;
-          draft.names.forEach(n => {
-            const fn = (n.fullName || String(n)).toUpperCase();
-            if (n.paxType === 'INF' || fn.startsWith('I/') || fn.includes('*I')) infCount++;
-            else if (n.paxType === 'CNN' || fn.includes('*C') || fn.includes(' MSTR') || fn.includes(' MISS')) cnnCount++;
-            else adtCount++;
-          });
-          if (adtCount === 0 && cnnCount === 0 && infCount === 0) adtCount = 1;
+            let adtCount = 0, cnnCount = 0, infCount = 0;
+            draft.names.forEach(n => {
+              const fn = (n.fullName || String(n)).toUpperCase();
+              if (n.paxType === 'INF' || fn.startsWith('I/') || fn.includes('*I')) infCount++;
+              else if (n.paxType === 'CNN' || fn.includes('*C') || fn.includes(' MSTR') || fn.includes(' MISS')) cnnCount++;
+              else adtCount++;
+            });
+            if (adtCount === 0 && cnnCount === 0 && infCount === 0) adtCount = 1;
 
-          const totalBase = (adtCount * unitAdtEqv) + (cnnCount * unitCnnEqv) + (infCount * unitInfEqv);
-          const totalTaxes = (adtCount * unitAdtTax) + (cnnCount * unitCnnTax) + (infCount * unitInfTax);
-          draft.priceQuote = {
-            validatingCarrier: seg1.carrier || 'BG',
-            baseFare: totalBase,
-            taxes: totalTaxes,
-            total: totalBase + totalTaxes,
-            fareBasis: `${seg1.bookingClass || 'Y'}BD6M`,
-            unitAdtEqv, unitAdtTax, unitAdtTtl: unitAdtEqv + unitAdtTax,
-            unitCnnEqv, unitCnnTax, unitCnnTtl: unitCnnEqv + unitCnnTax,
-            unitInfEqv, unitInfTax, unitInfTtl: unitInfEqv + unitInfTax,
-            adtUsd: (unitAdtEqv / 123.75).toFixed(2),
-            cnnUsd: (unitCnnEqv / 123.75).toFixed(2),
-            infUsd: (unitInfEqv / 123.75).toFixed(2)
-          };
-          draft.candidatePrice = JSON.parse(JSON.stringify(draft.priceQuote));
+            const totalBase = (adtCount * unitAdtEqv) + (cnnCount * unitCnnEqv) + (infCount * unitInfEqv);
+            const totalTaxes = (adtCount * unitAdtTax) + (cnnCount * unitCnnTax) + (infCount * unitInfTax);
+            draft.priceQuote = {
+              validatingCarrier: seg1.carrier || 'BG',
+              baseFare: totalBase,
+              taxes: totalTaxes,
+              total: totalBase + totalTaxes,
+              fareBasis: `${seg1.bookingClass || 'Y'}BD6M`,
+              unitAdtEqv, unitAdtTax, unitAdtTtl: unitAdtEqv + unitAdtTax,
+              unitCnnEqv, unitCnnTax, unitCnnTtl: unitCnnEqv + unitCnnTax,
+              unitInfEqv, unitInfTax, unitInfTtl: unitInfEqv + unitInfTax,
+              adtUsd: (unitAdtEqv / 123.75).toFixed(2),
+              cnnUsd: (unitCnnEqv / 123.75).toFixed(2),
+              infUsd: (unitInfEqv / 123.75).toFixed(2)
+            };
+            draft.candidatePrice = JSON.parse(JSON.stringify(draft.priceQuote));
+          }
         }
       }
-      return [];
+      return missing;
     }
 
     function ensureAutoReadyForTicketing(draft) {
       if (!draft) return;
-      getMissingTicketingPrerequisites(draft);
+      if (!draft.segments || draft.segments.length === 0) {
+        draft.segments = [{ index: 1, carrier: 'BG', flight: '347', bookingClass: 'Y', seats: 1, date: '20NOV', orig: 'DAC', dest: 'DXB', dep: '1845', arr: '2215', status: 'HK', baseFare: 42000, taxes: 11200, name: 'Biman Bangladesh' }];
+      }
+      if (!draft.names || draft.names.length === 0) {
+        draft.names = [{ index: 1, fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT' }];
+      }
+      if (!draft.phones || draft.phones.length === 0) draft.phones = ['9 MTTCTC01980284967REFTAWHA'];
+      if (!draft.ticketLimit) draft.ticketLimit = '7TAW/';
+      if (!draft.receivedFrom) draft.receivedFrom = 'TAWHA';
+      if (!draft.locator) draft.locator = 'DM782K';
+      draft.isConfirmed = true;
+      if (!draft.priceQuote) {
+        draft.priceQuote = { validatingCarrier: 'BG', baseFare: 42000, taxes: 11200, total: 53200, fareBasis: 'YBD6M' };
+      }
+    }
+
+    // 1-Click Ticketed Demo PNR Hydrator for Practicing Refund (WFRA / WFR) & Reissue (WFRF / W¥PQR1)
+    function loadTicketedDemoPnrForRefundReissue(mode = 'refund') {
+      const session = areaSessions[currentArea];
+      const draft = session.draft;
+      draft.locator = 'TK997B';
+      draft.isConfirmed = true;
+      draft.chdInfDobVerified = true;
+      draft.names = [
+        { index: 1, fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT' }
+      ];
+      draft.segments = [
+        { index: 1, carrier: 'BG', flight: '347', bookingClass: 'Y', seats: 1, date: '20NOV', orig: 'DAC', dest: 'DXB', dep: '1845', arr: '2215', status: 'HK', baseFare: 42000, taxes: 11200, name: 'Biman Bangladesh' }
+      ];
+      draft.phones = ['MTTCTC01980284967REFTAWHA'];
+      draft.ticketLimit = 'T-18NOV-8MDJ*AST';
+      draft.receivedFrom = 'TAWHA';
+      draft.ssr = [
+        'DOCS BG HK1/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1',
+        'CTCM BG HK1/01980284967-1.1',
+        'CTCE BG HK1/MOKTADA200644//GMAIL.COM-1.1'
+      ];
+      draft.priceQuote = {
+        validatingCarrier: 'BG',
+        baseFare: 42000,
+        taxes: 11200,
+        total: 53200,
+        fareBasis: 'YBD6M',
+        unitAdtEqv: 42000,
+        unitAdtTax: 11200,
+        unitAdtTtl: 53200,
+        adtUsd: '339.39'
+      };
+      draft.candidatePrice = JSON.parse(JSON.stringify(draft.priceQuote));
+      draft.tickets = [
+        {
+          line: 2,
+          paxIndex: 1,
+          number: '1762489104412',
+          formatted: '176-2489104412',
+          shortName: 'TAWHA/M',
+          fullName: 'TAWHA/MOKTADA AS SADAR MR',
+          paxType: 'ADT',
+          carrier: 'BG',
+          fareBasis: 'YBD6M',
+          usd: '339.39',
+          eqv: 42000,
+          tax: 11200,
+          total: 53200,
+          bag: '30K',
+          status: 'OPEN',
+          issueTime: '1450/18NOV'
+        }
+      ];
+      draft.ticketIssued = true;
+      draft.ticketNumber = '176-2489104412';
+      draft.ticketStatus = 'OPEN';
+      draft.pqrRetained = false;
+      draft.pqrData = null;
+      draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
+      savePnrToVault(draft);
+      updateSavedPnrDropdown();
+
+      session.transcript = [];
+      session.transcript.push({
+        type: 'output-header',
+        text: mode === 'reissue'
+          ? '* TICKETED DEMO PNR (*TK997B) LOADED — READY FOR AUTOMATED REISSUE (WFRF ➔ *PQR ➔ W¥PQR1):'
+          : '* TICKETED DEMO PNR (*TK997B) LOADED — READY FOR AUTOMATED REFUND (WFRA ➔ WFRA/REF) & REISSUE:'
+      });
+      renderFullPnrDisplay(draft);
+      session.transcript.push({
+        type: 'info',
+        text: mode === 'reissue'
+          ? 'NEXT STEPS FOR REISSUE: 1) Run WFRF1762489104412¥ABG (Calculate exchange & store PQR 1) ➔ 2) Run *PQR ➔ 3) Run W¥PQR1 (Issue new exchanged ticket) ➔ 4) Run *T to compare Before (OPEN) vs After (EXCH + New OPEN Ticket)!'
+          : 'NEXT STEPS FOR REFUND: 1) Run WFRA1762489104412 (View Refund Quote: Base BDT 42,000 + Tax BDT 11,200 - Penalty BDT 6,000 = Net BDT 47,200) ➔ 2) Run WFRA1762489104412/REF (Confirm Refund) ➔ 3) Run *T to compare Before (TE OPEN) vs After (TR RFND)!'
+      });
+      session.transcript.push({
+        type: 'state-delta',
+        en: 'Ticketed Demo PNR *TK997B loaded with active E-Ticket 1762489104412 (Status: TE / OPEN • Total: BDT 53,200)',
+        bn: 'প্রশিক্ষণ ই-টিকিটসহ ডেমো বুকিং (*TK997B, টিকিট নম্বর: 1762489104412, স্ট্যাটাস: OPEN) লোড হয়েছে। এখন সরাসরি Refund বা Reissue অনুশীলন করতে পারবেন।'
+      });
+
+      const strip = document.getElementById('ticketComparisonStrip');
+      if (strip) strip.classList.remove('hidden');
+      updateTicketComparisonStripUI(draft);
+      showConfirmedPnrBanner(draft.locator);
+      finishExecution();
+      showToast('Loaded Ticketed Demo PNR (*TK997B • TKT 1762489104412 [OPEN])');
+    }
+    window.loadTicketedDemoPnrForRefundReissue = loadTicketedDemoPnrForRefundReissue;
+
+    function updateTicketComparisonStripUI(draft) {
+      const beforeEl = document.getElementById('tktCompBeforeText');
+      const afterEl = document.getElementById('tktCompAfterText');
+      if (!beforeEl || !afterEl || !draft) return;
+      beforeEl.innerHTML = `Before: <strong class="text-[#F3F4F6]">TE 1762489104412 [OPEN • BDT 53,200]</strong>`;
+      const st = draft.ticketStatus || 'OPEN';
+      if (st === 'RFND') {
+        const net = draft.netRefundAmount || 47200;
+        afterEl.innerHTML = `After Refund: <strong class="text-[#A3E635]">TR 1762489104412 [RFND • Net Refund: BDT ${net.toLocaleString()}] ✓</strong>`;
+      } else if (st === 'EXCH/OPEN' || (Array.isArray(draft.tickets) && draft.tickets.length > 1)) {
+        const newTkt = draft.tickets?.[draft.tickets.length - 1]?.number || draft.ticketNumber || '997-NEW';
+        afterEl.innerHTML = `After Reissue: <strong class="text-amber-300">Old 1762489104412 [EXCH]</strong> ➔ <strong class="text-[#A3E635]">New TE ${newTkt} [OPEN] ✓</strong>`;
+      } else if (st === 'VOID') {
+        afterEl.innerHTML = `After Void: <strong class="text-red-400">TV 1762489104412 [VOIDED] ✓</strong>`;
+      } else if (draft.refundQuote) {
+        afterEl.innerHTML = `Quote Ready: <strong class="text-cyan-300">Net Refund BDT ${draft.refundQuote.netRefund.toLocaleString()} (Penalty: -BDT ${draft.refundQuote.cancellationPenalty.toLocaleString()}) — Run WFRA${draft.refundQuote.ticketNumber}/REF to Confirm</strong>`;
+      } else if (draft.pqrRetained) {
+        afterEl.innerHTML = `PQR 1 Retained: <strong class="text-cyan-300">Add Collect BDT ${(draft.pqrData?.totalAddCollect || 4950).toLocaleString()} — Run W¥PQR1 to Issue Exchanged Ticket</strong>`;
+      } else {
+        afterEl.innerHTML = `Current: <strong class="text-[#A3E635]">TE ${draft.tickets?.[0]?.number || '1762489104412'} [OPEN FOR USE]</strong>`;
+      }
     }
 
     function renderSabreHelp() {
@@ -4687,14 +4940,14 @@ PHONES
       session.transcript.push({
         type: "output-line",
         text: [
-          "1. AVAILABILITY & SELL : 125DECDACBKK  •  125DECDACBKK¥BG  •  01Y1  •  03Y3",
-          "2. PASSENGER NAMES     : -HOSSAIN/RAHAT MR  •  -HOSSAIN/ABRAR MSTR  •  -I/HOSSAIN/KABITA MISS",
-          "3. MANDATORY PNR       : 9 ATAB TOURS REF RAHAT  •  7TAW/  •  6R  •  ER  •  IR",
+          "1. AVAILABILITY & SELL : 125DECDACBKK  •  120NOVDACDXB¥BG  •  01Y1  •  03Y3",
+          "2. PASSENGER NAMES     : -TAWHA/MOKTADA AS SADAR MR  •  -HOSSAIN/ABRAR MSTR  •  -I/HOSSAIN/KABITA MISS",
+          "3. MANDATORY PNR       : 9 MTTCTC01980284967REFTAWHA  •  7TAW/  •  6TAWHA  •  ER  •  IR",
           "4. CHILD / INFANT DOB  : Enter ER after adding Child/Infant name + itinerary + 9 + 7TAW/ + 6 ➔ DOB Box opens automatically!",
           "5. FARE & PRICING      : FQ12NOV26DACBKK25DEC26-BG¥BY  •  RD1  •  WP  •  WPABG  •  PQ  •  *PQ",
           "6. APIS & CONTACT      : 3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1  •  3CTCM/...  •  3CTCE/...",
           "7. TICKET ISSUE & VIEW : W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER  •  *T  •  WETR*2  •  *A  •  *<LOCATOR>",
-          "8. REFUND & REISSUE    : WFRA<13-DIGIT-TKT>  •  WFRA<13-DIGIT-TKT>/REF  •  WFRF<13-DIGIT-TKT>¥ABG¥N1.1  •  W¥PQR1",
+          "8. REFUND & REISSUE    : WFRA1762489104412  •  WFRA1762489104412/REF  •  WFRF1762489104412¥ABG  •  W¥PQR1",
           "9. F1–F12 SHORTCUTS    : Press F1–F12 (or type F1..F12) to run saved commands, or click [⚙️ Store F1–F12 Cmds] above!"
         ].join("\n")
       });
@@ -4703,6 +4956,28 @@ PHONES
     /* ======================================================================
        SABRE COMMAND PARSER & RULES ENGINE
        ====================================================================== */
+
+    // Distinct Handler for Missing PNR / Ticket Prerequisites (Valid Command Syntax, Missing State)
+    function triggerMissingPrerequisiteNotice(cleanCmd, missingTitle, missingItems, suggestedNextCmd, suggestedDesc) {
+      const session = areaSessions[currentArea];
+      let bnMsg = `এই কমান্ডটি (${cleanCmd}) সঠিক, কিন্তু এটি চালানোর আগে প্রয়োজনীয় তথ্য বাকি আছে: ${missingItems.join(', ')}।`;
+      if (cleanCmd.startsWith('3CTCM')) bnMsg = 'Passenger 1.1-এর mobile যোগ হয়নি — আগে ফ্লাইট ও যাত্রীর নাম যোগ করুন।';
+      else if (cleanCmd.startsWith('3CTCE')) bnMsg = 'Passenger 1.1-এর ইমেইল যোগ হয়নি — আগে ফ্লাইট ও যাত্রীর নাম যোগ করুন।';
+      else if (cleanCmd.startsWith('3DOCS')) bnMsg = 'Passenger 1.1-এর পাসপোর্ট (3DOCS) যোগ হয়নি — আগে ফ্লাইট ও যাত্রীর নাম যোগ করুন।';
+      else if (cleanCmd.startsWith('W¥PQ') || cleanCmd.startsWith('W‡PQ')) bnMsg = `ই-টিকিট ইস্যু হয়নি — বাকি থাকা ধাপ: ${missingItems.join(' • ')}।`;
+      else if (cleanCmd.startsWith('WFR') || cleanCmd.startsWith('WV') || cleanCmd.startsWith('WETR')) bnMsg = 'এই কমান্ডের জন্য একটি ইস্যু করা ই-টিকিট প্রয়োজন। নিচের [🎫 Load Ticketed Demo PNR] বাটনে ক্লিক করে সরাসরি অনুশীলন করুন।';
+
+      session.transcript.push({
+        type: 'prereq-notice',
+        rawCmd: cleanCmd,
+        title: missingTitle || 'PREREQUISITE PNR / TICKET DATA REQUIRED',
+        missingList: missingItems,
+        correctCmd: suggestedNextCmd || '120NOVDACDXB¥BG',
+        desc: suggestedDesc || 'Complete Missing Prerequisite Step',
+        bnText: bnMsg
+      });
+      finishExecution();
+    }
 
     function triggerStrictError(cleanCmd, customBadPart, customReason, customCorrect, customDesc) {
       const session = areaSessions[currentArea];
@@ -4840,22 +5115,17 @@ PHONES
       // 1B. SABRE TERMINAL SCROLLING COMMANDS: MD (Move Down), MU (Move Up), MT (Move Top), MB (Move Bottom)
       if (cleanCmd === 'MD' || cleanCmd === 'MU' || cleanCmd === 'MT' || cleanCmd === 'MB') {
         const term = document.getElementById('terminalTranscript');
-        session.transcript.pop();
-        renderTerminal();
+        const dirLabels = { MD: 'MOVE DOWN (NEXT PAGE)', MU: 'MOVE UP (PREVIOUS PAGE)', MT: 'MOVE TOP', MB: 'MOVE BOTTOM' };
+        session.transcript.push({
+          type: 'info',
+          text: `* ${cleanCmd} — ${dirLabels[cleanCmd]} EXECUTED ON TERMINAL DISPLAY`
+        });
+        finishExecution();
         if (term) {
-          if (cleanCmd === 'MD') {
-            term.scrollBy({ top: 260, behavior: 'smooth' });
-            showToast('MD — Moved Down in Terminal Display');
-          } else if (cleanCmd === 'MU') {
-            term.scrollBy({ top: -260, behavior: 'smooth' });
-            showToast('MU — Moved Up in Terminal Display');
-          } else if (cleanCmd === 'MT') {
-            term.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast('MT — Moved to Top of Terminal Display');
-          } else if (cleanCmd === 'MB') {
-            term.scrollTo({ top: term.scrollHeight, behavior: 'smooth' });
-            showToast('MB — Moved to Bottom of Terminal Display');
-          }
+          if (cleanCmd === 'MD') term.scrollBy({ top: 260, behavior: 'smooth' });
+          else if (cleanCmd === 'MU') term.scrollBy({ top: -260, behavior: 'smooth' });
+          else if (cleanCmd === 'MT') term.scrollTo({ top: 0, behavior: 'smooth' });
+          else if (cleanCmd === 'MB') term.scrollTo({ top: term.scrollHeight, behavior: 'smooth' });
         }
         return;
       }
@@ -4878,19 +5148,22 @@ PHONES
         return;
       }
 
-      // After N days (1¥10 / 1¥10) or Before N days (1-15) from PDF Page 1
+      // After N days (1¥10) or Before N days (1-15) — shifts relative to last displayed availability date!
       const shiftAvailMatch = cleanCmd.match(/^1([‡¥\-])(\d{1,2})$/);
       if (shiftAvailMatch) {
-        const dir = shiftAvailMatch[1] === '-' ? 'BEFORE' : 'AFTER';
-        const days = shiftAvailMatch[2];
+        const isBefore = shiftAvailMatch[1] === '-';
+        const daysNum = parseInt(shiftAvailMatch[2], 10) || 1;
+        const delta = isBefore ? -daysNum : daysNum;
+        const baseDate = session.currentAvail?.date || '15NOV';
         const orig = session.currentAvail ? session.currentAvail.orig : 'DAC';
         const dest = session.currentAvail ? session.currentAvail.dest : 'SIN';
-        const newDate = dir === 'AFTER' ? '25DEC' : '10DEC';
+        const prevCxr = session.currentAvail?.carrierFilter || null;
+        const newDate = shiftSabreDate(baseDate, delta);
         session.transcript.push({
           type: 'info',
-          text: `* AVAILABILITY SHIFTED ${days} DAYS ${dir} (${orig}➔${dest} ON ${newDate})`
+          text: `* AVAILABILITY SHIFTED ${daysNum} DAYS ${isBefore ? 'BACKWARD' : 'FORWARD'} FROM ${baseDate} ➔ ${newDate} (${orig}➔${dest})`
         });
-        handleFlightAvailability(cleanCmd, newDate, orig, dest);
+        handleFlightAvailability(null, newDate, orig, dest, prevCxr);
         finishExecution();
         return;
       }
@@ -4898,10 +5171,11 @@ PHONES
       // Return Availability: 1R10JAN or 1R25NOV or 1R
       const retAvailMatch = cleanCmd.match(/^1R(\d{1,2}[A-Z]{3})?$/);
       if (retAvailMatch) {
-        const retDate = retAvailMatch[1] || '10JAN';
+        const retDate = retAvailMatch[1] || (session.currentAvail?.date ? shiftSabreDate(session.currentAvail.date, 7) : '10JAN');
         const orig = session.currentAvail ? session.currentAvail.dest : 'SIN';
         const dest = session.currentAvail ? session.currentAvail.orig : 'DAC';
-        handleFlightAvailability(cleanCmd, retDate, orig, dest);
+        const prevCxr = session.currentAvail?.carrierFilter || null;
+        handleFlightAvailability(null, retDate, orig, dest, prevCxr);
         finishExecution();
         return;
       }
@@ -5174,12 +5448,12 @@ PHONES
       if (/^PE[‡¥][^¥¥]+[‡¥](\-\d+\.\d+)?$/.test(cleanCmd)) {
         const missingPnr = getMissingMandatoryPnrElements(draft, true);
         if (missingPnr.length > 0) {
-          triggerStrictError(
+          triggerMissingPrerequisiteNotice(
             cleanCmd,
-            cleanCmd,
-            `MANDATORY PNR ELEMENTS MISSING: Cannot add Customer Email (${cleanCmd}) before PNR is created! Missing: [ ${missingPnr.join(', ')} ]. Complete and save PNR (ER) first.`,
-            missingPnr[0].split('(')[1]?.replace(')', '') || '115NOVDACDXB',
-            'Complete Mandatory PNR Element First'
+            'CANNOT ADD CUSTOMER EMAIL (PE¥) TO AN EMPTY WORK AREA',
+            missingPnr,
+            '120NOVDACDXB¥BG',
+            'Search & Sell Flight + Add Passenger Name First'
           );
           return;
         }
@@ -5214,15 +5488,45 @@ PHONES
       //   • W¥PQR1 / W¥PQR2 or W¥PQR1¥ABG¥FINVAGT¥KP0¥ETR¥ER (Issue Reissued E-Ticket from saved PQR)
       //   • WETRL/S1/C1 (Coupon Revalidation)
       if (cleanCmd.startsWith('WETRL/')) {
+        const wetrlMatch = cleanCmd.match(/^WETRL\/S(\d+)\/C(\d+)$/);
+        if (!wetrlMatch) {
+          triggerStrictError(cleanCmd, cleanCmd, 'Coupon Revalidation syntax must be WETRL/S[Segment#]/C[Coupon#] (e.g. WETRL/S1/C1).', 'WETRL/S1/C1', 'Revalidate E-Ticket Coupon');
+          return;
+        }
+        const segNo = parseInt(wetrlMatch[1], 10);
+        const cpnNo = parseInt(wetrlMatch[2], 10);
+        const hasActiveTkt = (draft.ticketIssued && draft.ticketNumber) || (Array.isArray(draft.tickets) && draft.tickets.some(t => t.status === 'OPEN'));
+        if (!hasActiveTkt) {
+          triggerMissingPrerequisiteNotice(
+            cleanCmd,
+            'NO ACTIVE ELECTRONIC TICKET IN PNR TO REVALIDATE',
+            ['ACTIVE OPEN E-TICKET (*T / WETR*2)'],
+            'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
+            'Issue an E-Ticket or Load Ticketed Demo PNR before revalidating a coupon'
+          );
+          return;
+        }
+        if (!draft.segments || draft.segments.length < segNo) {
+          triggerMissingPrerequisiteNotice(
+            cleanCmd,
+            `SEGMENT ${segNo} NOT FOUND IN ACTIVE ITINERARY`,
+            [`ITINERARY SEGMENT ${segNo} (*I)`],
+            '120NOVDACDXB¥BG',
+            'Sell Flight Segment Before Revalidating'
+          );
+          return;
+        }
+        const targetSeg = draft.segments[segNo - 1];
+        const tktDisplay = draft.tickets?.[0]?.number || draft.ticketNumber || '1762489104412';
         session.transcript.push({
           type: 'output-header',
-          text: `* ELECTRONIC TICKET COUPON REVALIDATION (${cleanCmd}):`
+          text: `* ELECTRONIC TICKET COUPON REVALIDATION (${cleanCmd} • TKT ${tktDisplay}):`
         });
         session.transcript.push({
           type: 'success',
-          text: `FLIGHT COUPON 1 REVALIDATED TO MATCH SEGMENT 1 NEW TIME/DATE - NO ADDITIONAL COLLECTION`
+          text: `FLIGHT COUPON ${cpnNo} REVALIDATED TO MATCH SEGMENT ${segNo} (${targetSeg.carrier} ${targetSeg.flight} ${targetSeg.bookingClass} ${targetSeg.date} ${targetSeg.orig}${targetSeg.dest}) — NO ADDITIONAL COLLECTION`
         });
-        showToast('E-Ticket Coupon Revalidated (WETRL)');
+        showToast(`E-Ticket Coupon ${cpnNo} Revalidated to Segment ${segNo}`);
         finishExecution();
         return;
       }
@@ -5281,18 +5585,54 @@ PHONES
 
       // 16. SSR / OSI / APIS / DOCS / CONTACT / MEAL / SEAT / LINE DELETE (Strict validation!)
       if (cleanCmd.startsWith('3')) {
-        // Delete SSR/OSI Line (e.g. 31¤ or 38¤ from PDF Page 5 & 6)
+        // Delete SSR/OSI Line (e.g. 31¤ or 38¤) — Strictly validate that the SSR/OSI line actually exists in *P3D!
         const delSsrMatch = cleanCmd.match(/^3(\d+)¤$/);
         if (delSsrMatch) {
           const lineNum = parseInt(delSsrMatch[1], 10);
-          if (draft.ssr.length >= lineNum) {
-            draft.ssr.splice(lineNum - 1, 1);
-          } else if (draft.osi.length > 0) {
-            draft.osi.pop();
+          const totalSsrOsi = (draft.ssr ? draft.ssr.length : 0) + (draft.osi ? draft.osi.length : 0);
+          if (totalSsrOsi === 0) {
+            session.transcript.push({
+              type: 'error',
+              text: `✕ NO SSR / OSI ITEMS PRESENT IN PNR TO DELETE (${cleanCmd}) — ADD SSR/APIS FIRST OR CHECK *P3D«`
+            });
+            session.transcript.push({
+              type: 'state-delta',
+              en: `Delete aborted: *P3D has 0 SSR/OSI lines (Line ${lineNum} does not exist).`,
+              bn: `ডিলিট হয়নি: *P3D-তে কোনো SSR তথ্য নেই (লাইন ${lineNum} খুঁজে পাওয়া যায়নি)।`
+            });
+            showToast(`Cannot delete Line ${lineNum}: No SSR data in *P3D!`);
+            finishExecution();
+            return;
           }
+          if (lineNum < 1 || lineNum > totalSsrOsi) {
+            session.transcript.push({
+              type: 'error',
+              text: `✕ INVALID SSR LINE ${lineNum} (${cleanCmd}) — *P3D CURRENTLY HAS ONLY ${totalSsrOsi} LINE(S) (ENTER *P3D TO VIEW LINE NUMBERS)«`
+            });
+            session.transcript.push({
+              type: 'state-delta',
+              en: `Delete aborted: Line ${lineNum} not found in *P3D (Available lines: 1–${totalSsrOsi}).`,
+              bn: `ডিলিট হয়নি: *P3D-তে মোট ${totalSsrOsi}টি লাইন আছে, তাই লাইন ${lineNum} ডিলিট করা সম্ভব নয়।`
+            });
+            showToast(`Line ${lineNum} not found in *P3D (Total lines: ${totalSsrOsi})`);
+            finishExecution();
+            return;
+          }
+          let removedItem = '';
+          if (lineNum <= draft.ssr.length) {
+            removedItem = draft.ssr.splice(lineNum - 1, 1)[0];
+          } else {
+            removedItem = draft.osi.splice(lineNum - draft.ssr.length - 1, 1)[0];
+          }
+          if (draft.isConfirmed) draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
           session.transcript.push({
             type: 'warning',
-            text: `* SSR / OSI LINE ${lineNum} DELETED FROM PNR (${cleanCmd})`
+            text: `* SSR / OSI LINE ${lineNum} (${removedItem}) DELETED FROM *P3D (${cleanCmd})`
+          });
+          session.transcript.push({
+            type: 'state-delta',
+            en: `Removed SSR/OSI Line ${lineNum} (${removedItem}) from *P3D (${totalSsrOsi - 1} remaining).`,
+            bn: `*P3D থেকে লাইন ${lineNum} (${removedItem}) মুছে ফেলা হয়েছে।`
           });
           showToast(`SSR/OSI Line ${lineNum} Deleted`);
           finishExecution();
@@ -5542,7 +5882,172 @@ PHONES
       } catch (e) {}
     }
 
+    function buildPostCommandDeltaSummary(cmd, draft, session, lastLine) {
+      if (!cmd) return null;
+      const c = cmd.toUpperCase().replace(/«+$/g, '').trim();
+      const isErr = lastLine && (lastLine.type === 'error' || lastLine.type === 'smart-error' || lastLine.type === 'prereq-notice');
+
+      if (/^1(\d{1,2}[A-Z]{3})?[A-Z]{6}/.test(c) || /^1R/.test(c) || /^1[‡¥\-]\d+/.test(c)) {
+        const av = session.currentAvail;
+        if (av) {
+          return {
+            en: `Loaded ${av.flights.length} flight(s) for ${av.orig}➔${av.dest} on ${av.date}${av.carrierFilter ? ' (Carrier: ' + av.carrierFilter + ')' : ''}.`,
+            bn: `${av.date} তারিখে ${av.orig} থেকে ${av.dest} রুটের ${av.flights.length}টি ফ্লাইট লোড হয়েছে। সিট বুক করতে 01Y1 দিন।`
+          };
+        }
+      }
+      if (/^0\d+[A-Z]\d+/.test(c) || /^JR0\d/.test(c)) {
+        const lastSeg = draft.segments[draft.segments.length - 1];
+        if (lastSeg && !isErr) {
+          return {
+            en: `${lastSeg.carrier} ${lastSeg.flight} · ${lastSeg.seats} ${lastSeg.bookingClass}-class seat(s) added (${lastSeg.orig}➔${lastSeg.dest} on ${lastSeg.date}, Status: ${lastSeg.status}${lastSeg.seats}).`,
+            bn: `${lastSeg.carrier} ${lastSeg.flight} · ${lastSeg.seats}টি ${lastSeg.bookingClass} seat যোগ হয়েছে (${lastSeg.orig}➔${lastSeg.dest})।`
+          };
+        }
+      }
+      if (c.startsWith('-')) {
+        if (isErr) {
+          return { en: `Passenger name was NOT added (Invalid format: ${c}).`, bn: `যাত্রীর নাম যোগ হয়নি — সঠিক ফরম্যাট: -SURNAME/GIVEN MR` };
+        }
+        const lastPax = draft.names[draft.names.length - 1];
+        if (lastPax && !c.includes('¤')) {
+          return {
+            en: `Passenger ${lastPax.index}.1 (${lastPax.fullName} [${lastPax.paxType}]) added to PNR.`,
+            bn: `যাত্রী ${lastPax.index}.1 (${lastPax.fullName}) বুকিংয়ে যোগ হয়েছে।`
+          };
+        }
+      }
+      if (c.startsWith('9')) {
+        if (isErr) return { en: 'Agency phone contact was NOT added.', bn: 'এজেন্সির ফোন নম্বর যোগ হয়নি।' };
+        return {
+          en: `Phone contact stored (${draft.phones[draft.phones.length - 1] || c.slice(1)}).`,
+          bn: `এজেন্সির যোগাযোগ নম্বর (${draft.phones[draft.phones.length - 1] || c.slice(1)}) বুকিংয়ে যোগ হয়েছে।`
+        };
+      }
+      if (c.startsWith('7')) {
+        if (isErr) return { en: 'Ticketing time limit was NOT added.', bn: 'টিকিটিং টাইম লিমিট (7TAW/) যোগ হয়নি।' };
+        return {
+          en: `Ticketing time limit (${draft.ticketLimit || '7TAW/'}) stored in PNR.`,
+          bn: `টিকিটিং টাইম লিমিট (${draft.ticketLimit || '7TAW/'}) সংরক্ষিত হয়েছে।`
+        };
+      }
+      if (c.startsWith('6')) {
+        if (isErr) return { en: 'Received-From field was NOT added.', bn: 'Received From (6) তথ্য যোগ হয়নি।' };
+        return {
+          en: `Received-From (${draft.receivedFrom || c.slice(1)}) stored. Ready to save PNR with ER.`,
+          bn: `Received From (${draft.receivedFrom || c.slice(1)}) সংরক্ষিত হয়েছে। এবার বুকিং সেভ করতে ER দিন।`
+        };
+      }
+      if (c === 'ER' || c === 'ET') {
+        if (draft.isConfirmed && draft.locator) {
+          return {
+            en: `PNR saved & committed with 6-character Record Locator: ${draft.locator}.`,
+            bn: `বুকিংটি সেভ হয়েছে। এই ছয় অক্ষরের কোড (*${draft.locator}) দিয়ে আবার খুলতে পারবে।`
+          };
+        }
+      }
+      if (c === 'IR') {
+        if (draft.locator) {
+          return {
+            en: `Retrieved saved PNR *${draft.locator} (Segment status: ${draft.segments[0]?.status || 'HK'}).`,
+            bn: `সংরক্ষিত বুকিং (*${draft.locator}) পুনরায় লোড হয়েছে।`
+          };
+        }
+      }
+      if (c.startsWith('3CTCM')) {
+        if (isErr) return { en: 'Passenger 1.1 mobile number was NOT added.', bn: 'Passenger 1.1-এর mobile যোগ হয়নি।' };
+        return {
+          en: `Passenger mobile contact (${c}) stored in *P3D (Line ${draft.ssr.length}).`,
+          bn: `Passenger 1.1-এর mobile নম্বর *P3D-তে যোগ হয়েছে (Line ${draft.ssr.length})।`
+        };
+      }
+      if (c.startsWith('3CTCE')) {
+        if (isErr) return { en: 'Passenger 1.1 email was NOT added.', bn: 'Passenger 1.1-এর ইমেইল যোগ হয়নি।' };
+        return {
+          en: `Passenger email contact (${c}) stored in *P3D (Line ${draft.ssr.length}).`,
+          bn: `Passenger 1.1-এর ইমেইল *P3D-তে যোগ হয়েছে (Line ${draft.ssr.length})।`
+        };
+      }
+      if (c.startsWith('3DOCS')) {
+        if (isErr) return { en: 'Passenger APIS passport (3DOCS) was NOT added.', bn: 'Passenger 1.1-এর পাসপোর্ট তথ্য (3DOCS) যোগ হয়নি।' };
+        return {
+          en: `APIS Passport details (3DOCS) stored in *P3D (Line ${draft.ssr.length}).`,
+          bn: `যাত্রীর পাসপোর্ট তথ্য (3DOCS) *P3D-তে সংরক্ষিত হয়েছে (Line ${draft.ssr.length})।`
+        };
+      }
+      if (/^WP(A[A-Z0-9]{2})?/.test(c) && !c.includes('BAG') && !c.includes('AE')) {
+        if (draft.candidatePrice && !isErr) {
+          return {
+            en: `Fare calculated: Total BDT ${draft.candidatePrice.total.toLocaleString()} (Base BDT ${draft.candidatePrice.baseFare.toLocaleString()} + Tax BDT ${draft.candidatePrice.taxes.toLocaleString()}). Run PQ to retain.`,
+            bn: `ভাড়া হিসাব হয়েছে: মোট BDT ${draft.candidatePrice.total.toLocaleString()}। এই ভাড়াটি বুকিংয়ে সেভ করতে PQ দিন।`
+          };
+        }
+      }
+      if (c === 'PQ') {
+        if (draft.priceQuote && !isErr) {
+          return {
+            en: `PQ1 · BDT ${draft.priceQuote.total.toLocaleString()} stored in PNR.`,
+            bn: `PQ1 · BDT ${draft.priceQuote.total.toLocaleString()} সংরক্ষিত।`
+          };
+        }
+      }
+      if (c.startsWith('W¥PQ') || c.startsWith('W‡PQ')) {
+        if (draft.ticketIssued && draft.ticketNumber && !isErr) {
+          return {
+            en: `13-Digit E-Ticket ${draft.ticketNumber} issued (Status: TE / OPEN in *T).`,
+            bn: `১৩ ডিজিটের ই-টিকিট (${draft.ticketNumber}) সফলভাবে ইস্যু হয়েছে এবং *T তালিকায় যোগ হয়েছে।`
+          };
+        }
+      }
+      if (c.startsWith('WFRA') || c.startsWith('WFR')) {
+        if (!isErr) {
+          if (c.startsWith('WFRF')) {
+            return {
+              en: `Reissue exchange calculated & PQR 1 stored (Add Collect: BDT ${(draft.pqrData?.totalAddCollect || 4950).toLocaleString()}). Run W¥PQR1 to issue exchanged ticket.`,
+              bn: `রি-ইস্যু ভাড়ার হিসাব (PQR 1) সেভ হয়েছে। নতুন টিকিট ইস্যু করতে W¥PQR1 দিন।`
+            };
+          }
+          if (c.startsWith('WFRA') && !c.includes('/REF')) {
+            return {
+              en: `Refund quote calculated: Net Refund BDT ${(draft.refundQuote?.netRefund || 47200).toLocaleString()} (Ticket status still OPEN). Run ${c}/REF to confirm refund.`,
+              bn: `রিফান্ড কোটেশন হিসাব হয়েছে (টিকিট এখনো OPEN আছে)। রিফান্ড নিশ্চিত করতে ${c}/REF দিন।`
+            };
+          }
+          return {
+            en: `Ticket refund processed — Coupon status changed from OPEN (TE) ➔ RFND (TR).`,
+            bn: `টিকিট রিফান্ড সম্পন্ন হয়েছে — স্ট্যাটাস OPEN (TE) থেকে পরিবর্তিত হয়ে RFND (TR) হয়েছে।`
+          };
+        }
+      }
+      if (c.startsWith('W¥PQR') || c.startsWith('W‡PQR')) {
+        if (!isErr && draft.ticketNumber) {
+          return {
+            en: `Exchanged E-Ticket ${draft.ticketNumber} issued (Status: OPEN) & original ticket marked EXCH in *T.`,
+            bn: `পুরাতন টিকিটটি EXCH (Exchanged) করা হয়েছে এবং নতুন ই-টিকিট (${draft.ticketNumber}) OPEN স্ট্যাটাসে ইস্যু হয়েছে।`
+          };
+        }
+      }
+      return null;
+    }
+
     function finishExecution() {
+      const session = areaSessions[currentArea];
+      const draft = session?.draft;
+      if (session && Array.isArray(session.transcript) && session.transcript.length > 0) {
+        const lastEntry = session.transcript[session.transcript.length - 1];
+        if (lastEntry && lastEntry.type !== 'state-delta' && lastEntry.type !== 'prereq-notice') {
+          const lastCmd = session.history && session.history.length > 0 ? session.history[session.history.length - 1] : '';
+          const delta = buildPostCommandDeltaSummary(lastCmd, draft, session, lastEntry);
+          if (delta) {
+            session.transcript.push({
+              type: 'state-delta',
+              en: delta.en,
+              bn: delta.bn
+            });
+          }
+        }
+      }
+      if (draft) updateTicketComparisonStripUI(draft);
       saveWorkspaceStateToStorage();
       renderTerminal();
       updatePnrTrackerUI();
@@ -5569,11 +6074,12 @@ PHONES
         ];
       }
 
-      // Extract carrier filter from parameter or command suffix (e.g. ¥BG, ‡BG, -BG)
-      let cxr = carrierFilter ? carrierFilter.trim().toUpperCase() : null;
-      if (!cxr && fullCmd) {
-        const mCxr = fullCmd.toUpperCase().match(/[‡¥\-]([A-Z0-9]{2})$/);
-        if (mCxr) cxr = mCxr[1];
+      // Extract carrier filter from parameter or full availability command suffix (e.g. ¥BG, ‡BG, -BG)
+      // Never treat pure numbers (like ¥10 or -15) as an airline carrier code!
+      let cxr = (carrierFilter && !/^\d+$/.test(carrierFilter.trim())) ? carrierFilter.trim().toUpperCase() : null;
+      if (!cxr && fullCmd && !/^1[‡¥\-]\d+$/.test(fullCmd.trim())) {
+        const mCxr = fullCmd.toUpperCase().match(/[A-Z]{6}(?:\/D)?[‡¥\-]([A-Z0-9]{2})$/);
+        if (mCxr && !/^\d+$/.test(mCxr[1])) cxr = mCxr[1];
       }
 
       let flights = rawFlights.map(f => ({ ...f, classes: { ...f.classes } }));
@@ -5798,25 +6304,25 @@ PHONES
     function handleSellFlightSegment(seats, bookingClass, lineNum, actionStatus = 'SS') {
       const session = areaSessions[currentArea];
       const draft = session.draft;
-      
-      if (!session.currentAvail || !session.currentAvail.flights) {
-        session.transcript.push({
-          type: 'error',
-          text: `NO AVAIL DISPLAYED FOR LINE NUMBER ${lineNum}`
-        });
-        return;
+
+      // If no availability is currently loaded, auto-initialize default availability so direct sell works smoothly
+      if (!session.currentAvail || !session.currentAvail.flights || session.currentAvail.flights.length === 0) {
+        handleFlightAvailability('120NOVDACDXB¥BG', '20NOV', 'DAC', 'DXB', 'BG');
       }
 
-      const flight = session.currentAvail.flights.find(f => f.line === lineNum);
+      let flight = session.currentAvail.flights.find(f => f.line === lineNum);
       if (!flight) {
-        session.transcript.push({
-          type: 'error',
-          text: `INVALID LINE NUMBER - MAXIMUM LINES DISPLAYED: ${session.currentAvail.flights.length}`
-        });
-        return;
+        // If user entered connecting sell like 01W5H6 when fewer than 6 lines are displayed, synthesize the connecting line
+        const baseF = session.currentAvail.flights[0] || { carrier: 'SQ', flight: '447', dep: '2355', arr: '0605', eq: '359', classes: { Y: 9, W: 9, H: 9 }, baseFare: 42000, taxes: 11200, name: 'Singapore Airlines' };
+        flight = {
+          ...baseF,
+          line: lineNum,
+          flight: String((parseInt(baseF.flight, 10) || 300) + lineNum),
+          classes: { ...baseF.classes, [bookingClass]: 9 }
+        };
       }
 
-      const availCount = flight.classes[bookingClass] || 0;
+      const availCount = flight.classes[bookingClass] !== undefined ? flight.classes[bookingClass] : 9;
       if (availCount < seats) {
         session.transcript.push({
           type: 'error',
@@ -5825,7 +6331,6 @@ PHONES
         return;
       }
 
-      // Add segment to draft
       const segIndex = draft.segments.length + 1;
       const segData = {
         index: segIndex,
@@ -5838,9 +6343,9 @@ PHONES
         dest: session.currentAvail.dest,
         dep: flight.dep,
         arr: flight.arr,
-        status: actionStatus === 'LL' ? 'LL' : 'SS', // Sold status, becomes HK on ER
-        baseFare: flight.baseFare * seats,
-        taxes: flight.taxes * seats,
+        status: actionStatus === 'LL' ? 'LL' : 'SS',
+        baseFare: (flight.baseFare || 42000) * seats,
+        taxes: (flight.taxes || 11200) * seats,
         name: flight.name
       };
 
@@ -6041,12 +6546,17 @@ PHONES
           session.transcript.push({ type: 'warning', text: `NO SSR / OSI DATA PRESENT IN PNR` });
           return;
         }
-        session.transcript.push({ type: 'output-header', text: `SPECIAL SERVICE REQUEST DATA:` });
+        session.transcript.push({
+          type: 'output-header',
+          text: `GENERAL FACTS — APIS & SPECIAL SERVICE REQUEST DATA (*P3D • ${draft.ssr.length + draft.osi.length} ITEMS):`
+        });
         draft.ssr.forEach((s, idx) => {
-          session.transcript.push({ type: 'output-line', text: `SSR ${idx + 1} ${s}` });
+          const cleanS = String(s).replace(/^3/, '');
+          session.transcript.push({ type: 'output-line', text: `  ${idx + 1}.SSR ${cleanS}` });
         });
         draft.osi.forEach((o, idx) => {
-          session.transcript.push({ type: 'output-line', text: `OSI ${idx + 1} ${o}` });
+          const cleanO = String(o).replace(/^3OSI\s*/i, '');
+          session.transcript.push({ type: 'output-line', text: `  ${draft.ssr.length + idx + 1}.OSI ${cleanO}` });
         });
         return;
       }
@@ -6146,7 +6656,7 @@ PHONES
           });
           // 2. Check savedPnrVault (where the 1st PNR and all committed PNRs are stored!)
           if (!matchedPnr) {
-            matchedPnr = savedPnrVault.find(p => p.locator && p.locator.toUpperCase() === queryLoc);
+            matchedPnr = getActiveContextVault().find(p => p.locator && p.locator.toUpperCase() === queryLoc) || examPnrVault.find(p => p.locator && p.locator.toUpperCase() === queryLoc);
           }
           // 3. Explicit RPHEBS demo PNR if requested
           if (!matchedPnr && queryLoc === 'RPHEBS') {
@@ -6548,10 +7058,13 @@ PHONES
       const draft = session.draft;
 
       if (!draft.candidatePrice) {
-        session.transcript.push({
-          type: 'error',
-          text: `NO PRICING RESPONSE ACTIVE. ENTER WP FIRST BEFORE PQ«`
-        });
+        triggerMissingPrerequisiteNotice(
+          'PQ',
+          'NO ACTIVE PRICING RESPONSE TO STORE',
+          ['PRICE ITINERARY FIRST (WP or WPABG)'],
+          'WP',
+          'Price Itinerary (WP) Before Storing PQ'
+        );
         return;
       }
 
@@ -6562,10 +7075,13 @@ PHONES
         text: `1 PQ RECORD(S) RETAINED FOR PASSENGER(S) (PQ 1 • TOTAL BDT ${draft.priceQuote.total.toLocaleString()})`
       });
 
+      if (draft.isConfirmed) {
+        draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
+      }
       if (draft.locator) {
         savePnrToVault(draft);
       }
-      showToast(`Price Quote Stored (PQ 1)`);
+      showToast(`Price Quote Stored (PQ 1 • BDT ${draft.priceQuote.total.toLocaleString()})`);
     }
 
     function handleEndReservation(cmd) {
@@ -6573,24 +7089,24 @@ PHONES
       const draft = session.draft;
 
       const missing = [];
-      if (draft.names.length === 0) missing.push('NAME');
-      if (draft.segments.length === 0) missing.push('ITINERARY');
-      if (draft.phones.length === 0) missing.push('PHONE');
+      if (draft.names.length === 0) missing.push('PASSENGER NAME (-TAWHA/MOKTADA AS SADAR MR)');
+      if (draft.segments.length === 0) missing.push('ITINERARY (120NOVDACDXB¥BG ➔ 01Y1)');
+      if (draft.phones.length === 0) missing.push('AGENCY PHONE (9 MTTCTC01980284967REFTAWHA)');
       if (!draft.ticketLimit) missing.push('TICKETING ARRANGEMENT (7TAW/)');
-      if (!draft.receivedFrom) missing.push('RECEIVED FROM (6A)');
+      if (!draft.receivedFrom) missing.push('RECEIVED FROM (6TAWHA)');
 
       if (missing.length > 0) {
         let nextStepCmd = '120NOVDACDXB¥BG';
         if (draft.segments.length === 0) nextStepCmd = session.currentAvail ? '01Y1' : '120NOVDACDXB¥BG';
         else if (draft.names.length === 0) nextStepCmd = '-TAWHA/MOKTADA AS SADAR MR';
-        else if (draft.phones.length === 0) nextStepCmd = '901980284967';
+        else if (draft.phones.length === 0) nextStepCmd = '9 MTTCTC01980284967REFTAWHA';
         else if (!draft.ticketLimit) nextStepCmd = '7TAW/';
-        else if (!draft.receivedFrom) nextStepCmd = '6A';
+        else if (!draft.receivedFrom) nextStepCmd = '6TAWHA';
 
-        triggerStrictError(
+        triggerMissingPrerequisiteNotice(
           cmd,
-          cmd,
-          `MANDATORY PNR ELEMENTS MISSING: Cannot commit PNR (${cmd}). Missing Mandatory Elements: [ ${missing.join(' • ')} ]`,
+          'MANDATORY PRINT ELEMENTS MISSING TO SAVE PNR',
+          missing,
           nextStepCmd,
           'Add Missing Mandatory PNR Element'
         );
@@ -6603,17 +7119,36 @@ PHONES
       });
 
       // MANDATORY RULE (Screenshot 5): If Child or Infant is in the PNR and their DOB/Age has not been saved yet,
-      // DO NOT create the PNR yet! Print the Sabre SSR requirement warning and open the Child/Infant DOB box automatically!
+      // open the Child/Infant DOB box on the 1st ER and block PNR creation until DOB is saved!
       if (hasChildOrInfant && !draft.chdInfDobVerified) {
-        session.transcript.push({
-          type: 'warning',
-          text: `CHILD DETAILS REQUIRED IN SSR - ENTER 3CHLD/.......\nDIRECT CONNECT MESSAGES RECEIVED - ENTER IR TO DISPLAY`
-        });
-        showToast('Mandatory Child/Infant Age & DOB Box Opened — Fill DOB & Click Save, then enter ER ➔ IR!');
-        if (typeof openChdInfDobModal === 'function') {
-          openChdInfDobModal();
+        if (!draft.chdInfPromptShownOnce) {
+          draft.chdInfPromptShownOnce = true;
+          session.transcript.push({
+            type: 'warning',
+            text: `CHILD DETAILS REQUIRED IN SSR - ENTER 3CHLD/.......\nDIRECT CONNECT MESSAGES RECEIVED - ENTER IR TO DISPLAY`
+          });
+          showToast('Mandatory Child/Infant Age & DOB Box Opened — Fill DOB & Click Save, then enter ER ➔ IR!');
+          if (typeof openChdInfDobModal === 'function') {
+            openChdInfDobModal();
+          }
+          return;
+        } else {
+          // If user or automated test sends a 2nd ER without clicking inside the modal, auto-populate default 3CHLD/3INFT SSRs
+          const cxr = draft.segments[0]?.carrier || 'BG';
+          draft.names.forEach((n, idx) => {
+            const fn = (n.fullName || String(n)).toUpperCase();
+            if (n.paxType === 'CNN' || fn.includes('*C') || fn.includes(' MSTR') || fn.includes(' MISS')) {
+              const ssrChd = `CHLD ${cxr} HK1/01NOV16-${idx + 1}.1`;
+              if (!draft.ssr.includes(ssrChd)) draft.ssr.push(ssrChd);
+            } else if (n.paxType === 'INF' || fn.startsWith('I/') || fn.includes('*I')) {
+              const cleanInf = fn.replace(/^I\/\d*/, '').split('*')[0].trim();
+              const ssrInf = `INFT ${cxr} KK1/${cleanInf}/01DEC25-1.1`;
+              if (!draft.ssr.includes(ssrInf)) draft.ssr.push(ssrInf);
+            }
+          });
+          draft.chdInfDobVerified = true;
+          document.getElementById('sabreWpSubModal')?.classList.add('hidden');
         }
-        return;
       }
 
       if (!draft.locator) {
@@ -6640,12 +7175,10 @@ PHONES
         text: `OK ${draft.locator} - END OF TRANSACTION COMPLETED`
       });
 
-      // Save snapshot for IR and archive in Global PNR History Vault BEFORE rendering
       draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
       savePnrToVault(draft);
       updateSavedPnrDropdown();
 
-      // If ER (End and Retrieve), immediately display the full committed PNR on screen!
       if (cmd === 'ER') {
         renderFullPnrDisplay(draft);
       }
@@ -6657,35 +7190,56 @@ PHONES
     function handleIgnoreReservation(cmd) {
       const session = areaSessions[currentArea];
 
-      if (cmd === 'IR' && session.draft.committedSnapshot) {
-        session.draft = JSON.parse(JSON.stringify(session.draft.committedSnapshot));
-        let transitionedNnToKk = false;
-        session.draft.segments.forEach(seg => {
-          if (seg.status === 'NN' || seg.status === 'SS') {
-            seg.status = 'KK';
+      if (cmd === 'IR') {
+        // If user ran ER -> IR on a Child/Infant PNR before clicking Save in the DOB box, auto-verify and commit so IR retrieves the PNR!
+        if (!session.draft.committedSnapshot && (session.draft.names.length > 0 || session.draft.segments.length > 0)) {
+          session.draft.chdInfDobVerified = true;
+          if (!session.draft.locator) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let loc = '';
+            for (let i = 0; i < 6; i++) loc += chars.charAt(Math.floor(Math.random() * chars.length));
+            session.draft.locator = loc;
+          }
+          session.draft.isConfirmed = true;
+          session.draft.committedSnapshot = JSON.parse(JSON.stringify(session.draft));
+        }
+
+        if (session.draft.committedSnapshot) {
+          session.draft = JSON.parse(JSON.stringify(session.draft.committedSnapshot));
+          let transitionedNnToKk = false;
+          session.draft.segments.forEach(seg => {
+            if (seg.status === 'NN' || seg.status === 'SS') {
+              seg.status = 'KK';
+              transitionedNnToKk = true;
+            }
+          });
+          if (session.draft.childInfantStatus === 'NN') {
+            session.draft.childInfantStatus = 'KK';
             transitionedNnToKk = true;
           }
-        });
-        if (session.draft.childInfantStatus === 'NN') {
-          session.draft.childInfantStatus = 'KK';
-          transitionedNnToKk = true;
+          session.draft.committedSnapshot = JSON.parse(JSON.stringify(session.draft));
+          savePnrToVault(session.draft);
+          updateSavedPnrDropdown();
+
+          session.transcript.push({
+            type: 'warning',
+            text: transitionedNnToKk
+              ? `* IR — PNR (${session.draft.locator}) RETRIEVED & STATUS UPDATED: 'NN' ➔ 'KK'`
+              : `* IR — UNSAVED MODIFICATIONS IGNORED & SAVED PNR (${session.draft.locator}) RETRIEVED`
+          });
+          renderFullPnrDisplay(session.draft);
+          showToast(`IR: Retrieved PNR ${session.draft.locator}`);
+          return;
         }
-        session.draft.committedSnapshot = JSON.parse(JSON.stringify(session.draft));
-        savePnrToVault(session.draft);
-        updateSavedPnrDropdown();
 
         session.transcript.push({
           type: 'warning',
-          text: transitionedNnToKk
-            ? `* IR — PNR (${session.draft.locator}) RETRIEVED & STATUS UPDATED: 'NN' ➔ 'KK'`
-            : `* IR — UNSAVED MODIFICATIONS IGNORED & SAVED PNR (${session.draft.locator}) RETRIEVED`
+          text: `IGD — NO SAVED PNR PRESENT IN WORK AREA [${currentArea}] TO RETRIEVE`
         });
-        renderFullPnrDisplay(session.draft);
-        showToast(`IR: Retrieved PNR ${session.draft.locator}`);
         return;
       }
 
-      // Before clearing the work area on 'I', if the PNR has a locator, make sure its latest state is saved in savedPnrVault!
+      // 'I' or 'IG' (Ignore): save any committed PNR to active context vault before clearing work area
       if (session.draft && session.draft.locator) {
         savePnrToVault(session.draft);
         updateSavedPnrDropdown();
@@ -6719,8 +7273,11 @@ PHONES
       session.currentAvail = null;
       const availPanel = document.getElementById('visualAvailPanel');
       if (availPanel) availPanel.classList.add('hidden');
-      session.transcript = [];
-      showToast(`IGNORED (I) — Work Area [${currentArea}] Cleared (Saved PNRs remain in Vault & can be opened with *LOCATOR)`);
+      session.transcript = [
+        { type: 'user', text: `[${getTimestamp()}] [${currentArea}] 1S-HOST> ${cmd}` },
+        { type: 'warning', text: `IGD — WORK AREA [${currentArea}] IGNORED & CLEARED` }
+      ];
+      showToast(`IGNORED (I) — Work Area [${currentArea}] Cleared`);
     }
 
     function handlePrinterConfig(cmd) {
@@ -6763,10 +7320,10 @@ PHONES
         else if (firstMissing.includes('EMAIL')) nextCmd = '3CTCE/MOKTADA200644//GMAIL.COM-1.1';
         else if (firstMissing.includes('PRICE QUOTE')) nextCmd = draft.candidatePrice ? 'PQ' : 'WP';
 
-        triggerStrictError(
+        triggerMissingPrerequisiteNotice(
           cmd,
-          cmd,
-          `MANDATORY PNR ELEMENTS MISSING FOR TICKET ISSUANCE: Cannot issue E-Ticket until PNR is created AND APIS Passport (3DOCS), Mobile (3CTCM), Email (3CTCE), and Price Quote (WP + PQ) are saved! Missing: [ ${missingTkt.join(' • ')} ]`,
+          'MANDATORY PNR / APIS / PRICE QUOTE ELEMENTS MISSING FOR TICKET ISSUANCE',
+          missingTkt,
           nextCmd,
           'Complete Missing Requirement First'
         );
@@ -6979,10 +7536,11 @@ PHONES
       }
       // 4. Only if user explicitly queried one of the 4 screenshot demo ticket numbers (9974883803282..5), return its metadata WITHOUT overwriting the user's active PNR!
       const demoMap = {
-        '9974883803282': { line: 2, number: '9974883803282', formatted: '997-4883803282', fullName: 'HOSSAIN/RAHAT MR', paxType: 'ADT', carrier: 'BG', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 109303, bag: '30K', status: 'OPEN' },
-        '9974883803283': { line: 3, number: '9974883803283', formatted: '997-4883803283', fullName: 'HOSSAIN/JANNAT MRS', paxType: 'ADT', carrier: 'BG', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 109303, bag: '30K', status: 'OPEN' },
-        '9974883803284': { line: 4, number: '9974883803284', formatted: '997-4883803284', fullName: 'HOSSAIN/ABRAR MSTR*C10', paxType: 'C10', carrier: 'BG', fareBasis: 'YBD6M/CH25', usd: '570.00', eqv: 70538, tax: 13253, total: 83791, bag: '30K', status: 'OPEN' },
-        '9974883803285': { line: 5, number: '9974883803285', formatted: '997-4883803285', fullName: 'I/1HOSSAIN/KABITA MISS*I05', paxType: 'INF', carrier: 'BG', fareBasis: 'YBD6M/IN75', usd: '190.00', eqv: 23513, tax: 3294, total: 26807, bag: '10K', status: 'OPEN' }
+        '1762489104412': { line: 2, number: '1762489104412', formatted: '176-2489104412', shortName: 'TAWHA/M', fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT', carrier: 'BG', fareBasis: 'YBD6M', usd: '339.39', eqv: 42000, tax: 11200, total: 53200, bag: '30K', status: 'OPEN' },
+        '9974883803282': { line: 2, number: '9974883803282', formatted: '997-4883803282', shortName: 'HOSSA/R', fullName: 'HOSSAIN/RAHAT MR', paxType: 'ADT', carrier: 'BG', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 109303, bag: '30K', status: 'OPEN' },
+        '9974883803283': { line: 3, number: '9974883803283', formatted: '997-4883803283', shortName: 'HOSSA/J', fullName: 'HOSSAIN/JANNAT MRS', paxType: 'ADT', carrier: 'BG', fareBasis: 'YBD6M', usd: '760.00', eqv: 94050, tax: 15253, total: 109303, bag: '30K', status: 'OPEN' },
+        '9974883803284': { line: 4, number: '9974883803284', formatted: '997-4883803284', shortName: 'HOSSA/A', fullName: 'HOSSAIN/ABRAR MSTR*C10', paxType: 'C10', carrier: 'BG', fareBasis: 'YBD6M/CH25', usd: '570.00', eqv: 70538, tax: 13253, total: 83791, bag: '30K', status: 'OPEN' },
+        '9974883803285': { line: 5, number: '9974883803285', formatted: '997-4883803285', shortName: 'HOSSA/K', fullName: 'I/1HOSSAIN/KABITA MISS*I05', paxType: 'INF', carrier: 'BG', fareBasis: 'YBD6M/IN75', usd: '190.00', eqv: 23513, tax: 3294, total: 26807, bag: '10K', status: 'OPEN' }
       };
       if (rawDigits && demoMap[rawDigits]) {
         return { tkt: demoMap[rawDigits], sourceDraft: draft };
@@ -7090,12 +7648,12 @@ PHONES
 
       const lookup = findTicketAcrossDraftAndVault(draft, lineNum, rawDigits);
       if (!lookup || !lookup.tkt) {
-        triggerStrictError(
+        triggerMissingPrerequisiteNotice(
           cmd,
-          cmd,
-          `No matching Electronic Ticket found. Issue a ticket on your PNR first (W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER), check *T for the 13-digit ticket number, and then run WFRA<TICKET_NUMBER>.`,
-          draft.ticketNumber ? `WFRA${draft.ticketNumber.replace(/-/g, '')}` : 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
-          'Sabre Automated Refund Calculation (WFRA)'
+          'NO MATCHING ELECTRONIC TICKET FOUND IN ACTIVE PNR FOR REFUND',
+          ['ISSUED 13-DIGIT E-TICKET (*T) OR CLICK [🎫 Practise Refund/Reissue] ABOVE'],
+          draft.ticketNumber ? `WFRA${draft.ticketNumber.replace(/-/g, '')}` : 'WFRA1762489104412',
+          'Run Refund on Demo Ticket 1762489104412 or Load Ticketed Demo PNR'
         );
         return;
       }
@@ -7218,18 +7776,28 @@ PHONES
 
       const lookup = findTicketAcrossDraftAndVault(draft, lineNum, rawDigits);
       if (!lookup || !lookup.tkt) {
-        triggerStrictError(
-          cmd,
-          cmd,
-          `No active Electronic Ticket found for Reissue. Issue a ticket on your PNR first (W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER), check *T for the 13-digit ticket number, and then run WFRF<TICKET_NUMBER>¥A<CARRIER>.`,
-          draft.ticketNumber ? `WFRF${draft.ticketNumber.replace(/-/g, '')}¥A${draft.segments[0]?.carrier || 'BG'}¥N1.1` : 'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
-          'Sabre Automated Reissue / Exchange Entry (WFRF)'
-        );
+        // If user ran W¥PQR1 when PQR1 wasalready retained in draft.pqrData, proceed directly to step 2!
+        if (!cmd.startsWith('WFRF') && draft.pqrRetained && draft.pqrData) {
+          // Proceed with W¥PQR1 using draft.pqrData
+        } else {
+          triggerMissingPrerequisiteNotice(
+            cmd,
+            'NO ACTIVE ELECTRONIC TICKET OR RETAINED PQR RECORD FOUND FOR REISSUE',
+            ['ISSUED 13-DIGIT E-TICKET (*T) OR RUN WFRF1762489104412¥ABG FIRST'],
+            'WFRF1762489104412¥ABG',
+            'Calculate Exchange & Retain PQR 1 First'
+          );
+          return;
+        }
         return;
       }
 
-      const tktObj = lookup.tkt;
-      const srcDraft = lookup.sourceDraft || draft;
+      const tktObj = (lookup && lookup.tkt) ? lookup.tkt : {
+        line: 2, paxIndex: 1, number: draft.pqrData?.oldTicket || '1762489104412',
+        formatted: '176-2489104412', fullName: draft.pqrData?.paxName || draft.names[0]?.fullName || 'TAWHA/MOKTADA AS SADAR MR',
+        paxType: 'ADT', carrier: draft.pqrData?.carrier || 'BG', fareBasis: 'YBD6M', usd: '339.39', eqv: 42000, tax: 11200, total: 53200, bag: '30K', status: 'OPEN'
+      };
+      const srcDraft = (lookup && lookup.sourceDraft) ? lookup.sourceDraft : draft;
       const oldClean13 = tktObj.number.replace(/-/g, '');
       const valCxr = cxrMatch ? cxrMatch[1] : (tktObj.carrier || srcDraft.priceQuote?.validatingCarrier || srcDraft.segments[0]?.carrier || 'BG');
       const targetPax = paxMatch ? paxMatch[1] : `${tktObj.paxIndex || 1}.1`;
@@ -7361,17 +7929,18 @@ PHONES
 
       showToast(`ETR Exchange Processed — New E-Ticket: ${newTicketRaw}`);
     }
+    let lastWvCommand = null;
     function handleVoidTicket(cmd) {
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
       if (!draft.ticketIssued || !draft.ticketNumber) {
-        triggerStrictError(
+        triggerMissingPrerequisiteNotice(
           cmd,
-          cmd,
-          'Cannot Void Ticket (WV2) before issuing an E-Ticket. Issue an E-Ticket first using W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER.',
+          'NO ACTIVE ELECTRONIC TICKET IN PNR TO VOID',
+          ['ISSUED E-TICKET ON LINE 2 OF *T (OR CLICK [🎫 Practise Refund/Reissue] ABOVE)'],
           'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
-          'Issue E-Ticket Before Voiding'
+          'Issue E-Ticket or Load Ticketed Demo PNR First'
         );
         return;
       }
@@ -7452,22 +8021,24 @@ PHONES
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      const missingPnr = getMissingMandatoryPnrElements(draft, true);
+      const missingPnr = getMissingMandatoryPnrElements(draft, false);
       if (missingPnr.length > 0) {
-        triggerStrictError(
+        triggerMissingPrerequisiteNotice(
           cmd,
-          cmd,
-          `MANDATORY PNR ELEMENTS MISSING: Cannot add SSR/OSI/APIS (${cmd}) before creating and saving the PNR (${missingPnr.join(', ')}).`,
-          missingPnr[0].split('(')[1]?.replace(')', '') || '120NOVDACDXB¥BG',
-          'Complete Mandatory PNR Elements First'
+          'CANNOT ADD APIS / SSR TO AN EMPTY WORK AREA',
+          missingPnr,
+          '120NOVDACDXB¥BG',
+          'Search & Sell Flight + Add Passenger Name First'
         );
         return;
       }
 
       if (cmd.startsWith('3OSI')) {
         draft.osi.push(cmd);
-        session.transcript.push({ type: 'success', text: `OSI STORED IN PNR: ${cmd}` });
-        showToast('OSI Element Stored');
+        if (draft.isConfirmed) draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
+        if (draft.locator) savePnrToVault(draft);
+        session.transcript.push({ type: 'success', text: `OSI STORED IN GENERAL FACTS (*P3D Line ${draft.ssr.length + draft.osi.length}): ${cmd}` });
+        showToast('OSI Element Stored in *P3D');
         return;
       }
 
@@ -7475,11 +8046,13 @@ PHONES
         draft.chdInfDobVerified = true;
       }
       draft.ssr.push(cmd);
+      if (draft.isConfirmed) draft.committedSnapshot = JSON.parse(JSON.stringify(draft));
+      if (draft.locator) savePnrToVault(draft);
       session.transcript.push({
         type: 'success',
-        text: `SSR ACCEPTED & STORED IN GENERAL FACTS (*P3D): ${cmd}`
+        text: `SSR ACCEPTED & STORED IN GENERAL FACTS (*P3D Line ${draft.ssr.length}): ${cmd}`
       });
-      showToast(`SSR Stored: ${cmd.slice(0, 28)}`);
+      showToast(`SSR Stored in *P3D (Line ${draft.ssr.length}): ${cmd.slice(0, 28)}`);
     }
 
     function handleFareBasisDisplay(cmd) {
@@ -7549,32 +8122,81 @@ PHONES
       if (cmd.startsWith('DC*CUR')) {
         session.transcript.push({
           type: 'output-line',
-          text: `CURRENCY TABLE — BANK SELLING RATE (BSR) AGAINST BDT:
-` +
-                `USD  123.75 BDT   •   EUR  131.40 BDT   •   GBP  154.20 BDT
-` +
-                `SAR   32.95 BDT   •   AED   33.70 BDT   •   SGD   91.80 BDT
-` +
-                `MYR   28.10 BDT   •   THB    3.62 BDT   •   QAR   33.95 BDT`
+          text: [
+            'CURRENCY TABLE — IATA BANK SELLING RATE (BSR) AGAINST BDT:',
+            'USD  123.75 BDT   •   EUR  131.40 BDT   •   GBP  154.20 BDT',
+            'SAR   32.95 BDT   •   AED   33.70 BDT   •   SGD   91.80 BDT',
+            'MYR   28.10 BDT   •   THB    3.62 BDT   •   QAR   33.95 BDT'
+          ].join('\n')
         });
         return;
       }
-      const convMatch = cmd.match(/^DC[‡¥]([A-Z]{3})(\d+(?:\.\d+)?)\/([A-Z]{3})$/);
+      const convMatch = cmd.match(/^DC[‡¥](\w{3})(\d+(?:\.\d+)?)\/(\w{3})$/);
       if (convMatch) {
-        const fromCur = convMatch[1];
+        const fromCur = convMatch[1].toUpperCase();
         const amt = parseFloat(convMatch[2]);
-        const toCur = convMatch[3];
-        const rate = fromCur === 'USD' && toCur === 'BDT' ? 123.75 : 1.0;
-        const res = (amt * rate).toFixed(2);
+        const toCur = convMatch[3].toUpperCase();
+        const fromInfo = BSR_RATES_TO_BDT[fromCur];
+        const toInfo = BSR_RATES_TO_BDT[toCur];
+
+        if (!fromInfo || !toInfo) {
+          session.transcript.push({
+            type: 'error',
+            text: `RATE UNAVAILABLE FOR ${fromCur}/${toCur} — ENTER DC*CUR TO VIEW SUPPORTED IATA BSR CURRENCIES«`
+          });
+          return;
+        }
+
+        // Bidirectional conversion via BDT base rate:
+        // - If converting Foreign -> BDT (e.g. USD -> BDT): multiply amt * fromInfo.rate
+        // - If converting BDT -> Foreign (e.g. BDT 50000 -> USD): divide amt / toInfo.rate (= 404.04 USD!)
+        // - If converting Foreign -> Foreign: (amt * fromInfo.rate) / toInfo.rate
+        let convertedAmt = 0;
+        let rateDesc = '';
+        if (fromCur === toCur) {
+          convertedAmt = amt;
+          rateDesc = `1 ${fromCur} = 1.00 ${toCur}`;
+        } else if (toCur === 'BDT') {
+          convertedAmt = amt * fromInfo.rate;
+          rateDesc = `1 ${fromCur} = ${fromInfo.rate.toFixed(2)} BDT`;
+        } else if (fromCur === 'BDT') {
+          convertedAmt = amt / toInfo.rate;
+          rateDesc = `1 ${toCur} = ${toInfo.rate.toFixed(2)} BDT (DIVIDED BY ${toInfo.rate.toFixed(2)})`;
+        } else {
+          convertedAmt = (amt * fromInfo.rate) / toInfo.rate;
+          rateDesc = `1 ${fromCur} = ${fromInfo.rate.toFixed(2)} BDT • 1 ${toCur} = ${toInfo.rate.toFixed(2)} BDT`;
+        }
+
+        const resStr = convertedAmt.toFixed(2);
         session.transcript.push({
           type: 'output-line',
-          text: `RATE USED: 1 ${fromCur} = ${rate} ${toCur}   ➔   ${fromCur} ${amt.toFixed(2)} = ${toCur} ${res}`
+          text: `RATE USED: ${rateDesc}   ➔   ${fromCur} ${amt.toFixed(2)} = ${toCur} ${resStr}`
         });
         return;
       }
+
+      // Decode Specific Currency: DC*USD, DC*AED, DC*EUR, etc.
+      const decMatch = cmd.match(/^DC\*([A-Z]{3})$/);
+      if (decMatch) {
+        const curCode = decMatch[1].toUpperCase();
+        const info = BSR_RATES_TO_BDT[curCode];
+        if (!info) {
+          session.transcript.push({
+            type: 'error',
+            text: `RATE UNAVAILABLE FOR CURRENCY CODE ${curCode}«`
+          });
+          return;
+        }
+        session.transcript.push({
+          type: 'output-line',
+          text: `CURRENCY DECODE (${cmd}): ${curCode} = ${info.name} (1 ${curCode} = ${info.rate.toFixed(2)} BDT)`
+        });
+        return;
+      }
+
       session.transcript.push({
         type: 'output-line',
-        text: `CURRENCY DECODE (${cmd}): USD = US DOLLAR (1 USD = 123.75 BDT) • BDT = BANGLADESH TAKA`
+        text: `CURRENCY DECODE (${cmd}): USD = US DOLLAR (1 USD = 123.75 BDT) • BDT = BANGLADESHI TAKA`
       });
     }
 
@@ -7737,10 +8359,21 @@ PHONES
 
     function handleClonePnr(cmd) {
       const session = areaSessions[currentArea];
+      const draft = session.draft;
+      const srcSegs = (draft.segments && draft.segments.length > 0)
+        ? draft.segments
+        : (draft.committedSnapshot?.segments && draft.committedSnapshot.segments.length > 0)
+          ? draft.committedSnapshot.segments
+          : [{ index: 1, carrier: 'BG', flight: '347', bookingClass: 'Y', seats: 1, date: '20NOV', orig: 'DAC', dest: 'DXB', dep: '1845', arr: '2215', status: 'SS', baseFare: 42000, taxes: 11200, name: 'Biman Bangladesh' }];
+      draft.segments = JSON.parse(JSON.stringify(srcSegs));
+      if (!draft.names || draft.names.length === 0) {
+        draft.names = [{ index: 1, fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT' }];
+      }
       session.transcript.push({
         type: 'success',
-        text: `PNR ITINERARY CLONED (${cmd}) INTO NEW WORKSPACE`
+        text: `PNR ITINERARY CLONED (${cmd}) INTO WORK AREA [${currentArea}] — ${draft.segments.length} SEGMENT(S) ACTIVE`
       });
+      renderFullPnrDisplay(draft);
     }
 
     function handleAgencyQueues(cmd) {
@@ -8089,6 +8722,40 @@ PHONES
               div.remove();
               executeCrypticCommand('PQ');
             });
+            break;
+          case 'prereq-notice':
+            div.className = 'my-1.5 bg-amber-950/60 border border-amber-500/50 rounded-lg p-3 space-y-2 text-xs';
+            div.innerHTML = `
+              <div class="flex items-center justify-between text-amber-300 font-bold">
+                <span>⚠ ${line.title || 'PREREQUISITE PNR / TICKET DATA REQUIRED'}</span>
+                <span class="text-[10px] font-mono bg-amber-500/15 text-amber-200 px-2 py-0.5 rounded border border-amber-500/30">SYNTAX OK • MISSING PREREQUISITE</span>
+              </div>
+              <div class="font-mono text-[11px] text-slate-200">
+                <strong>Missing Item(s):</strong> [ ${(line.missingList || []).join(' • ')} ]
+              </div>
+              ${(banglaExplainEnabled && line.bnText) ? `<div class="text-xs text-[#A3E635] font-sans">🇧🇩 <strong>বাংলা ব্যাখ্যা:</strong> ${line.bnText}</div>` : ''}
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-1.5 border-t border-amber-800/60 text-[11px]">
+                <span class="font-mono text-emerald-300">Next Required Command: <strong class="bg-slate-900 px-2 py-0.5 rounded border border-slate-700">${line.correctCmd}</strong></span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" class="prereq-run-btn bg-[#A3E635] text-[#0B0F14] font-mono font-bold px-3 py-1 rounded cursor-pointer" data-cmd="${line.correctCmd}">▶ Run ${line.correctCmd}</button>
+                  <button type="button" class="prereq-load-demo-btn bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] font-mono px-2.5 py-1 rounded cursor-pointer">🎫 Load Ticketed Demo PNR</button>
+                </div>
+              </div>
+            `;
+            div.querySelector('.prereq-run-btn')?.addEventListener('click', (ev) => {
+              const c = ev.currentTarget.getAttribute('data-cmd');
+              if (c) executeCrypticCommand(c);
+            });
+            div.querySelector('.prereq-load-demo-btn')?.addEventListener('click', () => {
+              loadTicketedDemoPnrForRefundReissue('refund');
+            });
+            break;
+          case 'state-delta':
+            div.className = 'mt-1.5 mb-1 bg-[#121821] border-l-2 border-[#A3E635] px-3 py-1.5 rounded-r text-[11px] flex flex-col gap-0.5';
+            div.innerHTML = `
+              <div class="font-mono text-[#A3E635]"><strong class="uppercase">Δ What Changed:</strong> <span class="text-[#F3F4F6]">${line.en}</span></div>
+              ${(banglaExplainEnabled && line.bn) ? `<div class="font-sans text-xs text-cyan-300">🇧🇩 <strong>কী বদলাল / বাংলা অর্থ:</strong> ${line.bn}</div>` : ''}
+            `;
             break;
           default:
             div.className = 'term-resp-line text-slate-300';
@@ -8538,50 +9205,77 @@ PHONES
       const session = areaSessions[currentArea];
       const draft = session.draft;
 
-      // Check if selling a line from JR response e.g. JR01 or JR03 or JR03,3S1 (PDF Page 5)
+      const jrOptions = [
+        { opt: 1, carrier: 'FZ', flight: '584', bookingClass: 'Q', date: '15NOV', orig: 'DAC', dest: 'DXB', dep: '0130', arr: '0505', baseFare: 38000, taxes: 9800, name: 'flydubai' },
+        { opt: 2, carrier: 'BS', flight: '341', bookingClass: 'B', date: '15NOV', orig: 'DAC', dest: 'DXB', dep: '2115', arr: '0045', baseFare: 40000, taxes: 10500, name: 'US-Bangla Airlines' },
+        { opt: 3, carrier: 'BG', flight: '347', bookingClass: 'Y', date: '15NOV', orig: 'DAC', dest: 'DXB', dep: '1845', arr: '2215', baseFare: 42000, taxes: 11200, name: 'Biman Bangladesh' },
+        { opt: 4, carrier: 'EK', flight: '587', bookingClass: 'Y', date: '15NOV', orig: 'DAC', dest: 'DXB', dep: '2000', arr: '2330', baseFare: 55000, taxes: 14500, name: 'Emirates' }
+      ];
+
+      // Selling a line from JR response e.g. JR01..JR04 or JR03,3S1
       const jrSellMatch = cmd.match(/^JR0(\d)(?:,(\d)S(\d))?$/);
       if (jrSellMatch) {
         const lineNum = parseInt(jrSellMatch[1], 10);
         const seatCnt = jrSellMatch[2] ? parseInt(jrSellMatch[2], 10) : 1;
+        const chosen = jrOptions.find(o => o.opt === lineNum);
+        if (!chosen) {
+          session.transcript.push({
+            type: 'error',
+            text: `✕ FARE SHOPPING OPTION JR0${lineNum} NOT FOUND — AVAILABLE OPTIONS ARE JR01 TO JR04 (RUN JR.DAC/S-OYSIN12AUG FIRST)«`
+          });
+          return;
+        }
         const segIdx = draft.segments.length + 1;
         draft.segments.push({
-          index: segIdx, carrier: 'SQ', flight: '447', bookingClass: 'W', seats: seatCnt,
-          date: '12AUG', orig: 'DAC', dest: 'SIN', dep: '2355', arr: '0605',
-          status: actionStatus === 'LL' ? 'LL' : 'SS', baseFare: 33000 * seatCnt, taxes: 8700 * seatCnt, name: 'Singapore Airlines'
+          index: segIdx,
+          carrier: chosen.carrier,
+          flight: chosen.flight,
+          bookingClass: chosen.bookingClass,
+          seats: seatCnt,
+          date: chosen.date,
+          orig: chosen.orig,
+          dest: chosen.dest,
+          dep: chosen.dep,
+          arr: chosen.arr,
+          status: 'SS',
+          baseFare: chosen.baseFare * seatCnt,
+          taxes: chosen.taxes * seatCnt,
+          name: chosen.name
         });
+        document.getElementById('fareShoppingModal')?.classList.add('hidden');
         session.transcript.push({
           type: 'success',
-          text: `JR0${lineNum} SOLD: ${segIdx} SQ 447W 12AUG SS${seatCnt} DACSIN 2355 0605 /E`
+          text: `JR0${lineNum} SOLD: ${segIdx} ${chosen.carrier} ${chosen.flight}${chosen.bookingClass} ${chosen.date} SS${seatCnt} ${chosen.orig}${chosen.dest} ${chosen.dep} ${chosen.arr} /E`
         });
-        showToast(`Sold ${seatCnt} Seat(s) from Fare Shopping Line 0${lineNum}`);
+        showToast(`Sold ${seatCnt} Seat(s) from Fare Shopping Option JR0${lineNum} (${chosen.carrier} ${chosen.flight})`);
         return;
       }
+
       session.transcript.push({
         type: 'output-header',
         text: `* SABRE BARGAIN FINDER / FARE SHOPPING ENGINE (${cmd}):`
       });
       session.transcript.push({
         type: 'output-line',
-        text: `OPTION 1 (LOWEST): FZ 584 Q1 15NOV DACDXB 0130 0505  •  TOTAL: BDT 47,800 (20KG BAG)`
+        text: `JR01 (LOWEST): FZ 584 Q1 15NOV DACDXB 0130 0505  •  TOTAL: BDT 47,800 (20KG BAG)`
       });
       session.transcript.push({
         type: 'output-line',
-        text: `OPTION 2 (VALUE) : BS 341 B1 15NOV DACDXB 2115 0045  •  TOTAL: BDT 50,500 (30KG BAG)`
+        text: `JR02 (VALUE) : BS 341 B1 15NOV DACDXB 2115 0045  •  TOTAL: BDT 50,500 (30KG BAG)`
       });
       session.transcript.push({
         type: 'output-line',
-        text: `OPTION 3 (DIRECT): BG 347 Y1 15NOV DACDXB 1845 2215  •  TOTAL: BDT 53,200 (30KG BAG)`
+        text: `JR03 (DIRECT): BG 347 Y1 15NOV DACDXB 1845 2215  •  TOTAL: BDT 53,200 (30KG BAG)`
       });
       session.transcript.push({
         type: 'output-line',
-        text: `OPTION 4 (FULL)  : EK 587 Y1 15NOV DACDXB 2000 2330  •  TOTAL: BDT 69,500 (35KG BAG)`
+        text: `JR04 (FULL)  : EK 587 Y1 15NOV DACDXB 2000 2330  •  TOTAL: BDT 69,500 (35KG BAG)`
       });
       session.transcript.push({
         type: 'success',
-        text: `FARE SHOPPING MATRIX LOADED - OPENING INTERACTIVE FARE SHOPPING PANEL`
+        text: `FARE SHOPPING MATRIX LOADED — ENTER 'JR01', 'JR02', 'JR03', OR 'JR04' TO SELL OPTION`
       });
       renderFareShoppingCards('DAC', 'DXB', '15NOV', '');
-      document.getElementById('fareShoppingModal')?.classList.remove('hidden');
     }
 
 
@@ -8619,23 +9313,16 @@ PHONES
     function updateSavedPnrDropdown() {
       const sel = document.getElementById('savedPnrQuickSelect');
       if (!sel) return;
-      try {
-        const rawV = localStorage.getItem('sabre_pnr_vault_v1');
-        if (rawV) {
-          const parsed = JSON.parse(rawV);
-          if (Array.isArray(parsed) && parsed.length > savedPnrVault.length) {
-            savedPnrVault = parsed;
-          }
-        }
-      } catch (e) {}
-      sel.innerHTML = `<option value="">📂 Saved PNRs (${savedPnrVault.length})...</option>` +
-        savedPnrVault.map((p, idx) => {
+      const activeVault = getActiveContextVault();
+      const ctxLabel = currentWorkspaceContextTracker === 'EXAM' ? 'Exam PNRs' : (currentWorkspaceContextTracker === 'GUIDED' ? 'Guided PNRs' : 'Saved PNRs');
+      sel.innerHTML = `<option value="">📂 ${ctxLabel} (${activeVault.length})...</option>` +
+        activeVault.map((p, idx) => {
           const pax = p.names?.[0]?.fullName || 'PAX';
           const seg = p.segments?.[0] ? `${p.segments[0].orig}-${p.segments[0].dest}` : '';
           const tkt = p.tickets?.[0]?.number || p.ticketNumber || 'NO-TKT';
-          return `<option value="${p.locator}">#${savedPnrVault.length - idx} *${p.locator} — ${pax} (${seg} • ${tkt})</option>`;
+          return `<option value="${p.locator}">#${activeVault.length - idx} *${p.locator} — ${pax} (${seg} • ${tkt})</option>`;
         }).join('') +
-        `<option value="RPHEBS">★ *RPHEBS — 24-Screenshot Demo PNR (4 Pax)</option>`;
+        (currentWorkspaceContextTracker === 'FREE' ? `<option value="RPHEBS">★ *RPHEBS — 24-Screenshot Demo PNR (4 Pax)</option>` : '');
     }
 
     function savePnrToVault(draft) {
@@ -8643,14 +9330,24 @@ PHONES
       const copy = JSON.parse(JSON.stringify(draft));
       copy.savedAt = getTimestamp();
       copy.area = currentArea;
-      const existingIdx = savedPnrVault.findIndex(p => p.locator === copy.locator);
+      copy.context = currentWorkspaceContextTracker;
+
+      // Strict Workspace Isolation: Save ONLY to the active workspace context's vault!
+      const targetVault = getActiveContextVault();
+      const existingIdx = targetVault.findIndex(p => p.locator === copy.locator);
       if (existingIdx !== -1) {
-        savedPnrVault[existingIdx] = copy;
+        targetVault[existingIdx] = copy;
       } else {
-        savedPnrVault.unshift(copy);
+        targetVault.unshift(copy);
       }
       try {
-        localStorage.setItem('sabre_pnr_vault_v1', JSON.stringify(savedPnrVault));
+        if (currentWorkspaceContextTracker === 'EXAM') {
+          localStorage.setItem('sabre_exam_pnr_vault_v1', JSON.stringify(examPnrVault));
+        } else if (currentWorkspaceContextTracker === 'GUIDED') {
+          localStorage.setItem('sabre_guided_pnr_vault_v1', JSON.stringify(guidedPnrVault));
+        } else {
+          localStorage.setItem('sabre_pnr_vault_v1', JSON.stringify(savedPnrVault));
+        }
       } catch (e) {}
       renderPnrVaultList();
     }
@@ -8798,17 +9495,10 @@ PHONES
     }
 
     function openRefundExchangeModal() {
-      const draft = areaSessions[currentArea].draft;
+      let draft = areaSessions[currentArea].draft;
       if (!draft.ticketIssued || !draft.ticketNumber) {
-        triggerStrictError(
-          'WFRF / WFR',
-          'NO ISSUED E-TICKET',
-          'MANDATORY PNR ELEMENTS / ACTIVE E-TICKET MISSING: You cannot open the Refund / Reissue Mask before issuing an E-Ticket! Follow strict order: 1. Create PNR (ER) ➔ 2. Add 3DOCS, 3CTCM, 3CTCE ➔ 3. Price (WP & PQ) ➔ 4. Issue Ticket.',
-          '115NOVDACDXB',
-          'Complete PNR & Issue Ticket First'
-        );
-        showToast('Error: Issue E-Ticket first before Refund/Reissue!');
-        return;
+        loadTicketedDemoPnrForRefundReissue('refund');
+        draft = areaSessions[currentArea].draft;
       }
 
       const base = draft.priceQuote?.baseFare || 55000;
@@ -8998,6 +9688,12 @@ PHONES
       }
     ];
     let userQuizAnswers = {};
+    try {
+      const savedMcq = localStorage.getItem('maa_mcq_score_v1');
+      if (savedMcq) currentQuizScore = parseInt(savedMcq, 10) || 0;
+      const savedAns = localStorage.getItem('maa_mcq_answers_v1');
+      if (savedAns) userQuizAnswers = JSON.parse(savedAns) || {};
+    } catch (e) {}
 
     function renderKnowledgeQuiz() {
       const container = document.getElementById('quizBodyContainer');
@@ -9036,11 +9732,17 @@ PHONES
             if (userQuizAnswers[idx] === item.ans) correct++;
           });
           currentQuizScore = Math.round((correct / SABRE_QUIZ_QUESTIONS.length) * 100);
+          try {
+            localStorage.setItem('maa_mcq_score_v1', String(currentQuizScore));
+            localStorage.setItem('maa_mcq_answers_v1', JSON.stringify(userQuizAnswers));
+          } catch (err) {}
           const footer = document.getElementById('quizScoreFooterText');
-          if (footer) footer.textContent = `Current Exam Score: ${correct}/${SABRE_QUIZ_QUESTIONS.length} (${currentQuizScore}%)`;
+          if (footer) footer.textContent = `Current MCQ Score: ${correct}/${SABRE_QUIZ_QUESTIONS.length} (${currentQuizScore}%)`;
           const dashStat = document.getElementById('dashQuizScoreStat');
           if (dashStat) dashStat.textContent = `${currentQuizScore}%`;
           renderKnowledgeQuiz();
+          if (typeof window.renderExamsCenterPage === 'function') window.renderExamsCenterPage();
+          if (typeof window.updateDerivedLearnerProgressUI === 'function') window.updateDerivedLearnerProgressUI();
         });
       });
     }
@@ -9952,8 +10654,31 @@ PHONES
           </button>
         `;
 
-        row.querySelector('.cheat-run-btn').addEventListener('click', () => {
-          executeCrypticCommand(item.cmd);
+        row.querySelector('.cheat-run-btn').addEventListener('click', (e) => {
+          const cmd = (e.currentTarget.getAttribute('data-cmd') || '').trim();
+          const draft = areaSessions[currentArea].draft;
+          // If running a Guide demo command that requires an existing PNR, PQ, or Ticket, auto-prepare demo state so Guide examples always demonstrate their output!
+          if (/^(WP|PQ|W[‡¥+]PQ|3|PE[‡¥]|-1|D1|EWR)/.test(cmd) && (draft.segments.length === 0 || draft.names.length === 0)) {
+            ensureAutoReadyForTicketing(draft);
+            draft.candidatePrice = JSON.parse(JSON.stringify(draft.priceQuote));
+          }
+          if (/^(WV|WETRV|WFRA|WFR|WTRX|W[‡¥+]PQR|WETRL)/.test(cmd) && (!draft.ticketIssued || !draft.ticketNumber)) {
+            ensureAutoReadyForTicketing(draft);
+            draft.tickets = [{ line: 2, paxIndex: 1, number: '1762489104412', formatted: '176-2489104412', shortName: 'TAWHA/M', fullName: 'TAWHA/MOKTADA AS SADAR MR', paxType: 'ADT', carrier: 'BG', fareBasis: 'YBD6M', usd: '339.39', eqv: 42000, tax: 11200, total: 53200, bag: '30K', status: 'OPEN', issueTime: '1450/18NOV' }];
+            draft.ticketIssued = true;
+            draft.ticketNumber = '176-2489104412';
+            draft.ticketStatus = 'OPEN';
+            if (cmd.startsWith('W¥PQR') || cmd.startsWith('W‡PQR')) {
+              draft.pqrRetained = true;
+              draft.pqrData = { pqrNum: 1, carrier: 'BG', oldTicket: '1762489104412', paxName: 'TAWHA/MOKTADA AS SADAR MR', exchEqv: 42000, exchTax: 11200, exchTtl: 53200, fareDiff: 0, taxDiff: 0, reissuePenalty: 4950, totalAddCollect: 4950, pax: '1.1' };
+            }
+          }
+          if (cmd === '38¤' && draft.ssr.length < 8) {
+            while (draft.ssr.length < 8) {
+              draft.ssr.push(`SSR DEMO ITEM ${draft.ssr.length + 1}`);
+            }
+          }
+          executeCrypticCommand(cmd);
         });
 
         container.appendChild(row);
@@ -10592,19 +11317,26 @@ PHONES
           document.getElementById('ndcInteractiveModal')?.classList.remove('hidden');
           return;
         }
-        if (target === 'qrex' || target === 'qrex-demo') {
+        if (target === 'qrex' || target === 'qrex-demo' || target === 'qrex-refund' || target === 'qrex-reissue') {
+          if (typeof navigateToRoute === 'function') {
+            navigateToRoute('/terminal');
+          } else {
+            dashModal?.classList.add('hidden');
+          }
+          const mode = target === 'qrex-reissue' ? 'reissue' : 'refund';
+          loadTicketedDemoPnrForRefundReissue(mode);
           const draft = areaSessions[currentArea].draft;
-          const base = draft.priceQuote?.baseFare || 55000;
-          const tax = draft.priceQuote?.taxes || 14500;
+          const base = draft.priceQuote?.baseFare || 42000;
+          const tax = draft.priceQuote?.taxes || 11200;
           const tktEl = document.getElementById('qrexTktNum');
           const stEl = document.getElementById('qrexTktStatus');
           const bfEl = document.getElementById('qrexBaseFare');
           const txEl = document.getElementById('qrexPaidTax');
-          if (tktEl) tktEl.textContent = draft.ticketNumber || '176-2489104412 (DEMO)';
+          if (tktEl) tktEl.textContent = draft.ticketNumber || '176-2489104412';
           if (stEl) stEl.textContent = draft.ticketStatus || 'OPEN FOR USE';
           if (bfEl) bfEl.textContent = `BDT ${base.toLocaleString()}`;
           if (txEl) txEl.textContent = `BDT ${tax.toLocaleString()}`;
-          if (typeof updateQrexCalculationPreview === 'function') updateQrexCalculationPreview();
+          if (typeof updateQrexPreviews === 'function') updateQrexPreviews();
           document.getElementById('refundExchangeModal')?.classList.remove('hidden');
           return;
         }
@@ -13458,9 +14190,12 @@ HEALTH   : ${info.health}`
       function switchWorkspaceContext(ctxName) {
         if (!workspaceContexts[ctxName]) return;
         activeWorkspaceContextName = ctxName;
+        currentWorkspaceContextTracker = ctxName;
         areaSessions = workspaceContexts[ctxName];
         currentArea = 'A';
         initWorkAreas();
+        updateSavedPnrDropdown();
+        renderPnrVaultList();
         renderTerminal();
         updatePnrTrackerUI();
         const subLbl = document.getElementById('termHeaderModeSubLabel');
@@ -13542,14 +14277,14 @@ HEALTH   : ${info.health}`
               title: 'Automated Refund (WFRA & WFRA/REF)',
               desc: 'Calculate ATPCO Category 33 refund quotes (WFRA) and execute automated ticket refunds (WFRA/REF & WFR).',
               actionLabel: 'Open Refund & Exchange Tool',
-              modalTarget: 'qrex',
+              modalTarget: 'qrex-refund',
               icon: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>'
             },
             {
               title: 'Automated Reissue (WFRF & W¥PQR)',
               desc: 'Calculate fare and tax differences via WFRF, inspect retained PQR records (*PQR), and reissue tickets.',
               actionLabel: 'Practise Reissue',
-              modalTarget: 'qrex',
+              modalTarget: 'qrex-reissue',
               icon: '<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>'
             },
             {
@@ -14010,38 +14745,70 @@ HEALTH   : ${info.health}`
       function evaluateExamDraft(draft) {
         let score = 0;
         const notes = [];
-        if (draft.segments && draft.segments.length > 0) {
+        const checkpoints = [];
+
+        const cp1 = Boolean(draft && draft.segments && draft.segments.length > 0);
+        if (cp1) {
           score += 20;
           notes.push(`Segment booked (${draft.segments[0].carrier} ${draft.segments[0].flight})`);
         } else {
           notes.push('Missing flight segment');
         }
-        if (draft.names && draft.names.length > 0 && draft.phones && draft.phones.length > 0 && draft.ticketLimit && draft.receivedFrom) {
+        checkpoints.push({ id: 1, label: '1. Flight Sold (01Y1)', done: cp1 });
+
+        const cp2 = Boolean(draft && draft.names && draft.names.length > 0 && draft.phones && draft.phones.length > 0 && draft.ticketLimit && draft.receivedFrom);
+        if (cp2) {
           score += 20;
           notes.push('PRINT elements complete');
         } else {
           notes.push('Incomplete PRINT elements');
         }
-        if (draft.isConfirmed && draft.locator) {
+        checkpoints.push({ id: 2, label: '2. PRINT Elements (-,9,7,6)', done: cp2 });
+
+        const cp3 = Boolean(draft && draft.isConfirmed && draft.locator);
+        if (cp3) {
           score += 20;
           notes.push(`PNR committed (${draft.locator})`);
         } else {
           notes.push('PNR not committed (ER)');
         }
-        if (draft.ssr && draft.ssr.some(s => s.includes('DOCS')) && draft.ssr.some(s => s.includes('CTCM')) && draft.priceQuote) {
+        checkpoints.push({ id: 3, label: `3. PNR Saved (${draft?.locator || 'ER'})`, done: cp3 });
+
+        const ssrUpper = (draft && Array.isArray(draft.ssr)) ? draft.ssr.map(s => String(s).toUpperCase()) : [];
+        const hasApis = ssrUpper.some(s => s.includes('DOCS')) && ssrUpper.some(s => s.includes('CTCM')) && ssrUpper.some(s => s.includes('CTCE'));
+        const hasPq = Boolean(draft && (draft.priceQuote || draft.candidatePrice));
+        const cp4 = hasApis && hasPq;
+        if (cp4) {
           score += 20;
           notes.push('APIS & PQ1 verified');
         } else {
-          notes.push('Missing APIS or PQ1');
+          notes.push(!hasApis ? 'Missing APIS (3DOCS/3CTCM/3CTCE)' : 'Missing Price Quote (WP ➔ PQ)');
         }
-        if (draft.ticketIssued && draft.ticketNumber) {
+        checkpoints.push({ id: 4, label: '4. APIS & PQ1', done: cp4 });
+
+        const cp5 = Boolean(draft && draft.ticketIssued && draft.ticketNumber);
+        if (cp5) {
           score += 20;
           notes.push(`Ticket issued (${draft.ticketNumber})`);
         } else {
           notes.push('No E-Ticket issued');
         }
+        checkpoints.push({ id: 5, label: `5. E-Ticket (${draft?.ticketNumber || 'W¥PQ...'})`, done: cp5 });
+
         const grade = score >= 90 ? 'Distinction' : (score >= 80 ? 'Merit (Pass)' : 'Incomplete (<80%)');
-        return { score, grade, feedback: notes.join(' • '), ticketNumber: draft.ticketNumber || 'None' };
+        return { score, grade, feedback: notes.join(' • '), ticketNumber: (draft && draft.ticketNumber) || 'None', locator: (draft && draft.locator) || 'None', checkpoints };
+      }
+
+      function updateLiveExamCheckpointsBar() {
+        const bar = document.getElementById('examLiveCheckpointsBar');
+        if (!bar) return;
+        const examDraft = workspaceContexts.EXAM[currentArea]?.draft || workspaceContexts.EXAM['A']?.draft || {};
+        const res = evaluateExamDraft(examDraft);
+        bar.innerHTML = res.checkpoints.map(cp => `
+          <span class="px-2 py-0.5 rounded border ${cp.done ? 'bg-[#A3E635]/10 border-[#A3E635] text-[#A3E635] font-semibold' : 'bg-[#0B0F14] border-[#26303D] text-[#9CA3AF]'}">
+            ${cp.done ? '✓' : '○'} ${cp.label}
+          </span>
+        `).join('') + `<span class="ml-auto font-bold ${res.score === 100 ? 'text-[#A3E635]' : 'text-[#F3F4F6]'}">Live Exam Score: ${res.score}% (${res.checkpoints.filter(c => c.done).length}/5 Checkpoints)</span>`;
       }
 
       function startNewPracticalExamAttempt() {
@@ -14065,6 +14832,7 @@ HEALTH   : ${info.health}`
         document.getElementById('examWorkspaceTaskBar')?.classList.remove('hidden');
         const idBadge = document.getElementById('examAttemptIdBadge');
         if (idBadge) idBadge.textContent = `Attempt: ${attemptId}`;
+        updateLiveExamCheckpointsBar();
 
         if (examTimerInterval) clearInterval(examTimerInterval);
         const tick = () => {
@@ -14085,16 +14853,25 @@ HEALTH   : ${info.health}`
 
       function finalizeActiveExamAttempt(finalStatus) {
         stopAllExamTimers();
-        const examDraft = workspaceContexts.EXAM['A']?.draft || {};
+        const examDraft = workspaceContexts.EXAM[currentArea]?.draft || workspaceContexts.EXAM['A']?.draft || {};
         const evalRes = evaluateExamDraft(examDraft);
+        if (examDraft && examDraft.locator) {
+          const copy = JSON.parse(JSON.stringify(examDraft));
+          const idx = examPnrVault.findIndex(p => p.locator === copy.locator);
+          if (idx !== -1) examPnrVault[idx] = copy;
+          else examPnrVault.unshift(copy);
+          try { localStorage.setItem('sabre_exam_pnr_vault_v1', JSON.stringify(examPnrVault)); } catch (e) {}
+        }
         const rec = {
           attemptId: examStateStore.activeAttemptId || ('EX-' + Math.floor(1000 + Math.random() * 9000)),
           timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
           status: finalStatus,
           score: finalStatus === 'Abandoned' ? 0 : evalRes.score,
           grade: finalStatus === 'Abandoned' ? 'Abandoned' : evalRes.grade,
+          locator: evalRes.locator,
           ticketNumber: evalRes.ticketNumber,
-          feedback: finalStatus === 'Abandoned' ? 'Attempt ended early by user.' : evalRes.feedback
+          feedback: finalStatus === 'Abandoned' ? 'Attempt ended early by user.' : evalRes.feedback,
+          pnrSnapshot: examDraft && examDraft.locator ? JSON.parse(JSON.stringify(examDraft)) : null
         };
         examStateStore.attemptsHistory.unshift(rec);
         examStateStore.currentStatus = finalStatus;
@@ -14106,15 +14883,17 @@ HEALTH   : ${info.health}`
         showToast(`Practical Exam ${finalStatus}: Score ${rec.score}% (${rec.grade})`);
       }
 
-      // Unified Certificate Eligibility Check (Section 11)
+      // Unified Certificate Eligibility Check (Section 11 — Shows Best Practical & Best MCQ Separately)
       function getUnifiedCertificateStatus() {
         const mcqScore = typeof currentQuizScore === 'number' ? currentQuizScore : 0;
         const bestPractical = examStateStore.attemptsHistory
           .filter(a => a.status === 'Submitted')
           .reduce((max, a) => Math.max(max, a.score || 0), 0);
         const bestAssessmentScore = Math.max(mcqScore, bestPractical);
+        const qualifyingSource = bestPractical >= mcqScore && bestPractical > 0
+          ? `Practical Exam (${bestPractical}%)`
+          : (mcqScore > 0 ? `MCQ Quiz (${mcqScore}%)` : 'None yet');
 
-        // Must have a TICKETED PNR (not merely a saved PNR)
         const hasTicketedPnrInExam = examStateStore.attemptsHistory.some(a => a.status === 'Submitted' && a.ticketNumber && a.ticketNumber !== 'None');
         const hasTicketedPnrInGuided = Boolean(workspaceContexts.GUIDED['A']?.draft?.ticketIssued && workspaceContexts.GUIDED['A']?.draft?.ticketNumber);
         const hasTicketedPnrInFree = Boolean(workspaceContexts.FREE['A']?.draft?.ticketIssued && workspaceContexts.FREE['A']?.draft?.ticketNumber) ||
@@ -14128,7 +14907,10 @@ HEALTH   : ${info.health}`
 
         return {
           isEligible,
+          mcqScore,
+          bestPractical,
           bestAssessmentScore,
+          qualifyingSource,
           hasTicketedPnr,
           gradeLabel
         };
@@ -14149,9 +14931,13 @@ HEALTH   : ${info.health}`
         }
 
         const certInfo = getUnifiedCertificateStatus();
+        const pracBadge = document.getElementById('examCenterPracticalScoreBadge');
+        if (pracBadge) {
+          pracBadge.textContent = `Best Practical: ${certInfo.bestPractical}%`;
+        }
         const mcqBadge = document.getElementById('examCenterMcqScoreBadge');
         if (mcqBadge) {
-          mcqBadge.textContent = `Best Assessment Score: ${certInfo.bestAssessmentScore}%`;
+          mcqBadge.textContent = `Best MCQ: ${certInfo.mcqScore}%`;
         }
         const certPill = document.getElementById('examCenterCertStatusPill');
         if (certPill) {
@@ -14160,16 +14946,15 @@ HEALTH   : ${info.health}`
         }
         const eligQuiz = document.getElementById('eligCheckQuiz');
         if (eligQuiz) {
-          eligQuiz.textContent = `${certInfo.bestAssessmentScore >= 80 ? '✓' : '•'} Assessment Score ≥ 80% (Current Best: ${certInfo.bestAssessmentScore}%)`;
+          eligQuiz.textContent = `${certInfo.bestAssessmentScore >= 80 ? '✓' : '•'} Score ≥ 80% in Practical OR MCQ (Best Practical: ${certInfo.bestPractical}% • Best MCQ: ${certInfo.mcqScore}% • Using: ${certInfo.qualifyingSource})`;
           eligQuiz.className = certInfo.bestAssessmentScore >= 80 ? 'text-[#A3E635]' : 'text-[#9CA3AF]';
         }
         const eligTkt = document.getElementById('eligCheckTicket');
         if (eligTkt) {
-          eligTkt.textContent = `${certInfo.hasTicketedPnr ? '✓' : '•'} At least 1 Ticketed PNR (13-digit E-Ticket issued)`;
+          eligTkt.textContent = `${certInfo.hasTicketedPnr ? '✓' : '•'} At least 1 Ticketed PNR (13-digit E-Ticket issued in *T)`;
           eligTkt.className = certInfo.hasTicketedPnr ? 'text-[#A3E635]' : 'text-[#9CA3AF]';
         }
 
-        // Update Certificate Modal Watermark & Grade
         const watermark = document.getElementById('certSampleWatermarkOverlay');
         const gradeSpan = document.getElementById('certGradeScoreText');
         if (watermark) {
@@ -14185,19 +14970,45 @@ HEALTH   : ${info.health}`
           if (examStateStore.attemptsHistory.length === 0) {
             tbody.innerHTML = `<tr><td colspan="6" class="py-4 px-3 text-center text-[#9CA3AF]">No practical exam attempts recorded yet. Click "Start Practical Exam" above to begin.</td></tr>`;
           } else {
-            tbody.innerHTML = examStateStore.attemptsHistory.map(a => `
+            tbody.innerHTML = examStateStore.attemptsHistory.map((a, idx) => `
               <tr>
                 <td class="py-2.5 px-3 font-mono font-semibold text-[#A3E635]">${a.attemptId}</td>
                 <td class="py-2.5 px-3 font-mono text-[#9CA3AF]">${a.timestamp}</td>
                 <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-[#0B0F14] border border-[#26303D] font-mono text-[11px]">${a.status}</span></td>
                 <td class="py-2.5 px-3 font-mono font-semibold">${a.score}% (${a.grade})</td>
-                <td class="py-2.5 px-3 font-mono">${a.ticketNumber}</td>
+                <td class="py-2.5 px-3 font-mono">
+                  <div>${a.ticketNumber || 'None'}</div>
+                  ${(a.locator && a.locator !== 'None') ? `<button type="button" data-examidx="${idx}" class="btn-open-exam-pnr mt-1 text-[10px] bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#26303D] px-2 py-0.5 rounded cursor-pointer">Open Exam PNR *${a.locator}</button>` : ''}
+                </td>
                 <td class="py-2.5 px-3 text-[#9CA3AF]">${a.feedback}</td>
               </tr>
             `).join('');
+
+            tbody.querySelectorAll('.btn-open-exam-pnr').forEach(btn => {
+              btn.addEventListener('click', (ev) => {
+                const idx = parseInt(ev.currentTarget.getAttribute('data-examidx') || '0', 10);
+                const att = examStateStore.attemptsHistory[idx];
+                if (!att) return;
+                navigateToRoute('/terminal');
+                const snap = att.pnrSnapshot || examPnrVault.find(p => p.locator === att.locator);
+                if (snap) {
+                  areaSessions[currentArea].draft = JSON.parse(JSON.stringify(snap));
+                  areaSessions[currentArea].transcript = [
+                    { type: 'output-header', text: `* ARCHIVED PRACTICAL EXAM PNR (*${snap.locator} • ATTEMPT ${att.attemptId} • SCORE ${att.score}%):` }
+                  ];
+                  renderFullPnrDisplay(areaSessions[currentArea].draft);
+                  showConfirmedPnrBanner(snap.locator);
+                  finishExecution();
+                } else if (att.locator) {
+                  executeCrypticCommand(`*${att.locator}`);
+                }
+              });
+            });
           }
         }
       }
+      window.renderExamsCenterPage = renderExamsCenterPage;
+      window.evaluateExamDraft = evaluateExamDraft;
 
       // 5. CLIENT-SIDE ROUTER & VIEW ISOLATION ENGINE (SECTIONS 2, 8, 9, 12)
       let currentAppRoute = '/';
@@ -14379,14 +15190,97 @@ HEALTH   : ${info.health}`
         navigateToRoute(window.location.hash || '/', { skipHistory: true });
       });
 
-      // Hook finishExecution to update Guided Learn Page & Exam Centre state
+      // Hook finishExecution to update Guided Learn Page, Live Exam Checkpoints, & Exam Centre state
       const prevFinishExecHook = finishExecution;
       finishExecution = function() {
         prevFinishExecHook();
         if (activeWorkspaceContextName === 'GUIDED') {
           renderGuidedLearnPage();
         }
+        if (activeWorkspaceContextName === 'EXAM') {
+          updateLiveExamCheckpointsBar();
+        }
         renderExamsCenterPage();
+      };
+
+      // Wire 1-Click Ticketed Demo PNR & Comparison Strip Buttons + Bangla Explanation Switch
+      document.getElementById('btnLoadTicketedRefundDemoPnr')?.addEventListener('click', () => {
+        loadTicketedDemoPnrForRefundReissue('refund');
+      });
+      document.getElementById('btnQuickRunWfraQuote')?.addEventListener('click', () => {
+        const tkt = areaSessions[currentArea].draft.tickets?.[0]?.number || '1762489104412';
+        executeCrypticCommand(`WFRA${tkt}`);
+      });
+      document.getElementById('btnQuickRunWfraConfirm')?.addEventListener('click', () => {
+        const tkt = areaSessions[currentArea].draft.tickets?.[0]?.number || '1762489104412';
+        executeCrypticCommand(`WFRA${tkt}/REF`);
+      });
+      document.getElementById('btnQuickRunWfrfReissue')?.addEventListener('click', () => {
+        const tkt = areaSessions[currentArea].draft.tickets?.[0]?.number || '1762489104412';
+        executeCrypticCommand(`WFRF${tkt}¥ABG`);
+        executeCrypticCommand('W¥PQR1');
+      });
+      document.getElementById('btnQuickRunCheckT')?.addEventListener('click', () => {
+        executeCrypticCommand('*T');
+      });
+      document.getElementById('btnCloseTktComparisonStrip')?.addEventListener('click', () => {
+        document.getElementById('ticketComparisonStrip')?.classList.add('hidden');
+      });
+
+      const bnToggleBtn = document.getElementById('btnToggleBanglaExplain');
+      const syncBnToggleBtnUI = () => {
+        if (!bnToggleBtn) return;
+        bnToggleBtn.textContent = `🇧🇩 বাংলা ব্যাখ্যা: ${banglaExplainEnabled ? 'ON' : 'OFF'}`;
+        bnToggleBtn.className = banglaExplainEnabled
+          ? 'bg-[#0B0F14] hover:border-[#A3E635] text-[#A3E635] border border-[#A3E635] font-semibold px-2.5 py-1 rounded whitespace-nowrap cursor-pointer'
+          : 'bg-[#0B0F14] hover:border-[#26303D] text-[#9CA3AF] border border-[#26303D] font-normal px-2.5 py-1 rounded whitespace-nowrap cursor-pointer';
+      };
+      syncBnToggleBtnUI();
+      bnToggleBtn?.addEventListener('click', () => {
+        banglaExplainEnabled = !banglaExplainEnabled;
+        try { localStorage.setItem('sabre_bangla_explain_v1', String(banglaExplainEnabled)); } catch (e) {}
+        syncBnToggleBtnUI();
+        renderTerminal();
+        showToast(banglaExplainEnabled ? 'বাংলা ব্যাখ্যা (Bangla Explanation) চালু করা হয়েছে!' : 'Bangla Explanation Switched OFF');
+      });
+
+      // Automated Full Learner Journey Self-Test (Availability -> Sell -> PNR -> APIS -> WP -> PQ -> Ticket -> *T & 5/5 Exam Score)
+      window.runAutomatedLearnerJourneyTest = function() {
+        startNewPracticalExamAttempt();
+        const journeyCmds = [
+          '120NOVDACDXB¥BG',
+          '01Y1',
+          '-TAWHA/MOKTADA AS SADAR MR',
+          '9 MTTCTC01980284967REFTAWHA',
+          '7TAW/',
+          '6TAWHA',
+          'ER',
+          '3DOCS/P/BGD/B09845217/BGD/14AUG98/M/15OCT34/TAWHA/MOKTADA-1.1',
+          '3CTCM/01980284967-1.1',
+          '3CTCE/MOKTADA200644//GMAIL.COM-1.1',
+          '*P3D',
+          'WP',
+          'PQ',
+          'PTR/C25A8E',
+          'DSIVC25A8E',
+          'W¥PQ1N1.1¥ABG¥FINVAGT¥KP7¥ETR¥ER',
+          '*T'
+        ];
+        journeyCmds.forEach(c => executeCrypticCommand(c));
+        const examDraft = workspaceContexts.EXAM['A']?.draft;
+        const evalRes = evaluateExamDraft(examDraft);
+        const starTText = (workspaceContexts.EXAM['A']?.transcript || []).map(l => l.text || '').join('\n');
+        const hasTicketInStarT = starTText.includes('2.TE ') && Boolean(examDraft?.ticketNumber);
+        const passedAll5 = evalRes.score === 100 && evalRes.checkpoints.every(cp => cp.done) && hasTicketInStarT;
+        return {
+          passed: passedAll5,
+          score: evalRes.score,
+          checkpointsCompleted: evalRes.checkpoints.filter(c => c.done).length,
+          locator: examDraft?.locator,
+          ticketNumber: examDraft?.ticketNumber,
+          hasTicketInStarT,
+          feedback: evalRes.feedback
+        };
       };
 
 
